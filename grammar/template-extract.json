@@ -1,0 +1,6881 @@
+{
+ "slide": {
+  "w_in": 13.333333333333334,
+  "h_in": 7.5,
+  "ratio": 1.7778
+ },
+ "slides": [
+  {
+   "n": 1,
+   "layout": "Title Only",
+   "shapes": [
+    {
+     "l": 0.236,
+     "t": 0.311,
+     "w": 12.818,
+     "h": 6.861,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 0.855,
+     "t": 3.436,
+     "w": 10.927,
+     "h": 1.919,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Think Channel,",
+       "f": "Poppins SemiBold",
+       "sz": 54.0,
+       "b": true
+      },
+      {
+       "t": "Think Channelplay.",
+       "f": "Poppins SemiBold",
+       "sz": 54.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.068,
+     "t": 1.922,
+     "w": 1.871,
+     "h": 0.398,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.036,
+     "t": 2.952,
+     "w": 7.172,
+     "h": 0.0,
+     "kind": "LINE"
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 6.539,
+     "w": 13.333,
+     "h": 0.961,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": -0.01,
+     "t": 0.0,
+     "w": 3.944,
+     "h": 7.5,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.446,
+     "t": 1.34,
+     "w": 6.764,
+     "h": 0.841,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation",
+       "f": "Poppins SemiBold",
+       "sz": 44.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.185,
+     "t": 2.902,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.577,
+     "t": 2.911,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "1",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 5.185,
+     "t": 3.902,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.577,
+     "t": 3.911,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "2",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 5.185,
+     "t": 4.981,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.577,
+     "t": 4.989,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "3",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.4,
+     "t": 2.902,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.792,
+     "t": 2.911,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "4",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.4,
+     "t": 3.902,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.792,
+     "t": 3.911,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "5",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.4,
+     "t": 4.981,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.792,
+     "t": 4.989,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "6",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 2.583,
+     "t": 0.961,
+     "w": 0.0,
+     "h": 6.539,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.141,
+     "w": 13.333,
+     "h": 0.359,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": -0.227,
+     "t": 3.24,
+     "w": 3.947,
+     "h": 1.717,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Index",
+       "f": "Poppins SemiBold",
+       "sz": 96.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.876,
+     "t": 2.204,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.267,
+     "t": 2.201,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "1",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.876,
+     "t": 3.037,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.267,
+     "t": 3.035,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "2",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.876,
+     "t": 3.871,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.267,
+     "t": 3.868,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "3",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.876,
+     "t": 4.704,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.267,
+     "t": 4.701,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "5",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.876,
+     "t": 5.537,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.267,
+     "t": 5.535,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "6",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.268,
+     "t": 2.204,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.659,
+     "t": 2.201,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "7",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.268,
+     "t": 3.037,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.659,
+     "t": 3.035,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "8",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.268,
+     "t": 3.871,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.659,
+     "t": 3.868,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "9",
+       "f": "Poppins SemiBold",
+       "sz": 11.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.268,
+     "t": 4.704,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.659,
+     "t": 4.701,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient"
+    },
+    {
+     "l": 8.268,
+     "t": 5.537,
+     "w": 3.208,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Chapter Name Goes Here",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.659,
+     "t": 5.535,
+     "w": 0.314,
+     "h": 0.314,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient"
+    },
+    {
+     "l": 7.614,
+     "t": 4.718,
+     "w": 0.405,
+     "h": 0.286,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "10",
+       "f": "Poppins SemiBold",
+       "sz": 11.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 7.614,
+     "t": 5.558,
+     "w": 0.405,
+     "h": 0.286,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "11",
+       "f": "Poppins SemiBold",
+       "sz": 11.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "layout": "Title Only",
+   "shapes": [
+    {
+     "l": 0.596,
+     "t": 2.203,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "FMCG",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.628,
+     "t": 2.222,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "FMCD",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.778,
+     "t": 2.222,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "General Trade",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 17.861,
+     "t": 5.583,
+     "w": 0.088,
+     "h": 0.088,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.772,
+     "t": 2.222,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Modern Trade",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.516,
+     "t": 2.755,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 1.878,
+     "t": 2.701,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 4.574,
+     "t": 2.755,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 4.936,
+     "t": 2.701,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 7.719,
+     "t": 2.772,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 8.081,
+     "t": 2.701,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 10.722,
+     "t": 2.755,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.085,
+     "t": 2.701,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 0.596,
+     "t": 4.864,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Electronics & Telecom",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.628,
+     "t": 4.883,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Beauty & Personal Care",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.778,
+     "t": 4.883,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Events & Exhibitions",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 6.772,
+     "t": 4.883,
+     "w": 2.749,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Seasonal Bursts",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.516,
+     "t": 5.416,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 1.878,
+     "t": 5.362,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 4.574,
+     "t": 5.416,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 4.936,
+     "t": 5.362,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 7.719,
+     "t": 5.433,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 8.081,
+     "t": 5.362,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 10.722,
+     "t": 5.416,
+     "w": 0.856,
+     "h": 0.862,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.085,
+     "t": 5.362,
+     "w": 0.131,
+     "h": 0.13,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 0.825,
+     "t": 3.699,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Van Sales | Field sales | Merchandisers",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.916,
+     "t": 3.699,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Hyper / Supermarkets | ",
+       "f": "Poppins",
+       "sz": 9.0
+      },
+      {
+       "t": "Mini Marts | Discount Stores",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 7.063,
+     "t": 3.699,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Hypermarkets | Supermarkets | Pharmacies",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.952,
+     "t": 3.699,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Mini Markets | Local Stores | ",
+       "f": "Poppins",
+       "sz": 9.0
+      },
+      {
+       "t": "Baqala",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 0.825,
+     "t": 6.334,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Shop-in-shop | Kiosks | Roadshows",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.916,
+     "t": 6.334,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Counters | Demo Stations | ",
+       "f": "Poppins",
+       "sz": 9.0
+      },
+      {
+       "t": "GWP Activations",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 7.063,
+     "t": 6.334,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Ramadan | Hajj/Umrah | Travel Peaks | Back-to-school | GITEX",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.952,
+     "t": 6.334,
+     "w": 2.292,
+     "h": 0.536,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Products Launches | Trade Fairs | Mall Activations",
+       "f": "Poppins",
+       "sz": 9.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.783,
+     "t": 2.351,
+     "w": 0.0,
+     "h": 1.712,
+     "kind": "LINE"
+    },
+    {
+     "l": 6.578,
+     "t": 2.351,
+     "w": 0.0,
+     "h": 1.712,
+     "kind": "LINE"
+    },
+    {
+     "l": 3.419,
+     "t": 2.351,
+     "w": 0.0,
+     "h": 1.712,
+     "kind": "LINE"
+    },
+    {
+     "l": 9.783,
+     "t": 4.964,
+     "w": 0.0,
+     "h": 1.712,
+     "kind": "LINE"
+    },
+    {
+     "l": 6.578,
+     "t": 4.964,
+     "w": 0.0,
+     "h": 1.712,
+     "kind": "LINE"
+    },
+    {
+     "l": 3.419,
+     "t": 4.964,
+     "w": 0.0,
+     "h": 1.712,
+     "kind": "LINE"
+    },
+    {
+     "l": 10.856,
+     "t": 2.884,
+     "w": 0.604,
+     "h": 0.604,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.708,
+     "t": 2.868,
+     "w": 0.604,
+     "h": 0.604,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.622,
+     "t": 5.565,
+     "w": 0.604,
+     "h": 0.604,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.845,
+     "t": 2.87,
+     "w": 0.604,
+     "h": 0.604,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.657,
+     "t": 2.87,
+     "w": 0.604,
+     "h": 0.604,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.852,
+     "t": 5.55,
+     "w": 0.604,
+     "h": 0.604,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.897,
+     "t": 5.557,
+     "w": 0.604,
+     "h": 0.604,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.661,
+     "t": 5.485,
+     "w": 0.705,
+     "h": 0.705,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 1.985,
+     "w": 3.232,
+     "h": 4.923,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is placeholder copy. ",
+       "f": "Poppins",
+       "sz": 12.0
+      },
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.778,
+     "t": 2.108,
+     "w": 2.305,
+     "h": 4.014,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.469,
+     "t": 2.108,
+     "w": 2.305,
+     "h": 4.014,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.16,
+     "t": 2.108,
+     "w": 2.305,
+     "h": 4.014,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.913,
+     "t": 6.195,
+     "w": 2.035,
+     "h": 0.658,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Person Name ",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      },
+      {
+       "t": "Title, Channelplay",
+       "f": "Poppins Medium",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.617,
+     "t": 6.195,
+     "w": 2.035,
+     "h": 0.658,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Person Name ",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      },
+      {
+       "t": "Title, Channelplay",
+       "f": "Poppins Medium",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 10.341,
+     "t": 6.195,
+     "w": 2.035,
+     "h": 0.658,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Person Name ",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      },
+      {
+       "t": "Title, Channelplay",
+       "f": "Poppins Medium",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.256,
+     "t": 2.189,
+     "w": 3.375,
+     "h": 3.244,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins"
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.521,
+     "t": 1.954,
+     "w": 0.841,
+     "h": 0.841,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.367,
+     "t": 2.347,
+     "w": 1.836,
+     "h": 1.619,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 2.627,
+     "t": 5.047,
+     "w": 0.633,
+     "h": 0.633,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.367,
+     "t": 4.067,
+     "w": 2.035,
+     "h": 0.658,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Person Name ",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      },
+      {
+       "t": "Title, Channelplay",
+       "f": "Poppins Medium",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.667,
+     "t": 2.347,
+     "w": 1.836,
+     "h": 1.619,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.667,
+     "t": 4.067,
+     "w": 2.035,
+     "h": 0.658,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Person Name ",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      },
+      {
+       "t": "Title, Channelplay",
+       "f": "Poppins Medium",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.967,
+     "t": 2.347,
+     "w": 1.836,
+     "h": 1.619,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.967,
+     "t": 4.067,
+     "w": 2.035,
+     "h": 0.658,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Person Name ",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      },
+      {
+       "t": "Title, Channelplay",
+       "f": "Poppins Medium",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.367,
+     "t": 4.739,
+     "w": 1.836,
+     "h": 1.984,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Description if required or delete this box. ",
+       "f": "Poppins",
+       "sz": 10.0
+      },
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 10.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.683,
+     "t": 4.739,
+     "w": 1.836,
+     "h": 1.984,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Description if required or delete this box. ",
+       "f": "Poppins",
+       "sz": 10.0
+      },
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 10.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.983,
+     "t": 4.739,
+     "w": 1.836,
+     "h": 1.984,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Description if required or delete this box. ",
+       "f": "Poppins",
+       "sz": 10.0
+      },
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 10.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "layout": "Title Only",
+   "shapes": [
+    {
+     "l": 6.678,
+     "t": 5.083,
+     "w": 0.81,
+     "h": 1.586,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 17.861,
+     "t": 5.583,
+     "w": 0.088,
+     "h": 0.088,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 2.067,
+     "w": 2.887,
+     "h": 4.854,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Managing 90+ SKUs from Seara and ",
+       "f": "Poppins SemiBold",
+       "sz": 10.5,
+       "b": true
+      },
+      {
+       "t": "Mayda",
+       "f": "Poppins SemiBold",
+       "sz": 10.5,
+       "b": true
+      },
+      {
+       "t": ",",
+       "f": "Poppins SemiBold",
+       "sz": 10.5,
+       "b": true
+      },
+      {
+       "t": " applying first-in, first-out rotation and flagging near-exp",
+       "f": "Poppins",
+       "sz": 10.5
+      },
+      {
+       "t": "Executing and adjusting planograms ",
+       "f": "Poppins SemiBold",
+       "sz": 10.5,
+       "b": true
+      },
+      {
+       "t": "to optimize shelf layouts ",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.076,
+     "t": 2.108,
+     "w": 1.967,
+     "h": 2.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.076,
+     "t": 4.808,
+     "w": 2.496,
+     "h": 2.21,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.768,
+     "t": 4.494,
+     "w": 0.75,
+     "h": 0.75,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 7.768,
+     "t": 5.647,
+     "w": 0.75,
+     "h": 0.75,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 7.768,
+     "t": 3.182,
+     "w": 0.75,
+     "h": 0.75,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 7.881,
+     "t": 3.249,
+     "w": 0.523,
+     "h": 0.523,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.881,
+     "t": 4.624,
+     "w": 0.523,
+     "h": 0.523,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.881,
+     "t": 5.773,
+     "w": 0.523,
+     "h": 0.523,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.838,
+     "t": 3.096,
+     "w": 4.1,
+     "h": 3.423,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Enhanced Freshness & Availability ",
+       "f": "Poppins",
+       "sz": 10.5,
+       "b": true
+      },
+      {
+       "t": "Real-time alerts and FIFO management reduce stockouts and sp",
+       "f": "Poppins",
+       "sz": 10.5
+      },
+      {
+       "t": "Consistent Brand Presentation ",
+       "f": "Poppins",
+       "sz": 10.5,
+       "b": true
+      },
+      {
+       "t": "Accurate planogram execution and photo-verified compliance r",
+       "f": "Poppins",
+       "sz": 10.5
+      },
+      {
+       "t": "Operational Efficiency ",
+       "f": "Poppins",
+       "sz": 10.5,
+       "b": true
+      },
+      {
+       "t": "Digital task prioritization and live dashboards streamline f",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.804,
+     "t": 2.505,
+     "w": 4.894,
+     "h": 0.438,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Impacts & Benefits",
+       "f": "Poppins Medium",
+       "sz": 20.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 6.12,
+     "t": 2.542,
+     "w": 1.368,
+     "h": 2.074,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.149,
+     "t": 4.16,
+     "w": 1.34,
+     "h": 2.449,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "layout": "Title Only",
+   "shapes": [
+    {
+     "l": 7.531,
+     "t": 3.19,
+     "w": 5.572,
+     "h": 2.027,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 0.732,
+     "t": 5.254,
+     "w": 3.984,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "3. Classroom Sessions",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "LEFT"
+    },
+    {
+     "l": 0.719,
+     "t": 5.553,
+     "w": 3.043,
+     "h": 1.078,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Induction & Refresher ",
+       "f": "Poppins",
+       "sz": 10.5
+      },
+      {
+       "t": "One day/ month of back to the classroom for refresher traini",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.07,
+     "t": 2.693,
+     "w": 0.413,
+     "h": 0.252,
+     "kind": "TEXT_BOX"
+    },
+    {
+     "l": 0.805,
+     "t": 4.798,
+     "w": 0.413,
+     "h": 0.413,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.048,
+     "t": 4.897,
+     "w": 3.984,
+     "h": 1.517,
+     "kind": "GROUP",
+     "children": [
+      {
+       "l": 5.754,
+       "t": 5.464,
+       "w": 3.984,
+       "h": 0.303,
+       "kind": "TEXT_BOX",
+       "runs": [
+        {
+         "t": "4. Certification",
+         "f": "Poppins Medium",
+         "sz": 12.0
+        }
+       ],
+       "align": "LEFT"
+      },
+      {
+       "l": 5.754,
+       "t": 5.75,
+       "w": 3.286,
+       "h": 0.881,
+       "kind": "TEXT_BOX",
+       "runs": [
+        {
+         "t": "Training scores, levels, trainer feedback, store feedback, a",
+         "f": "Poppins",
+         "sz": 10.5
+        }
+       ],
+       "align": "None"
+      },
+      {
+       "l": 5.855,
+       "t": 5.114,
+       "w": 0.4,
+       "h": 0.4,
+       "kind": "PICTURE"
+      }
+     ]
+    },
+    {
+     "l": 0.72,
+     "t": 2.634,
+     "w": 3.984,
+     "h": 1.562,
+     "kind": "GROUP",
+     "children": [
+      {
+       "l": 5.754,
+       "t": 3.75,
+       "w": 3.984,
+       "h": 0.303,
+       "kind": "TEXT_BOX",
+       "runs": [
+        {
+         "t": "1. In-app Learning",
+         "f": "Poppins Medium",
+         "sz": 12.0
+        }
+       ],
+       "align": "LEFT"
+      },
+      {
+       "l": 5.754,
+       "t": 4.024,
+       "w": 3.043,
+       "h": 0.881,
+       "kind": "TEXT_BOX",
+       "runs": [
+        {
+         "t": "Engaging video content delivered in app, along with instruct",
+         "f": "Poppins",
+         "sz": 10.5
+        }
+       ],
+       "align": "None"
+      },
+      {
+       "l": 5.766,
+       "t": 3.343,
+       "w": 0.4,
+       "h": 0.4,
+       "kind": "PICTURE"
+      }
+     ]
+    },
+    {
+     "l": 4.075,
+     "t": 2.672,
+     "w": 3.984,
+     "h": 1.193,
+     "kind": "GROUP",
+     "children": [
+      {
+       "l": 6.396,
+       "t": 2.601,
+       "w": 3.984,
+       "h": 0.303,
+       "kind": "TEXT_BOX",
+       "runs": [
+        {
+         "t": "2. Virtual Sessions",
+         "f": "Poppins Medium",
+         "sz": 12.0
+        }
+       ],
+       "align": "LEFT"
+      },
+      {
+       "l": 6.43,
+       "t": 2.861,
+       "w": 3.149,
+       "h": 0.489,
+       "kind": "TEXT_BOX",
+       "runs": [
+        {
+         "t": "2 days in a month addressing specific needs",
+         "f": "Poppins",
+         "sz": 10.5
+        }
+       ],
+       "align": "None"
+      },
+      {
+       "l": 6.462,
+       "t": 2.157,
+       "w": 0.413,
+       "h": 0.413,
+       "kind": "PICTURE"
+      }
+     ]
+    },
+    {
+     "l": 8.109,
+     "t": 2.25,
+     "w": 1.832,
+     "h": 4.154,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.705,
+     "t": 2.248,
+     "w": 1.805,
+     "h": 4.135,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.917,
+     "t": 1.727,
+     "w": 2.157,
+     "h": 5.215,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.721,
+     "t": 4.401,
+     "w": 6.558,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 3.831,
+     "t": 2.694,
+     "w": 0.0,
+     "h": 0.988,
+     "kind": "LINE"
+    },
+    {
+     "l": 3.862,
+     "t": 5.045,
+     "w": 0.0,
+     "h": 0.988,
+     "kind": "LINE"
+    },
+    {
+     "l": 10.516,
+     "t": 1.708,
+     "w": 2.157,
+     "h": 5.215,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.869,
+     "t": 1.833,
+     "w": 11.596,
+     "h": 5.252,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 1.538,
+     "t": 1.079,
+     "w": 1.906,
+     "h": 0.392,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.397,
+     "t": 2.488,
+     "w": 5.442,
+     "h": 2.524,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Separator -  Cover Section title goes here.  ",
+       "f": "Poppins SemiBold",
+       "sz": 48.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.397,
+     "t": 5.311,
+     "w": 5.097,
+     "h": 0.985,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 10.755,
+     "t": 1.964,
+     "w": 2.086,
+     "h": 2.086,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 9.931,
+     "t": 4.064,
+     "w": 3.021,
+     "h": 3.021,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 10.755,
+     "t": 1.978,
+     "w": 2.086,
+     "h": 2.086,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 9.972,
+     "t": 4.067,
+     "w": 3.021,
+     "h": 3.021,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 6.962,
+     "t": 5.311,
+     "w": 2.136,
+     "h": 2.136,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 7.368,
+     "t": 1.111,
+     "w": 5.907,
+     "h": 6.421,
+     "kind": "PICTURE"
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.52,
+     "t": 1.937,
+     "w": 5.25,
+     "h": 4.771,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 14.0
+      },
+      {
+       "t": "Our platform provides unparalleled visibility and control, e",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 1.947,
+     "w": 6.427,
+     "h": 4.917,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 1.591,
+     "t": 4.154,
+     "w": 4.532,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Table / Image / Chart",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 4.827,
+     "t": 2.646,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 2.419,
+     "w": 3.232,
+     "h": 4.014,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is placeholder copy. ",
+       "f": "Poppins",
+       "sz": 12.0
+      },
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.738,
+     "t": 2.581,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.372,
+     "t": 2.6,
+     "w": 2.703,
+     "h": 0.572,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.372,
+     "t": 3.169,
+     "w": 2.978,
+     "h": 0.934,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.95,
+     "t": 2.646,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 9.495,
+     "t": 2.6,
+     "w": 2.703,
+     "h": 0.572,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.495,
+     "t": 3.169,
+     "w": 2.978,
+     "h": 0.934,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.907,
+     "t": 2.581,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.827,
+     "t": 4.751,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 5.372,
+     "t": 4.706,
+     "w": 2.703,
+     "h": 0.572,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.372,
+     "t": 5.274,
+     "w": 2.978,
+     "h": 0.934,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.95,
+     "t": 4.751,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 9.495,
+     "t": 4.706,
+     "w": 2.703,
+     "h": 0.572,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.495,
+     "t": 5.274,
+     "w": 2.978,
+     "h": 0.934,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.827,
+     "t": 4.654,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.937,
+     "t": 4.654,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.469,
+     "t": 4.366,
+     "w": 2.244,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 8.667,
+     "t": 2.581,
+     "w": 0.0,
+     "h": 1.508,
+     "kind": "LINE"
+    },
+    {
+     "l": 8.667,
+     "t": 4.742,
+     "w": 0.0,
+     "h": 1.508,
+     "kind": "LINE"
+    },
+    {
+     "l": 9.601,
+     "t": 4.366,
+     "w": 2.606,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 5.372,
+     "t": 6.562,
+     "w": 4.532,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Replace Icons from Icon slide at the end. Delete this",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 1.985,
+     "w": 7.018,
+     "h": 4.822,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 14.0
+      },
+      {
+       "t": "Our platform provides unparalleled visibility and control, e",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.495,
+     "t": 6.376,
+     "w": 3.717,
+     "h": 0.379,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Image / Graph description",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.243,
+     "t": 1.685,
+     "w": 4.221,
+     "h": 4.221,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 8.243,
+     "t": 1.685,
+     "w": 4.221,
+     "h": 4.221,
+     "kind": "AUTO_SHAPE",
+     "auto": "PIE"
+    }
+   ]
+  },
+  {
+   "n": 13,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 2.71,
+     "w": 11.336,
+     "h": 4.029,
+     "kind": "TABLE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.78,
+     "w": 11.109,
+     "h": 0.778,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 6.759,
+     "t": 3.477,
+     "w": 0.333,
+     "h": 0.333,
+     "kind": "AUTO_SHAPE",
+     "auto": "RECTANGLE"
+    },
+    {
+     "l": 0.869,
+     "t": 3.325,
+     "w": 2.725,
+     "h": 0.425,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 3.809,
+     "w": 2.725,
+     "h": 2.855,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "By combining cutting-edge technology with industry expertise",
+       "f": "Poppins",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.003,
+     "t": 3.325,
+     "w": 2.725,
+     "h": 0.425,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.003,
+     "t": 3.809,
+     "w": 2.725,
+     "h": 2.855,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "By combining cutting-edge technology with industry expertise",
+       "f": "Poppins",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.138,
+     "t": 3.325,
+     "w": 2.725,
+     "h": 0.425,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.138,
+     "t": 3.809,
+     "w": 2.725,
+     "h": 2.855,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "By combining cutting-edge technology with industry expertise",
+       "f": "Poppins",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 10.273,
+     "t": 3.325,
+     "w": 2.725,
+     "h": 0.425,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here.",
+       "f": "Poppins Medium",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 10.273,
+     "t": 3.809,
+     "w": 2.725,
+     "h": 2.855,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "By combining cutting-edge technology with industry expertise",
+       "f": "Poppins",
+       "sz": 11.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.712,
+     "t": 3.961,
+     "w": 0.0,
+     "h": 2.703,
+     "kind": "LINE"
+    },
+    {
+     "l": 6.866,
+     "t": 3.961,
+     "w": 0.0,
+     "h": 2.703,
+     "kind": "LINE"
+    },
+    {
+     "l": 9.982,
+     "t": 3.961,
+     "w": 0.0,
+     "h": 2.703,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.952,
+     "t": 2.92,
+     "w": 0.422,
+     "h": 0.422,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.175,
+     "t": 2.917,
+     "w": 0.422,
+     "h": 0.422,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.359,
+     "t": 2.923,
+     "w": 0.425,
+     "h": 0.425,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.057,
+     "t": 2.913,
+     "w": 0.425,
+     "h": 0.425,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.956,
+     "w": 9.915,
+     "h": 0.682,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 4.554,
+     "t": 2.412,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 2.222,
+     "w": 2.988,
+     "h": 4.317,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is placeholder copy. ",
+       "f": "Poppins",
+       "sz": 12.0
+      },
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.464,
+     "t": 2.347,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.098,
+     "t": 2.366,
+     "w": 2.703,
+     "h": 0.505,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.098,
+     "t": 2.813,
+     "w": 2.703,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.554,
+     "t": 5.308,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 5.098,
+     "t": 5.262,
+     "w": 2.703,
+     "h": 0.505,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.098,
+     "t": 5.708,
+     "w": 2.978,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.51,
+     "t": 5.243,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.554,
+     "t": 3.88,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 5.098,
+     "t": 3.834,
+     "w": 2.703,
+     "h": 0.505,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.098,
+     "t": 4.28,
+     "w": 2.978,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 4.554,
+     "t": 3.783,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.526,
+     "t": 2.347,
+     "w": 0.0,
+     "h": 4.085,
+     "kind": "LINE"
+    },
+    {
+     "l": 9.024,
+     "t": 2.412,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 8.934,
+     "t": 2.347,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.569,
+     "t": 2.366,
+     "w": 2.703,
+     "h": 0.505,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.569,
+     "t": 2.813,
+     "w": 2.703,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.024,
+     "t": 5.308,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 9.569,
+     "t": 5.262,
+     "w": 2.703,
+     "h": 0.505,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.569,
+     "t": 5.708,
+     "w": 2.978,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.98,
+     "t": 5.243,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.024,
+     "t": 3.88,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 9.569,
+     "t": 3.834,
+     "w": 2.703,
+     "h": 0.505,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.569,
+     "t": 4.28,
+     "w": 2.978,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.024,
+     "t": 3.783,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    }
+   ]
+  },
+  {
+   "n": 16,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.958,
+     "t": 2.847,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 1.851,
+     "w": 6.971,
+     "h": 0.682,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 2.782,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.503,
+     "t": 2.802,
+     "w": 4.532,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.503,
+     "t": 3.142,
+     "w": 5.286,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.538,
+     "t": 4.063,
+     "w": 5.251,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.958,
+     "t": 4.374,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 0.869,
+     "t": 4.309,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.503,
+     "t": 4.328,
+     "w": 4.532,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.503,
+     "t": 4.669,
+     "w": 5.286,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.538,
+     "t": 5.589,
+     "w": 5.251,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.958,
+     "t": 5.812,
+     "w": 0.447,
+     "h": 0.447,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL"
+    },
+    {
+     "l": 0.869,
+     "t": 5.747,
+     "w": 0.359,
+     "h": 0.359,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.503,
+     "t": 5.766,
+     "w": 4.532,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.503,
+     "t": 6.107,
+     "w": 5.286,
+     "h": 0.724,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.937,
+     "t": 1.942,
+     "w": 4.846,
+     "h": 4.889,
+     "kind": "PICTURE"
+    }
+   ]
+  },
+  {
+   "n": 17,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 1.851,
+     "w": 6.971,
+     "h": 0.682,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.794,
+     "t": 2.802,
+     "w": 4.532,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Place Subtitle here, place subtitle here. Thank you.",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.794,
+     "t": 3.142,
+     "w": 5.286,
+     "h": 3.038,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      },
+      {
+       "t": "Create a unified brand experience for your audience across p",
+       "f": "Poppins",
+       "sz": 10.5
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": -0.063,
+     "t": 2.533,
+     "w": 5.466,
+     "h": 3.644,
+     "kind": "PLACEHOLDER"
+    },
+    {
+     "l": 0.17,
+     "t": 3.006,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.222,
+     "t": 5.192,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.531,
+     "t": 4.177,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.684,
+     "t": 6.231,
+     "w": 4.532,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Replace Icons from Icon slide at the end. Delete this",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 18,
+   "layout": "Title and body",
+   "shapes": [
+    {
+     "l": 0.384,
+     "t": 3.946,
+     "w": 12.57,
+     "h": 3.131,
+     "kind": "AUTO_SHAPE",
+     "auto": "RECTANGLE"
+    },
+    {
+     "l": 2.942,
+     "t": 5.99,
+     "w": 0.716,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.632,
+     "t": 4.506,
+     "w": 3.742,
+     "h": 0.325,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Grocery Delivery Platforms",
+       "f": "Poppins",
+       "sz": 13.3,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.517,
+     "t": 3.444,
+     "w": 2.062,
+     "h": 0.258,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Market Size",
+       "f": "Poppins",
+       "sz": 9.3,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.29,
+     "t": 3.476,
+     "w": 0.227,
+     "h": 0.227,
+     "kind": "AUTO_SHAPE",
+     "auto": "RECTANGLE"
+    },
+    {
+     "l": 3.342,
+     "t": 3.443,
+     "w": 2.062,
+     "h": 0.258,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Market Share",
+       "f": "Poppins",
+       "sz": 9.3,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.115,
+     "t": 3.475,
+     "w": 0.227,
+     "h": 0.227,
+     "kind": "AUTO_SHAPE",
+     "auto": "RECTANGLE"
+    },
+    {
+     "l": 1.143,
+     "t": 5.183,
+     "w": 1.142,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "4,000",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.123,
+     "t": 5.653,
+     "w": 0.711,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "400",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.249,
+     "t": 5.52,
+     "w": 0.716,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 4.466,
+     "t": 4.602,
+     "w": 0.0,
+     "h": 1.898,
+     "kind": "LINE"
+    },
+    {
+     "l": 6.786,
+     "t": 5.99,
+     "w": 0.716,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 4.476,
+     "t": 4.506,
+     "w": 3.742,
+     "h": 0.325,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Supermarkets and Retail Chains",
+       "f": "Poppins",
+       "sz": 13.3,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 4.987,
+     "t": 5.183,
+     "w": 0.814,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "5,000",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 6.967,
+     "t": 5.653,
+     "w": 0.711,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "1,000",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.093,
+     "t": 5.52,
+     "w": 0.716,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 10.768,
+     "t": 5.99,
+     "w": 0.602,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 8.128,
+     "t": 4.513,
+     "w": 4.507,
+     "h": 0.55,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "E-Commerce and Logistics Providers",
+       "f": "Poppins",
+       "sz": 13.3,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.975,
+     "t": 5.52,
+     "w": 0.716,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 8.262,
+     "t": 4.602,
+     "w": 0.0,
+     "h": 1.898,
+     "kind": "LINE"
+    },
+    {
+     "l": 8.244,
+     "t": 1.293,
+     "w": 3.742,
+     "h": 0.325,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "OVERALL",
+       "f": "Poppins",
+       "sz": 13.3,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 10.768,
+     "t": 2.767,
+     "w": 0.716,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 8.596,
+     "t": 1.961,
+     "w": 1.142,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "20,000",
+       "f": "Poppins Medium",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 10.889,
+     "t": 2.431,
+     "w": 0.975,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "3,050",
+       "f": "Poppins Medium",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.703,
+     "t": 2.297,
+     "w": 0.716,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 1.897,
+     "t": 5.157,
+     "w": 1.136,
+     "h": 1.136,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.64,
+     "t": 5.179,
+     "w": 1.189,
+     "h": 1.189,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.798,
+     "t": 5.653,
+     "w": 0.711,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "1,650",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 9.38,
+     "t": 1.779,
+     "w": 1.468,
+     "h": 1.468,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.712,
+     "t": 5.139,
+     "w": 1.17,
+     "h": 1.17,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.851,
+     "t": 5.48,
+     "w": 1.307,
+     "h": 0.462,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "10%",
+       "f": "Poppins SemiBold",
+       "sz": 18.7,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 5.319,
+     "t": 3.443,
+     "w": 2.062,
+     "h": 0.258,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Target %",
+       "f": "Poppins",
+       "sz": 9.3,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.092,
+     "t": 3.475,
+     "w": 0.227,
+     "h": 0.227,
+     "kind": "AUTO_SHAPE",
+     "auto": "RECTANGLE"
+    },
+    {
+     "l": 5.707,
+     "t": 5.48,
+     "w": 1.307,
+     "h": 0.462,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "20%",
+       "f": "Poppins SemiBold",
+       "sz": 18.7,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.586,
+     "t": 5.494,
+     "w": 1.307,
+     "h": 0.462,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "15%",
+       "f": "Poppins SemiBold",
+       "sz": 18.7,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.478,
+     "t": 2.257,
+     "w": 1.307,
+     "h": 0.462,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "15.25%",
+       "f": "Poppins SemiBold",
+       "sz": 21.3,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.854,
+     "t": 5.183,
+     "w": 0.823,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "11,000",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 7.375,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 1.851,
+     "w": 6.971,
+     "h": 0.682,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Our Full Channel-Tech Stack is the result of countless itera",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 19,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.407,
+     "t": 2.033,
+     "w": 12.47,
+     "h": 2.384,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 0.94,
+     "t": 4.714,
+     "w": 1.661,
+     "h": 0.909,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Width and depth optimization, instead of depth maximization",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.94,
+     "t": 3.237,
+     "w": 1.364,
+     "h": 0.404,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Selling",
+       "f": "Poppins"
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.074,
+     "t": 2.608,
+     "w": 0.504,
+     "h": 0.504,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.747,
+     "t": 2.546,
+     "w": 0.504,
+     "h": 0.504,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.316,
+     "t": 2.577,
+     "w": 0.504,
+     "h": 0.504,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.268,
+     "t": 2.546,
+     "w": 0.504,
+     "h": 0.504,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.012,
+     "t": 2.603,
+     "w": 0.504,
+     "h": 0.504,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 2.96,
+     "t": 3.214,
+     "w": 1.852,
+     "h": 0.404,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Learning",
+       "f": "Poppins"
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 3.074,
+     "t": 4.714,
+     "w": 1.763,
+     "h": 0.909,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Width and depth optimization, instead of depth maximization",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.268,
+     "t": 3.214,
+     "w": 2.108,
+     "h": 0.707,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Talent Acquisition",
+       "f": "Poppins"
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 5.186,
+     "t": 4.714,
+     "w": 2.108,
+     "h": 0.707,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Attract people with brand experience and category knowledge",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.679,
+     "t": 3.214,
+     "w": 2.413,
+     "h": 0.707,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Fixtures Management",
+       "f": "Poppins"
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.679,
+     "t": 4.714,
+     "w": 2.108,
+     "h": 0.909,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Nimbleness and speed of response, ahead of compliance to pla",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 10.306,
+     "t": 3.214,
+     "w": 2.413,
+     "h": 0.707,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Program Management",
+       "f": "Poppins"
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 10.218,
+     "t": 4.717,
+     "w": 2.108,
+     "h": 0.909,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Matrix structure to actively listen, respond and adapt to va",
+       "f": "Poppins",
+       "sz": 12.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 2.731,
+     "t": 4.714,
+     "w": 0.0,
+     "h": 0.909,
+     "kind": "LINE"
+    },
+    {
+     "l": -0.011,
+     "t": 3.04,
+     "w": 13.344,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 4.918,
+     "t": 4.714,
+     "w": 0.0,
+     "h": 0.909,
+     "kind": "LINE"
+    },
+    {
+     "l": 7.402,
+     "t": 4.714,
+     "w": 0.0,
+     "h": 0.909,
+     "kind": "LINE"
+    },
+    {
+     "l": 9.887,
+     "t": 4.714,
+     "w": 0.0,
+     "h": 0.909,
+     "kind": "LINE"
+    },
+    {
+     "l": 1.284,
+     "t": 6.466,
+     "w": 10.715,
+     "h": 0.525,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "The hedgehog knows one big thing very well, but the fox know",
+       "f": "Poppins Medium",
+       "sz": 18.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 0.779,
+     "t": 6.071,
+     "w": 1.0,
+     "h": 1.0,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.503,
+     "t": 6.405,
+     "w": 0.924,
+     "h": 0.911,
+     "kind": "PICTURE"
+    }
+   ]
+  },
+  {
+   "n": 20,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.0,
+     "w": 13.333,
+     "h": 7.487,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.895,
+     "t": 3.214,
+     "w": 0.809,
+     "h": 0.546,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.45,
+     "t": 3.08,
+     "w": 0.789,
+     "h": 0.789,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.616,
+     "t": 3.378,
+     "w": 1.551,
+     "h": 0.47,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 2.913,
+     "t": 5.366,
+     "w": 1.514,
+     "h": 0.852,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.531,
+     "t": 5.577,
+     "w": 1.669,
+     "h": 0.534,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.683,
+     "t": 5.124,
+     "w": 1.304,
+     "h": 1.304,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.016,
+     "t": 4.621,
+     "w": 0.911,
+     "h": 0.283,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.148,
+     "t": 4.658,
+     "w": 1.241,
+     "h": 0.256,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.768,
+     "t": 4.409,
+     "w": 1.045,
+     "h": 0.566,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.158,
+     "t": 1.999,
+     "w": 1.884,
+     "h": 0.707,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.3,
+     "t": 2.206,
+     "w": 1.089,
+     "h": 0.263,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.853,
+     "t": 2.143,
+     "w": 1.089,
+     "h": 0.405,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.653,
+     "t": 1.887,
+     "w": 1.602,
+     "h": 0.935,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.0,
+     "t": 7.164,
+     "w": 13.333,
+     "h": 0.336,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Clients / Logos",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 21,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 5.47,
+     "t": 2.382,
+     "w": 2.394,
+     "h": 3.663,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 6.015,
+     "t": 4.136,
+     "w": 1.303,
+     "h": 1.639,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "More effective handling of expired stock.",
+       "f": "Poppins",
+       "sz": 16.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 6.444,
+     "t": 2.217,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "3",
+       "f": "Poppins",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 0.379,
+     "t": 2.382,
+     "w": 2.394,
+     "h": 3.663,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 0.788,
+     "t": 4.136,
+     "w": 1.576,
+     "h": 1.33,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Better execution of planograms.",
+       "f": "Poppins",
+       "sz": 16.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.353,
+     "t": 2.217,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "1",
+       "f": "Poppins",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 2.924,
+     "t": 2.382,
+     "w": 2.394,
+     "h": 3.663,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 3.47,
+     "t": 4.136,
+     "w": 1.303,
+     "h": 1.33,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Improved in-outlet stock rotation.",
+       "f": "Poppins",
+       "sz": 16.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.899,
+     "t": 2.217,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "2",
+       "f": "Poppins",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.015,
+     "t": 2.382,
+     "w": 2.394,
+     "h": 3.663,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 8.212,
+     "t": 4.136,
+     "w": 2.0,
+     "h": 1.639,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Robust communication between merchandising ",
+       "f": "Poppins",
+       "sz": 16.0
+      },
+      {
+       "t": "& ",
+       "f": "Poppins",
+       "sz": 16.0
+      },
+      {
+       "t": "sales teams.",
+       "f": "Poppins",
+       "sz": 16.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.99,
+     "t": 2.217,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "4",
+       "f": "Poppins",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 10.561,
+     "t": 2.382,
+     "w": 2.394,
+     "h": 3.663,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE"
+    },
+    {
+     "l": 10.765,
+     "t": 4.136,
+     "w": 1.985,
+     "h": 1.639,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Empowering the sales ",
+       "f": "Poppins",
+       "sz": 16.0
+      },
+      {
+       "t": "team to ",
+       "f": "Poppins",
+       "sz": 16.0
+      },
+      {
+       "t": "book the ",
+       "f": "Poppins",
+       "sz": 16.0
+      },
+      {
+       "t": "right orders.",
+       "f": "Poppins",
+       "sz": 16.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 11.535,
+     "t": 2.217,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "fill": "gradient",
+     "runs": [
+      {
+       "t": "5",
+       "f": "Poppins",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.76,
+     "t": 3.003,
+     "w": 0.715,
+     "h": 0.715,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.827,
+     "t": 2.993,
+     "w": 0.77,
+     "h": 0.77,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.301,
+     "t": 3.08,
+     "w": 0.743,
+     "h": 0.743,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.479,
+     "t": 3.0,
+     "w": 0.718,
+     "h": 0.718,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.137,
+     "t": 3.089,
+     "w": 0.846,
+     "h": 0.846,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 22,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 2.471,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.531,
+     "t": 5.029,
+     "w": 1.708,
+     "h": 0.905,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Understand products ",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      },
+      {
+       "t": "&",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      },
+      {
+       "t": " SKUs",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.163,
+     "t": 2.235,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "1",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 2.599,
+     "t": 2.418,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 3.075,
+     "t": 5.029,
+     "w": 1.838,
+     "h": 1.176,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Thoroughly understand ",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      },
+      {
+       "t": "the client\u2019s planogram",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.771,
+     "t": 2.235,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "2",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 5.749,
+     "t": 5.029,
+     "w": 1.621,
+     "h": 0.905,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Conduct a time and motion study",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 5.207,
+     "t": 2.418,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 6.337,
+     "t": 2.235,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "3",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 7.772,
+     "t": 2.418,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 8.205,
+     "t": 5.029,
+     "w": 1.969,
+     "h": 1.447,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Analyze",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      },
+      {
+       "t": " manpower requirements and necessary skill sets",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.967,
+     "t": 2.235,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "4",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 10.403,
+     "t": 2.418,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 10.719,
+     "t": 5.029,
+     "w": 2.115,
+     "h": 1.447,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Assess training needs, with a focus on the criticality of ha",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 11.554,
+     "t": 2.235,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "5",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 0.791,
+     "t": 3.299,
+     "w": 1.354,
+     "h": 1.354,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.317,
+     "t": 3.282,
+     "w": 1.354,
+     "h": 1.354,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.842,
+     "t": 3.253,
+     "w": 1.447,
+     "h": 1.447,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.644,
+     "t": 3.407,
+     "w": 1.257,
+     "h": 1.257,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.123,
+     "t": 3.388,
+     "w": 1.403,
+     "h": 1.403,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 23,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.796,
+     "t": 2.597,
+     "w": 1.247,
+     "h": 1.208,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 0.0,
+     "t": 0.783,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.905,
+     "t": 1.962,
+     "w": 1.834,
+     "h": 0.37,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "PILOT",
+       "f": "Poppins SemiBold",
+       "sz": 16.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.0,
+     "t": 4.269,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.531,
+     "t": 4.614,
+     "w": 1.708,
+     "h": 0.634,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Focus on a single SKU.",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.163,
+     "t": 4.033,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "1",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 2.599,
+     "t": 4.216,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 2.739,
+     "t": 4.614,
+     "w": 1.838,
+     "h": 0.634,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Target a specific city",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 3.436,
+     "t": 4.033,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "2",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 4.889,
+     "t": 4.614,
+     "w": 2.963,
+     "h": 0.905,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Partner with a retail chain like Danube, Panda, or a discoun",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 4.718,
+     "t": 4.216,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 6.148,
+     "t": 4.033,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "3",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 8.016,
+     "t": 4.216,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 8.205,
+     "t": 4.614,
+     "w": 2.284,
+     "h": 0.905,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Start with a small, manageable part of the business",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 9.125,
+     "t": 4.033,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "4",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 10.403,
+     "t": 4.216,
+     "w": 0.154,
+     "h": 0.105,
+     "kind": "AUTO_SHAPE",
+     "auto": "ISOSCELES_TRIANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 10.984,
+     "t": 4.614,
+     "w": 1.586,
+     "h": 0.634,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Let's get the POC going!",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 11.554,
+     "t": 4.033,
+     "w": 0.445,
+     "h": 0.445,
+     "kind": "AUTO_SHAPE",
+     "auto": "OVAL",
+     "runs": [
+      {
+       "t": "5",
+       "f": "Poppins Medium",
+       "sz": 12.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.024,
+     "t": 2.844,
+     "w": 0.723,
+     "h": 0.723,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 2.959,
+     "t": 2.597,
+     "w": 1.247,
+     "h": 1.208,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 5.749,
+     "t": 2.597,
+     "w": 1.247,
+     "h": 1.208,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 8.656,
+     "t": 2.597,
+     "w": 1.247,
+     "h": 1.208,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.098,
+     "t": 2.597,
+     "w": 1.247,
+     "h": 1.208,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 3.152,
+     "t": 2.746,
+     "w": 0.861,
+     "h": 0.861,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.941,
+     "t": 2.746,
+     "w": 0.861,
+     "h": 0.861,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.884,
+     "t": 2.746,
+     "w": 0.792,
+     "h": 0.792,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.417,
+     "t": 2.795,
+     "w": 0.719,
+     "h": 0.719,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "This is the title text right here. ",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 24,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.33,
+     "t": 3.119,
+     "w": 4.067,
+     "h": 0.438,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Managing Manpower",
+       "f": "Poppins",
+       "sz": 18.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 6.732,
+     "t": 3.119,
+     "w": 3.692,
+     "h": 0.438,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Training Capsules",
+       "f": "Poppins",
+       "sz": 18.0
+      }
+     ],
+     "align": "CENTER"
+    },
+    {
+     "l": 1.974,
+     "t": 2.149,
+     "w": 0.777,
+     "h": 0.777,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.169,
+     "t": 2.129,
+     "w": 0.818,
+     "h": 0.818,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.93,
+     "t": 3.67,
+     "w": 5.083,
+     "h": 2.899,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "At Channelplay Middle East, we go beyond simply staffing ret",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.353,
+     "t": 3.67,
+     "w": 5.083,
+     "h": 2.899,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "We deliver compact, focused training modules designed to up-",
+       "f": "Poppins",
+       "sz": 14.0
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 6.732,
+     "t": 3.863,
+     "w": 0.0,
+     "h": 2.643,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 1.215,
+     "w": 10.342,
+     "h": 0.64,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "What More Can We Do",
+       "f": "Poppins SemiBold",
+       "sz": 32.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Navigation / Chapter Title",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    }
+   ]
+  },
+  {
+   "n": 25,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Icons \u2013 insert > Icons",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 2.386,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.135,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.885,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.634,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.383,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.133,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.894,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.643,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.393,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.142,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.891,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.641,
+     "t": 1.445,
+     "w": 0.514,
+     "h": 0.514,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.818,
+     "t": 1.623,
+     "w": 1.517,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "PEOPLE",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 2.382,
+     "w": 11.739,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.818,
+     "t": 2.816,
+     "w": 1.517,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "LOCATION",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 3.575,
+     "w": 11.739,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.818,
+     "t": 3.991,
+     "w": 1.517,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "ARROWS",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 4.75,
+     "w": 11.739,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.818,
+     "t": 5.237,
+     "w": 1.517,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "OPERATIONS",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 5.996,
+     "w": 11.739,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.818,
+     "t": 6.43,
+     "w": 1.517,
+     "h": 0.337,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "TECH",
+       "f": "Poppins SemiBold",
+       "sz": 14.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 2.392,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.389,
+     "t": 1.452,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.135,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.885,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.634,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.383,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.133,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.882,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.632,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.381,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.13,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.88,
+     "t": 2.713,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.256,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 2.438,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.073,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.891,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.708,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.526,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.343,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.16,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.978,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.795,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.613,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.43,
+     "t": 3.958,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.244,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 2.426,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.063,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.882,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.7,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.519,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.337,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.156,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.975,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.793,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.612,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.43,
+     "t": 5.196,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.221,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.037,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 2.406,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 4.853,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.668,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.484,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.3,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.116,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 8.931,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 9.747,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.563,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.378,
+     "t": 6.356,
+     "w": 0.41,
+     "h": 0.41,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.633,
+     "t": 2.768,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 11.366,
+     "t": 2.69,
+     "w": 0.508,
+     "h": 0.508,
+     "kind": "PICTURE"
+    }
+   ]
+  },
+  {
+   "n": 26,
+   "layout": "Title Only",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.0,
+     "w": 13.333,
+     "h": 7.5,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 1.46,
+     "t": 3.469,
+     "w": 5.76,
+     "h": 1.111,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Thank you.",
+       "f": "Poppins SemiBold",
+       "sz": 60.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 1.46,
+     "t": 3.113,
+     "w": 4.874,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 1.46,
+     "t": 2.074,
+     "w": 2.252,
+     "h": 0.479,
+     "kind": "PICTURE"
+    }
+   ]
+  },
+  {
+   "n": 27,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Channelplay Images",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 8.14,
+     "t": 1.232,
+     "w": 4.25,
+     "h": 5.667,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 6.093,
+     "t": 2.377,
+     "w": 2.689,
+     "h": 3.197,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.943,
+     "t": 2.489,
+     "w": 5.432,
+     "h": 1.346,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Adjusting Corners for images",
+       "f": "Poppins SemiBold",
+       "sz": 20.0,
+       "b": true
+      },
+      {
+       "t": "Click on the image > on the upper corner > hold and drag the",
+       "f": "Poppins Medium"
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 7.039,
+     "t": 1.122,
+     "w": 1.334,
+     "h": 1.313,
+     "kind": "PICTURE"
+    }
+   ]
+  },
+  {
+   "n": 28,
+   "layout": "Title Slide",
+   "shapes": [
+    {
+     "l": 0.0,
+     "t": 0.961,
+     "w": 13.333,
+     "h": 0.0,
+     "kind": "LINE"
+    },
+    {
+     "l": 0.0,
+     "t": 7.257,
+     "w": 13.333,
+     "h": 0.243,
+     "kind": "AUTO_SHAPE",
+     "auto": "ROUNDED_RECTANGLE",
+     "fill": "gradient"
+    },
+    {
+     "l": 11.211,
+     "t": 0.359,
+     "w": 1.397,
+     "h": 0.288,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 0.359,
+     "w": 2.988,
+     "h": 0.303,
+     "kind": "TEXT_BOX",
+     "runs": [
+      {
+       "t": "Images",
+       "f": "Poppins SemiBold",
+       "sz": 12.0,
+       "b": true
+      }
+     ],
+     "align": "None"
+    },
+    {
+     "l": 0.869,
+     "t": 1.232,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.21,
+     "t": 1.236,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.552,
+     "t": 1.236,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.893,
+     "t": 1.232,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.234,
+     "t": 1.232,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 0.869,
+     "t": 4.236,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 3.21,
+     "t": 4.24,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 5.552,
+     "t": 4.24,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 7.893,
+     "t": 4.236,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    },
+    {
+     "l": 10.234,
+     "t": 4.236,
+     "w": 2.156,
+     "h": 2.875,
+     "kind": "PICTURE"
+    }
+   ]
+  }
+ ]
+}

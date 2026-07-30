@@ -1,0 +1,86 @@
+# brand-studio
+#
+# Rule of thumb: build OUTPUT is disposable and stays out; brand INPUT is the
+# product and stays in. A deck or a film can always be rebuilt from its IR plus
+# the brand profile — a logo, a font or a reference cut cannot be rebuilt from
+# anything.
+#
+# Deliberately NOT ignored:
+#   brands/*/assets/**      logos, fonts, token dumps — shipped brand assets
+#   brands/*/video/**       supplied intro/outro plates, music beds, reference films
+#   examples/*.json         the worked Deck IR and Video IR examples
+#   grammar/icons/*.svg     the shared icon set
+
+# ---------------------------------------------------------------------------
+# build output
+# ---------------------------------------------------------------------------
+examples/**/*.pptx
+examples/**/*.mp4
+examples/**/*.pdf
+examples/**/*.srt
+examples/**/*.timeline.json
+examples/out/
+out/
+
+# Any directory literally named out/ or preview/, at any depth, plus the
+# <deck>.preview/ directories render_preview.sh drops beside a deck.
+**/out/
+**/preview/
+*.preview/
+
+# ---------------------------------------------------------------------------
+# render intermediates
+# ---------------------------------------------------------------------------
+# build_video.py work dirs, frame sequences, per-scene HTML and Chrome profiles.
+**/frames/
+**/chrome-profiles/
+.brand-studio-work/
+*.brand-studio-work/
+tmp/
+.tmp/
+*.tmp
+
+# macOS 'say' writes AIFF before it is normalised into the mix.
+*.aiff
+*.aif
+
+# ---------------------------------------------------------------------------
+# python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# ---------------------------------------------------------------------------
+# editor and OS noise
+# ---------------------------------------------------------------------------
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# ---------------------------------------------------------------------------
+# office lock files, left behind by soffice and PowerPoint
+# ---------------------------------------------------------------------------
+.~lock.*#
+~$*.pptx
+~$*.docx
+~$*.xlsx
+
+# Nightly review packets are generated output: they carry absolute paths from the
+# machine that built them and would churn on every run. The learning that must be
+# shared lives in LEARNED.md, rules.local.json and daily/metrics.json, all tracked.
+brands/*/daily/*/
+!brands/*/daily/metrics.json
+
+# Generated music beds (regenerated deterministically from a seed).
+brands/*/audio/generated/

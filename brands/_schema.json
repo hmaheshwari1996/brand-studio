@@ -1,0 +1,779 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://channelplay.in/brand-studio/brands/_schema.json",
+  "title": "brand-studio brand profile",
+  "description": "Shape of brands/<id>/brand.json — the single machine-read source of brand truth for a deck or a video. Geometry lives in grammar/deck-grammar.json and is brand-agnostic; nothing in this file describes where things sit on a slide, only how they look and how they are worded. Loaded exclusively through scripts/lib/brandlib.py, which adds two runtime keys that are NOT part of this schema and must never be written to disk: 'learnedRules' (rules.local.json merged in) and '_dir' (absolute brand directory). Any property whose name starts with '$' is metadata: '$comment' is free prose and is ignored everywhere, and '$unverified' is written by scripts/new_brand.py to mark a block that carries a neutral default nobody ever confirmed.",
+  "type": "object",
+
+  "required": ["id", "name", "color", "colorRules", "type", "logo", "voice"],
+
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path to this file, normally \"../_schema.json\". Documentation only — no script validates against it at build time.",
+      "default": "../_schema.json"
+    },
+    "$unverified": {
+      "$ref": "#/$defs/unverifiedFlag",
+      "description": "True when scripts/new_brand.py had to invent at least one default. Set at the top level whenever any block carries it."
+    },
+    "$unverifiedFields": {
+      "type": "array",
+      "description": "Dotted paths of every field that fell back to a neutral default during intake, e.g. [\"color.semantic\", \"type.deckScalePt\"]. brand_resolve.py surfaces this in the confirmation card so nobody ships a guess as a rule.",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+
+    "id": {
+      "type": "string",
+      "description": "Lowercase slug. MUST equal the containing directory name — brands/acme/brand.json must carry \"id\": \"acme\", or the brand resolves and then fails to load.",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "examples": ["channelplay", "acme-retail"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name as it should appear in a deck footer and in the brand confirmation card.",
+      "minLength": 1,
+      "examples": ["Channelplay"]
+    },
+    "aliases": {
+      "type": "array",
+      "description": "Everything a person might type for this brand. Feeds fuzzy resolution in brand_resolve.py — a missing alias is the usual cause of a wrong match. Lowercase.",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "examples": [["channel play", "cp", "channelplay technologies"]]
+    },
+    "kind": {
+      "description": "Whether this is the agency's own brand or a client's. Governs nothing mechanically; it exists so a reader can tell at a glance whose rules these are.",
+      "enum": ["house", "client"]
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence: what the brand does and who the audience is. Copy generation reads this, so \"we deliver excellence\" is not an answer."
+    },
+    "version": {
+      "type": "string",
+      "description": "Semver of THIS PROFILE, not of the brand. Bump on every durable edit (tier 3 of the learn protocol).",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "updated": {
+      "$ref": "#/$defs/isoDate",
+      "description": "Date of the last durable edit. Shown in the confirmation card and in brandlib.list_brands()."
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "Where the values came from and who ruled on conflicts. This is what separates a brand fact from a guess six months later. Free prose, never parsed.",
+      "properties": {
+        "tokens": {
+          "type": "string",
+          "description": "Source of colour and type values, with a date. e.g. \"Channelplay design system (DESIGN_SYSTEM.md v1.0), derived from Channelplay_Brand_Guidelines.pptx\"."
+        },
+        "geometry": {
+          "type": "string",
+          "description": "Source of the layout the grammar was extracted from. Usually \"grammar/deck-grammar.json (shared, brand-agnostic).\""
+        },
+        "resolution": {
+          "type": "string",
+          "description": "Who ruled on any conflict between sources, what they ruled, and when."
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": { "type": "string" }
+    },
+
+    "color": {
+      "type": "object",
+      "title": "Colour tokens",
+      "description": "Every colour the brand owns. brandlib.palette_index() flattens this into {hex: token} and DELIBERATELY EXCLUDES 'superseded' — an unapproved hex must never win a nearest-token lookup. On duplicate hexes the first path wins, so put the canonical name under color.brand.*.",
+      "required": ["brand", "neutral"],
+      "properties": {
+        "$unverified": { "$ref": "#/$defs/unverifiedFlag" },
+        "brand": {
+          "type": "object",
+          "description": "The named identity colours, whatever the brand calls them: blue, navy, mint, teal, sky … At least one.",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9]*$" },
+          "additionalProperties": { "$ref": "#/$defs/hexColor" },
+          "examples": [{ "blue": "#0000FF", "navy": "#0F0A6C", "mint": "#41E7AB" }]
+        },
+        "neutral": {
+          "allOf": [{ "$ref": "#/$defs/ramp" }],
+          "description": "Backgrounds and text greys. MUST include \"0\": \"#FFFFFF\" (or the brand's paper colour) — the builder paints slide backgrounds from it.",
+          "required": ["0"]
+        },
+        "semantic": {
+          "type": "object",
+          "description": "Status colours and their wash backgrounds: success, warning, danger, info, plus the matching \"<role>.bg\" keys.",
+          "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9]*(\\.bg)?$" },
+          "additionalProperties": { "$ref": "#/$defs/hexColor" },
+          "examples": [{ "success": "#1B7A74", "success.bg": "#EAFCF5" }]
+        },
+        "gradient": {
+          "type": "object",
+          "description": "Named linear gradients. Used for cover and section-break panels. Text is never set on a gradient when colorRules.gradientTextForbidden is true.",
+          "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9]*$" },
+          "additionalProperties": {
+            "type": "object",
+            "required": ["stops"],
+            "properties": {
+              "stops": {
+                "type": "array",
+                "description": "Two or more hex stops, in paint order.",
+                "items": { "$ref": "#/$defs/hexColor" },
+                "minItems": 2
+              },
+              "angle": {
+                "type": "number",
+                "description": "Degrees clockwise from the positive x-axis. 135 is the usual top-left to bottom-right.",
+                "minimum": 0,
+                "maximum": 360
+              }
+            },
+            "patternProperties": { "^\\$": {} },
+            "additionalProperties": false
+          }
+        },
+        "superseded": {
+          "type": "object",
+          "title": "Retired colours",
+          "description": "Hexes that appear in old templates and files but are NOT approved. The validator reports COLOR.SUPERSEDED naming the canonical replacement. Excluded from palette_index() on purpose; read it with brandlib.superseded_map().",
+          "properties": {
+            "note": {
+              "type": "string",
+              "description": "Why these are recorded and where they were observed."
+            },
+            "map": {
+              "type": "object",
+              "description": "Retired hex -> canonical replacement hex.",
+              "propertyNames": { "$ref": "#/$defs/hexColorPattern" },
+              "additionalProperties": { "$ref": "#/$defs/hexColor" },
+              "examples": [{ "#0000D5": "#0000FF", "#08F8B9": "#41E7AB" }]
+            }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": {
+        "allOf": [{ "$ref": "#/$defs/ramp" }],
+        "description": "Any other key is a colour ramp named after a brand colour — \"blue\", \"mint\", \"sky\" — keyed 50…950. Needed for hovers, borders, washes and dark surfaces. Say in GUIDELINES.md when the steps were interpolated rather than brand-mandated."
+      }
+    },
+
+    "colorRules": {
+      "type": "object",
+      "title": "How colour may be used",
+      "description": "The enforceable half of colour. Everything here is read by validate_deck.py and validate_video.py.",
+      "required": ["defaultText", "forbiddenText", "onSurface", "minContrastBody", "minContrastLarge", "largeTextPt"],
+      "properties": {
+        "$unverified": { "$ref": "#/$defs/unverifiedFlag" },
+        "defaultText": {
+          "$ref": "#/$defs/hexColor",
+          "description": "Body text colour on the default light surface. Rarely #000000 — most brands ban pure black."
+        },
+        "secondaryText": {
+          "$ref": "#/$defs/hexColor",
+          "description": "Captions, footers, page numbers."
+        },
+        "forbiddenText": {
+          "type": "object",
+          "title": "Colours that must never carry text",
+          "description": "hex -> the reason, stating the measured contrast ratio and the shade to use instead. Read with brandlib.forbidden_text_colors(); excluded from palette_index().",
+          "propertyNames": { "$ref": "#/$defs/hexColorPattern" },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Why this colour is banned for text and what to use instead."
+          },
+          "examples": [{ "#41E7AB": "Mint is decorative only (1.6:1 on white). Use mint.700 #1B7A74 for mint-family text." }]
+        },
+        "onSurface": {
+          "type": "object",
+          "title": "Text colour per background",
+          "description": "background hex -> text hex, for every fill a slide or a frame may use. brandlib.on_surface_text() reads this. Every pair must clear the contrast thresholds below.",
+          "propertyNames": { "$ref": "#/$defs/hexColorPattern" },
+          "additionalProperties": { "$ref": "#/$defs/hexColor" },
+          "examples": [{ "#0000FF": "#FFFFFF", "#41E7AB": "#0F0A6C" }]
+        },
+        "minContrastBody": {
+          "type": "number",
+          "description": "Minimum contrast ratio for text below largeTextPt. WCAG AA is 4.5.",
+          "minimum": 1,
+          "maximum": 21,
+          "default": 4.5
+        },
+        "minContrastLarge": {
+          "type": "number",
+          "description": "Minimum contrast ratio at or above largeTextPt. WCAG AA is 3.0.",
+          "minimum": 1,
+          "maximum": 21,
+          "default": 3.0
+        },
+        "largeTextPt": {
+          "type": "number",
+          "description": "Point size at which the 'large text' threshold starts to apply.",
+          "exclusiveMinimum": 0,
+          "default": 18.0
+        },
+        "gradientTextForbidden": {
+          "type": "boolean",
+          "description": "True bans text set directly on a gradient fill.",
+          "default": true
+        },
+        "maxGradientsPerSurface": {
+          "type": "integer",
+          "description": "How many gradient fills may appear on one slide or frame.",
+          "minimum": 0,
+          "default": 1
+        },
+        "chartSeries": {
+          "type": "array",
+          "description": "Series colours IN ORDER. build_deck.py indexes into this array, so the order is the design, not a suggestion.",
+          "items": { "$ref": "#/$defs/hexColor" },
+          "minItems": 1
+        },
+        "chartGradientFillForbidden": {
+          "type": "boolean",
+          "description": "True bans gradient fills inside chart geometry.",
+          "default": true
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    },
+
+    "type": {
+      "type": "object",
+      "title": "Typography",
+      "description": "PowerPoint has no weight axis. A semibold run is the FAMILY \"Poppins SemiBold\" with bold = False; setting bold = True on a non-bold family is synthetic bold and is a TYPE.SYNTHETIC_BOLD violation. weightToPptxFamily is what makes that work.",
+      "required": ["family", "weightToPptxFamily", "approvedWeights", "deckScalePt", "minBodyPt"],
+      "properties": {
+        "$unverified": { "$ref": "#/$defs/unverifiedFlag" },
+        "family": {
+          "type": "string",
+          "description": "Primary typeface family name, as installed.",
+          "minLength": 1,
+          "examples": ["Poppins"]
+        },
+        "fallback": {
+          "type": "array",
+          "description": "Stack for machines without the font. HTML motion templates use it; PPTX does not.",
+          "items": { "type": "string" }
+        },
+        "fontFiles": {
+          "type": "array",
+          "description": "Optional TTF/OTF paths relative to the brand directory. Leave empty when the licence forbids redistribution — keep the family names and say so in provenance.",
+          "items": { "$ref": "#/$defs/relativePath" }
+        },
+        "weightToPptxFamily": {
+          "type": "object",
+          "title": "Weight -> PPTX family name",
+          "description": "THE critical field. Keys are stringified weights, values are the exact font family names PowerPoint must be given. brandlib.weight_to_family() raises ValueError for any weight not listed here. Confirmed profiles are restricted to the 400/500/600 keys — see the conditional rule at the end of this block.",
+          "propertyNames": { "type": "string", "pattern": "^[1-9]00$" },
+          "additionalProperties": { "type": "string", "minLength": 1 },
+          "minProperties": 1,
+          "examples": [{ "400": "Poppins", "500": "Poppins Medium", "600": "Poppins SemiBold" }]
+        },
+        "approvedWeights": {
+          "type": "array",
+          "description": "Must match the keys of weightToPptxFamily. The plugin supports the 400/500/600 axis: 400 regular, 500 medium, 600 semibold. A brand that genuinely needs another weight is a plugin-owner conversation, not a local edit — the builder has no way to name a family it was not given.",
+          "items": { "type": "integer", "minimum": 100, "maximum": 900 },
+          "minItems": 1,
+          "uniqueItems": true,
+          "examples": [[400, 500, 600]]
+        },
+        "forbiddenWeights": {
+          "type": "array",
+          "description": "Documents the rejection reason in validator output. Normally the complement of approvedWeights.",
+          "items": { "type": "integer", "minimum": 1, "maximum": 1000 },
+          "uniqueItems": true,
+          "examples": [[100, 200, 300, 700, 800, 900]]
+        },
+        "italicsAllowed": {
+          "type": "boolean",
+          "description": "False makes any italic run a violation.",
+          "default": false
+        },
+        "syntheticBoldAllowed": {
+          "type": "boolean",
+          "description": "Keep false. True permits bold = True on a family that has no bold cut, which the renderer fakes by smearing the outline.",
+          "default": false
+        },
+        "deckScalePt": {
+          "type": "object",
+          "title": "Type scale, in points",
+          "description": "One entry per role the grammar addresses. brandlib.type_role() raises KeyError (listing what exists) for anything else, so every role below must be present or the build dies on the slide that first needs it.",
+          "required": [
+            "cover", "section", "title", "subtitle", "cardTitle", "label",
+            "body", "bodySmall", "caption", "eyebrow", "footer", "statNumber"
+          ],
+          "properties": {
+            "cover":      { "$ref": "#/$defs/typeRole", "description": "Cover slide title." },
+            "section":    { "$ref": "#/$defs/typeRole", "description": "Section-break title and pull quotes." },
+            "title":      { "$ref": "#/$defs/typeRole", "description": "Slide title in the header chrome." },
+            "subtitle":   { "$ref": "#/$defs/typeRole", "description": "Deck line under the title, intros, CTA." },
+            "cardTitle":  { "$ref": "#/$defs/typeRole", "description": "Cell, row, column, step and stat headings." },
+            "label":      { "$ref": "#/$defs/typeRole", "description": "Agenda and index item labels, quote attribution." },
+            "body":       { "$ref": "#/$defs/typeRole", "description": "Default prose." },
+            "bodySmall":  { "$ref": "#/$defs/typeRole", "description": "Prose inside cells, rows and columns." },
+            "caption":    { "$ref": "#/$defs/typeRole", "description": "Photo captions, stat captions, page numbers." },
+            "eyebrow":    { "$ref": "#/$defs/typeRole", "description": "The small label above the title. Usually the one role exempt from sentence case — set \"case\": \"upper\"." },
+            "footer":     { "$ref": "#/$defs/typeRole", "description": "Footer band." },
+            "statNumber": { "$ref": "#/$defs/typeRole", "description": "The headline metric on a stats slide." }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": { "$ref": "#/$defs/typeRole" }
+        },
+        "minBodyPt": {
+          "type": "number",
+          "description": "Floor for body copy. Anything smaller is a hard accessibility failure, not a layout choice — if the copy does not fit at this size, cut the copy.",
+          "exclusiveMinimum": 0,
+          "examples": [10.5]
+        },
+        "negativeTrackingAbovePt": {
+          "type": "number",
+          "description": "Size above which negative letter-spacing is allowed. Tight tracking on 12pt body is a violation.",
+          "exclusiveMinimum": 0,
+          "examples": [22]
+        }
+      },
+      "if": {
+        "$comment": "A confirmed profile — one NOT stamped \"$unverified\" — is held to the plugin's supported weight axis.",
+        "not": { "properties": { "$unverified": { "const": true } }, "required": ["$unverified"] }
+      },
+      "then": {
+        "$comment": "400 regular / 500 medium / 600 semibold. Nothing else can be mapped to a PPTX family name, and there is no synthetic weight to fall back on. scripts/new_brand.py seeds an unconfirmed profile with a generic 400/700 axis; replacing it with the brand's real weights is part of confirming the profile, and until that happens this rule is deliberately relaxed.",
+        "properties": {
+          "weightToPptxFamily": { "propertyNames": { "$ref": "#/$defs/approvedWeightKeyPattern" } },
+          "approvedWeights": { "items": { "$ref": "#/$defs/approvedWeight" } },
+          "forbiddenWeights": { "items": { "not": { "$ref": "#/$defs/approvedWeight" } } },
+          "deckScalePt": {
+            "patternProperties": {
+              "^[^$]": { "properties": { "weight": { "$ref": "#/$defs/approvedWeight" } } }
+            }
+          }
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    },
+
+    "logo": {
+      "type": "object",
+      "title": "Logo",
+      "description": "Files are referenced by path RELATIVE to the brand directory; resolve them against the '_dir' key brandlib adds at load. An absolute path here makes the brand unportable.",
+      "required": ["placement", "variants", "variantForBackground", "deckSizeIn"],
+      "properties": {
+        "$unverified": { "$ref": "#/$defs/unverifiedFlag" },
+        "placement": {
+          "description": "Where the mark sits in the header chrome.",
+          "enum": ["top-left", "top-right", "bottom-left", "bottom-right"]
+        },
+        "placementRationale": {
+          "type": "string",
+          "description": "Why, especially when it contradicts an older template. Saves the argument being had twice."
+        },
+        "variants": {
+          "type": "object",
+          "description": "Named lockups. At least one. The ids are referenced by variantForBackground.",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9]*$" },
+          "additionalProperties": {
+            "type": "object",
+            "required": ["file"],
+            "properties": {
+              "file": {
+                "$ref": "#/$defs/relativePath",
+                "description": "Path relative to the brand directory, e.g. \"assets/logos/acme-primary.png\"."
+              },
+              "use": {
+                "type": "string",
+                "description": "The backgrounds this variant is for, in plain words."
+              },
+              "aspect": {
+                "type": "number",
+                "description": "width / height. MEASURE it from the file; a guessed aspect stretches the mark on every slide.",
+                "exclusiveMinimum": 0
+              }
+            },
+            "patternProperties": { "^\\$": {} },
+            "additionalProperties": false
+          },
+          "examples": [{ "primary": { "file": "assets/logos/x.png", "use": "light backgrounds", "aspect": 4.846 } }]
+        },
+        "variantForBackground": {
+          "type": "object",
+          "description": "Background class -> variant id. The builder picks the file from here, so every value must name a key of 'variants'.",
+          "required": ["light", "dark"],
+          "properties": {
+            "light":    { "type": "string", "description": "White and tint surfaces." },
+            "dark":     { "type": "string", "description": "Navy, near-black and brand-primary surfaces." },
+            "photo":    { "type": "string", "description": "Over photography — normally a single-colour knockout." },
+            "gradient": { "type": "string", "description": "Over a gradient panel." }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": { "type": "string" }
+        },
+        "deckSizeIn": {
+          "$ref": "#/$defs/sizeIn",
+          "description": "On-slide size in the header chrome, in inches. Must match the logo's own aspect or the mark distorts."
+        },
+        "coverSizeIn": {
+          "$ref": "#/$defs/sizeIn",
+          "description": "On-slide size on the cover, section break and closing panels."
+        },
+        "minWidthIn": {
+          "type": "number",
+          "description": "Below this the wordmark stops being legible.",
+          "exclusiveMinimum": 0
+        },
+        "clearSpaceRatio": {
+          "type": "number",
+          "description": "Clear space as a multiple of clearSpaceBasis.",
+          "minimum": 0
+        },
+        "clearSpaceBasis": {
+          "type": "string",
+          "description": "What the ratio is a ratio OF, in words. e.g. \"height of the play mark == logo height\"."
+        },
+        "forbidden": {
+          "type": "array",
+          "description": "Treatments that are never allowed — redraw, recolour, stretch, rotate, effects, retype the wordmark.",
+          "items": { "type": "string" }
+        },
+        "vectorAvailable": {
+          "type": "boolean",
+          "description": "False means raster only. Say what the largest raster is in vectorNote and request vector before print or large format."
+        },
+        "vectorNote": {
+          "type": "string",
+          "description": "The caveat that goes with vectorAvailable."
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    },
+
+    "voice": {
+      "type": "object",
+      "title": "Copy rules",
+      "description": "Enforced by the CONTENT and VOICE checks in both validators.",
+      "required": ["case", "forbiddenChars", "forbiddenPhrases"],
+      "properties": {
+        "$unverified": { "$ref": "#/$defs/unverifiedFlag" },
+        "case": {
+          "description": "Capitalisation for titles, headings and labels.",
+          "enum": ["sentence", "title"]
+        },
+        "caseExceptions": {
+          "type": "array",
+          "description": "deckScalePt role names exempt from 'case', typically [\"eyebrow\"].",
+          "items": { "type": "string" }
+        },
+        "tense":  { "type": "string", "description": "e.g. \"present\". Guidance for copy generation, not mechanically checked." },
+        "voice":  { "type": "string", "description": "e.g. \"active\". Guidance for copy generation, not mechanically checked." },
+        "forbiddenChars": {
+          "type": "array",
+          "description": "Single characters that must never appear in copy. [\"!\"] for most brands.",
+          "items": { "type": "string", "minLength": 1, "maxLength": 1 }
+        },
+        "forbiddenPhrases": {
+          "type": "array",
+          "description": "Placeholder and off-brand strings that must never ship. Seed this from the brand's own template — every 'Lorem ipsum' and 'Chapter Name Goes Here' it contains. brandlib.find_forbidden_phrases() matches these case-insensitively.",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "guidance": {
+          "type": "string",
+          "description": "One paragraph the copy generator reads before it writes anything."
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    },
+
+    "video": {
+      "type": "object",
+      "title": "Video kit",
+      "description": "Required before any video task; optional for a deck-only brand. Documented for humans in brands/<id>/video/video-kit.md.",
+      "required": ["resolution", "fps", "container", "captions"],
+      "properties": {
+        "$unverified": { "$ref": "#/$defs/unverifiedFlag" },
+        "resolution": {
+          "type": "object",
+          "description": "Output frame size in pixels.",
+          "required": ["w", "h"],
+          "properties": {
+            "w": { "type": "integer", "exclusiveMinimum": 0 },
+            "h": { "type": "integer", "exclusiveMinimum": 0 }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false,
+          "examples": [{ "w": 1920, "h": 1080 }]
+        },
+        "fps":       { "type": "number", "description": "Frame rate. The validator measures the rendered file against this.", "exclusiveMinimum": 0 },
+        "container": { "type": "string", "description": "Output container extension without the dot.", "examples": ["mp4"] },
+        "vcodec":    { "type": "string", "description": "ffmpeg video encoder name.", "examples": ["libx264"] },
+        "acodec":    { "type": "string", "description": "ffmpeg audio encoder name.", "examples": ["aac"] },
+        "safeMarginPct": {
+          "type": "number",
+          "description": "Title-safe margin as a percentage of each edge. Nothing legible may sit outside it.",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "intro": { "$ref": "#/$defs/bumper", "description": "Opening bumper." },
+        "outro": { "$ref": "#/$defs/bumper", "description": "Closing bumper." },
+        "music": {
+          "type": "object",
+          "description": "Music bed. 'file' null with 'enabled' true means the brand wants music but has not supplied a licensed track — the builder renders silent and the validator warns.",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "file": {
+              "description": "Path relative to the brand directory, or null.",
+              "oneOf": [{ "$ref": "#/$defs/relativePath" }, { "type": "null" }]
+            },
+            "targetLufs": {
+              "type": "number",
+              "description": "Integrated loudness target for the bed, negative LUFS. Around -23 sits under a -16 LUFS voice without fighting it.",
+              "maximum": 0
+            },
+            "duckUnderVoiceDb": {
+              "type": "number",
+              "description": "How far the bed drops while the voiceover speaks, in dB. Negative.",
+              "maximum": 0
+            },
+            "fadeInSec":  { "type": "number", "minimum": 0 },
+            "fadeOutSec": { "type": "number", "minimum": 0 },
+            "mood":  { "type": "array", "items": { "type": "string" }, "description": "Adjectives for a track search." },
+            "avoid": { "type": "array", "items": { "type": "string" }, "description": "Genres that are off-brand. As useful as 'mood'." }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false
+        },
+        "voiceover": {
+          "type": "object",
+          "description": "Narration. engine \"say\" is the built-in macOS synthesiser — serviceable for review cuts, not for a film a client keeps.",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "engine":  { "type": "string", "examples": ["say"] },
+            "voice":   { "type": "string", "description": "Engine-specific voice name.", "examples": ["Samantha"] },
+            "rateWpm": { "type": "number", "description": "Words per minute. Also used to estimate scene duration in --dry-run.", "exclusiveMinimum": 0 },
+            "targetLufs": { "type": "number", "description": "Integrated loudness target for the voice track, negative LUFS.", "maximum": 0 }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false
+        },
+        "captions": {
+          "type": "object",
+          "description": "Captions are an accessibility requirement, not a style choice. 'required' true makes a missing caption track a CAPTION error.",
+          "required": ["enabled", "required"],
+          "properties": {
+            "enabled":  { "type": "boolean" },
+            "required": { "type": "boolean", "description": "True fails the build when captions are absent." },
+            "burnIn":   { "type": "boolean", "description": "True renders captions into the pixels (needs libass); false ships a sidecar." },
+            "sidecar":  { "description": "Sidecar caption format.", "enum": ["srt", "vtt"] },
+            "font":     { "type": "string", "description": "Family name, normally the medium weight from weightToPptxFamily." },
+            "sizePt":   { "type": "number", "exclusiveMinimum": 0 },
+            "color":      { "$ref": "#/$defs/hexColor", "description": "Caption text colour." },
+            "background": { "$ref": "#/$defs/hexColor", "description": "Caption plate colour." },
+            "backgroundOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
+            "position": { "enum": ["bottom-center", "bottom-left", "top-center"] },
+            "bottomMarginPct": { "type": "number", "minimum": 0, "maximum": 50 },
+            "maxCharsPerLine": { "type": "integer", "description": "Beyond ~42 a caption stops being readable at a glance.", "minimum": 10 },
+            "maxLines":        { "type": "integer", "minimum": 1, "maximum": 3 },
+            "minDurationSec":  { "type": "number", "description": "A caption on screen for less than this cannot be read.", "exclusiveMinimum": 0 }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false
+        },
+        "transition": {
+          "type": "object",
+          "description": "Between-scene transition.",
+          "properties": {
+            "type": { "enum": ["crossfade", "cut", "dip-to-color"] },
+            "durationSec": { "type": "number", "minimum": 0 }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false
+        },
+        "slideHoldSec": {
+          "type": "object",
+          "description": "Bounds on a scene's holdSec in the Video IR. A scene shorter than 'min' cannot be read; longer than 'max' and the viewer leaves.",
+          "properties": {
+            "min":     { "type": "number", "exclusiveMinimum": 0 },
+            "default": { "type": "number", "exclusiveMinimum": 0 },
+            "max":     { "type": "number", "exclusiveMinimum": 0 }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false
+        },
+        "storyline": {
+          "type": "object",
+          "description": "The narrative arc the brand's films follow. 'arc' values become scene 'role' values in the Video IR, and the validator checks the order.",
+          "properties": {
+            "required": { "type": "boolean", "description": "True makes a missing or out-of-order beat a violation." },
+            "arc": {
+              "type": "array",
+              "description": "Beats in order.",
+              "items": { "$ref": "#/$defs/storyBeat" },
+              "minItems": 2
+            },
+            "rules": {
+              "type": "array",
+              "description": "Prose rules the script writer must obey. One sentence each.",
+              "items": { "type": "string" }
+            }
+          },
+          "patternProperties": { "^\\$": {} },
+          "additionalProperties": false
+        },
+        "referenceVideos": {
+          "type": "array",
+          "description": "Approved films this one should sit next to, as paths relative to the brand directory. An empty array is a valid answer — but only after somebody asked.",
+          "items": { "$ref": "#/$defs/relativePath" }
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    },
+
+    "referenceDecks": {
+      "type": "array",
+      "description": "Approved sample decks, as paths relative to the brand directory. Same rule as referenceVideos: empty is fine, unasked is not.",
+      "items": { "$ref": "#/$defs/relativePath" }
+    },
+
+    "learned": {
+      "type": "object",
+      "description": "Names the two learning files. Both live in the brand directory.",
+      "properties": {
+        "file":  { "type": "string", "description": "Human ledger.", "default": "LEARNED.md" },
+        "rules": { "type": "string", "description": "Machine-enforceable rules, merged into 'learnedRules' at load.", "default": "rules.local.json" }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    }
+  },
+
+  "patternProperties": { "^\\$": {} },
+  "additionalProperties": false,
+
+  "$defs": {
+    "isoDate": {
+      "type": "string",
+      "title": "ISO date",
+      "description": "YYYY-MM-DD. Every date in this plugin is written this way so it sorts as a string.",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "examples": ["2026-07-30"]
+    },
+    "hexColorPattern": {
+      "type": "string",
+      "pattern": "^#?(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
+    },
+    "hexColor": {
+      "type": "string",
+      "title": "Hex colour",
+      "description": "Write it as #RRGGBB, uppercase. brandlib.normalize_hex() also accepts #abc, abc and #aabbccff (alpha dropped), but the canonical form is what belongs on disk.",
+      "pattern": "^#?(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$",
+      "examples": ["#0000FF", "#0F0A6C"]
+    },
+    "ramp": {
+      "type": "object",
+      "title": "Colour ramp",
+      "description": "Steps keyed 0, 50, 100 … 950. Steps do not all have to exist; the ones you reference do.",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^([0-9]|[1-9][0-9]{1,2})$" },
+      "additionalProperties": { "$ref": "#/$defs/hexColor" }
+    },
+    "approvedWeight": {
+      "description": "400 regular, 500 medium, 600 semibold. The plugin maps exactly these three onto PPTX family names.",
+      "enum": [400, 500, 600]
+    },
+    "approvedWeightKeyPattern": {
+      "description": "Stringified form of an approved weight.",
+      "pattern": "^(400|500|600)$"
+    },
+    "typeRole": {
+      "type": "object",
+      "title": "One step of the type scale",
+      "required": ["size", "weight"],
+      "properties": {
+        "size": {
+          "type": "number",
+          "description": "Point size.",
+          "exclusiveMinimum": 0
+        },
+        "leading": {
+          "type": "number",
+          "description": "Line height in points. Absolute, not a multiplier.",
+          "exclusiveMinimum": 0
+        },
+        "weight": {
+          "type": "integer",
+          "description": "Numeric weight. It must be a key of type.weightToPptxFamily, or brandlib.weight_to_family() raises ValueError at build time. Confirmed profiles are additionally held to 400/500/600 by the conditional rule in the 'type' block.",
+          "minimum": 100,
+          "maximum": 900
+        },
+        "tracking": {
+          "type": "number",
+          "description": "Letter-spacing as a fraction of the em: 0.08 opens an eyebrow up, -0.02 tightens a cover title. Negative values are only legitimate above type.negativeTrackingAbovePt.",
+          "minimum": -0.1,
+          "maximum": 0.3
+        },
+        "case": {
+          "description": "Overrides voice.case for this role. Present on 'eyebrow' for most brands.",
+          "enum": ["upper", "lower", "sentence", "title", "none"]
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false,
+      "examples": [{ "size": 32, "leading": 38, "weight": 600, "tracking": -0.01 }]
+    },
+    "sizeIn": {
+      "type": "object",
+      "description": "Width and height in inches on a 13.333 x 7.5in canvas.",
+      "required": ["w", "h"],
+      "properties": {
+        "w": { "type": "number", "exclusiveMinimum": 0 },
+        "h": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    },
+    "relativePath": {
+      "type": "string",
+      "title": "Path relative to the brand directory",
+      "description": "Never absolute, never starting with '~' or a drive letter. A brand directory has to be portable to a teammate's machine unchanged.",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!~)(?![A-Za-z]:).+$"
+    },
+    "bumper": {
+      "type": "object",
+      "title": "Intro or outro bumper",
+      "description": "type \"generated\" builds it from the brand tokens; type \"file\" plays the supplied clip. 'file' null with type \"generated\" is the normal state before a brand supplies its own plates.",
+      "properties": {
+        "type": { "enum": ["generated", "file", "none"] },
+        "durationSec": { "type": "number", "description": "Ignored when type is \"file\" — the clip's own length wins.", "minimum": 0 },
+        "style": { "type": "string", "description": "Name of the generated treatment, e.g. \"blue-gradient-logo-reveal\"." },
+        "file": {
+          "description": "Path relative to the brand directory when type is \"file\", otherwise null.",
+          "oneOf": [{ "$ref": "#/$defs/relativePath" }, { "type": "null" }]
+        }
+      },
+      "patternProperties": { "^\\$": {} },
+      "additionalProperties": false
+    },
+    "storyBeat": {
+      "description": "A beat of the storyline arc. These are the legal 'role' values on a scene in the Video IR.",
+      "enum": ["hook", "problem", "approach", "proof", "outcome", "call-to-action"]
+    },
+    "unverifiedFlag": {
+      "type": "boolean",
+      "title": "$unverified",
+      "description": "Written by scripts/new_brand.py when the block carries a neutral default nobody confirmed. The validator reports it as an info-level 'this profile is incomplete' rather than enforcing an invented rule. Remove it once a human has confirmed the values.",
+      "const": true
+    }
+  }
+}

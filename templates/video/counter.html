@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en" data-surface="light">
+<head>
+<meta charset="utf-8">
+<title>brand-studio counter</title>
+<!--
+  counter.html — the PROOF beat of a brand story.
+
+  One to four headline metrics whose numbers count up to their final value. This
+  is the slide that makes a claim concrete, so the figures are the largest thing
+  on the canvas and the supporting copy arrives behind them.
+
+  Self-contained: every colour, font face, logo and canvas dimension arrives as a
+  CSS custom property in the brand-vars block that build_video.py substitutes for
+  the marker below. No network reference of any kind, and no CSS animation or
+  transition — the markers appear exactly once each in this file. Chrome
+  screenshots a single instant, so the frame's position in the animation comes
+  entirely from the ?t=<0..1> query parameter, read synchronously at parse time.
+  The same t always produces identical pixels.
+
+  ---------------------------------------------------------------------------
+  DATA CONTRACT  (the scene-data marker below -> window.__SCENE__)
+  ---------------------------------------------------------------------------
+  {
+    "stats": [                                    // 1..4; extras are ignored
+      { "value":   "4,200",                       // required, a HUMAN string
+        "label":   "Stores covered",              // optional
+        "caption": "across 19 states",            // optional, smaller, softer
+        "prefix":  "",                            // optional, wraps the value
+        "suffix":  "" },                          // optional, wraps the value
+      { "value": "62%",  "label": "Attrition at handover" },
+      { "value": "3.4x", "label": "Reporting optimism" }
+    ],
+    "eyebrow": "Proof",                           // optional, uppercase accent
+    "title":   "Live at scale",                   // optional
+    "surface": "light",                           // light | tint | brand | dark
+    "countUp": true,                              // default true
+    "logo":    true                               // default true
+  }
+
+  `surface` defaults to "light"; an unknown value falls back to it. `countUp:
+  false` renders each final value immediately (the entrance fade/rise still
+  plays, only the counting is skipped). Every field except `stats` is optional
+  and anything absent is simply not rendered.
+
+  ---------------------------------------------------------------------------
+  VALUE PARSING  — the value is authored as a human string and must render back
+  in exactly that form at t = 1.0. It is split into (prefix, number, suffix):
+
+    "4,200"      -> prefix ""  number 4200  suffix ""        thousands separators
+                                                             preserved while
+                                                             counting: "1,204"
+    "62%"        -> prefix ""  number 62    suffix "%"
+    "3.4x"       -> prefix ""  number 3.4   suffix "x"       1 decimal held at
+                                                             every frame, so the
+                                                             digits never jitter
+                                                             between "3" and "3.4"
+    "24 hours"   -> prefix ""  number 24    suffix " hours"  the space belongs to
+                                                             the suffix
+    "$1.2M"      -> prefix "$" number 1.2   suffix "M"
+    "Same day"   -> no number at all; the string is rendered as-is with a fade,
+                                                             never NaN
+
+  At t >= the stat's settle point the ORIGINAL authored string is emitted
+  verbatim, so no float rounding can ever leak into the final frame.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden;
+    background: var(--surface-light);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ---- surfaces: only ever reference brand role tokens ------------------ */
+  html[data-surface="light"] {
+    --bg: var(--surface-light);  --fg: var(--ink-on-light);
+    --muted: var(--ink-soft);    --acc: var(--accent-text);
+    --bar: var(--accent);        --hair: var(--rule);
+    --logo-url: var(--logo-primary);  --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+  html[data-surface="tint"] {
+    --bg: var(--surface-tint);   --fg: var(--ink-on-tint);
+    --muted: var(--ink-soft);    --acc: var(--accent-text);
+    --bar: var(--accent);        --hair: var(--rule);
+    --logo-url: var(--logo-primary);  --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+  html[data-surface="brand"] {
+    --bg: var(--surface-brand);  --fg: var(--ink-on-brand);
+    --muted: var(--ink-on-brand);--acc: var(--accent);
+    --bar: var(--accent);        --hair: var(--accent-2);
+    --logo-url: var(--logo-reversed); --logo-aspect: var(--logo-reversed-aspect, 4.85);
+  }
+  html[data-surface="dark"] {
+    --bg: var(--surface-dark);   --fg: var(--ink-on-dark);
+    --muted: var(--ink-on-dark); --acc: var(--accent);
+    --bar: var(--accent);        --hair: var(--accent-2);
+    --logo-url: var(--logo-reversed); --logo-aspect: var(--logo-reversed-aspect, 4.85);
+  }
+
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    display: flex; flex-direction: column;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-regular), var(--font-fallback);
+  }
+
+  #logo {
+    flex: none; height: 58px;
+    width: calc(58px * var(--logo-aspect));
+    background-image: var(--logo-url);
+    background-size: contain; background-repeat: no-repeat;
+    background-position: left center;
+  }
+
+  #content {
+    flex: 1 1 auto; min-height: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 36px 0 8px 0;
+  }
+
+  .eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--acc);
+  }
+  .title {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 66px; line-height: 1.1; letter-spacing: -.02em;
+    margin-top: 18px; max-width: 1480px;
+  }
+
+  /* A hairline that separates the heading from the proof, drawn left to right. */
+  #hair {
+    height: 1px; background: var(--hair); opacity: .55;
+    margin-top: 44px; transform-origin: left center;
+  }
+
+  /* ---- the stat grid: evenly distributed across the safe area, top aligned */
+  #stats {
+    display: flex; align-items: flex-start; gap: 56px;
+    margin-top: 56px;
+  }
+  .stat { flex: 1 1 0; min-width: 0; }
+
+  .num {
+    display: flex; align-items: flex-end;
+    white-space: nowrap;
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 132px; line-height: 1; letter-spacing: -.03em;
+    /* Digits must not shift width while the value counts. */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  .numv { display: block; }
+
+  .srule {
+    height: 6px; width: 100%; max-width: 420px;
+    background: var(--bar);
+    margin-top: 28px;
+    transform-origin: left center;
+  }
+  .lab {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 32px; line-height: 1.3; margin-top: 24px;
+  }
+  .cap {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 25px; line-height: 1.4; margin-top: 10px;
+    color: var(--muted); opacity: .82;
+  }
+
+  /* Tighter type once the row gets crowded. */
+  #stats[data-count="4"] .lab { font-size: 28px; }
+  #stats[data-count="4"] .cap { font-size: 23px; }
+  #stats[data-count="1"] .lab { font-size: 40px; margin-top: 30px; }
+  #stats[data-count="1"] .cap { font-size: 29px; }
+  #stats[data-count="1"] { gap: 0; }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="logo"></div>
+    <div id="content">
+      <div id="head"></div>
+      <div id="hair"></div>
+      <div id="stats"></div>
+    </div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+
+  var SURFACES = ["light", "tint", "brand", "dark"];
+  var surface = String(D.surface || "light");
+  if (SURFACES.indexOf(surface) === -1) { surface = "light"; }
+  document.documentElement.setAttribute("data-surface", surface);
+
+  // ---- deterministic animation clock --------------------------------------
+  function queryT() {
+    var match = /[?&]t=([^&]*)/.exec(String(window.location.search || ""));
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }   // cubic, decelerating
+  function phase(start, span) { return easeOut(clamp((T - start) / (span || 0.4))); }
+
+  function list(value) {
+    return Object.prototype.toString.call(value) === "[object Array]" ? value : [];
+  }
+  function str(value) {
+    return value === undefined || value === null ? "" : String(value);
+  }
+
+  function el(tag, cls, value) {
+    var node = document.createElement(tag);
+    if (cls) { node.className = cls; }
+    // textContent, never innerHTML: the payload is authored content and must
+    // not be able to inject markup.
+    if (value !== undefined && value !== null) { node.textContent = String(value); }
+    return node;
+  }
+
+  function anim(node, kind, delay, span) {
+    node.setAttribute("data-anim", kind || "rise");
+    node.setAttribute("data-delay", String(delay === undefined ? 0 : delay));
+    node.setAttribute("data-span", String(span === undefined ? 0.4 : span));
+    return node;
+  }
+
+  // ---- value parsing -------------------------------------------------------
+  //
+  // Grouped form ("1,204" / "12,345.6") is matched before the plain form so the
+  // separators are never split across the number/suffix boundary. Nothing after
+  // the digits is consumed, which is what keeps the leading space of " hours".
+  var VALUE_RE = /^([^0-9]*?)(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)([\s\S]*)$/;
+
+  function group(intText) {
+    return intText.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function formatNumber(value, decimals, grouped) {
+    var fixed = value.toFixed(decimals);          // holds the authored precision
+    var neg = fixed.charAt(0) === "-";
+    if (neg) { fixed = fixed.slice(1); }
+    var parts = fixed.split(".");
+    var head = grouped ? group(parts[0]) : parts[0];
+    var out = parts.length > 1 ? head + "." + parts[1] : head;
+    return neg ? "-" + out : out;
+  }
+
+  function parseValue(raw, prefix, suffix) {
+    var text = str(raw);
+    var head = str(prefix);
+    var tail = str(suffix);
+    var spec = {
+      numeric: false,
+      head: head,
+      tail: tail,
+      target: 0,
+      decimals: 0,
+      grouped: false,
+      // Emitted verbatim once the stat has settled — no float can leak in.
+      finalText: head + text + tail
+    };
+
+    var m = VALUE_RE.exec(text);
+    if (!m) { return spec; }                       // "Same day" -> no number
+
+    var digits = m[2];
+    var target = parseFloat(digits.replace(/,/g, ""));
+    if (!isFinite(target)) { return spec; }        // never NaN on screen
+
+    var dot = digits.indexOf(".");
+    spec.numeric = true;
+    spec.head = head + m[1];
+    spec.tail = m[3] + tail;
+    spec.target = target;
+    spec.decimals = dot === -1 ? 0 : digits.length - dot - 1;
+    spec.grouped = digits.indexOf(",") !== -1;
+    return spec;
+  }
+
+  function frameText(spec, p) {
+    if (!spec.numeric || p >= 1) { return spec.finalText; }
+    return spec.head + formatNumber(spec.target * p, spec.decimals, spec.grouped) + spec.tail;
+  }
+
+  // ---- build ---------------------------------------------------------------
+  var stage = document.getElementById("stage");
+  var content = document.getElementById("content");
+  var logo = document.getElementById("logo");
+  var head = document.getElementById("head");
+  var hair = document.getElementById("hair");
+  var stats = document.getElementById("stats");
+
+  if (D.logo === false) { logo.style.display = "none"; }
+  else { anim(logo, "fade", 0, 0.3); }
+
+  if (D.eyebrow) { head.appendChild(anim(el("div", "eyebrow", D.eyebrow), "rise", 0.0, 0.32)); }
+  if (D.title) { head.appendChild(anim(el("div", "title", D.title), "rise", 0.04, 0.36)); }
+  if (!D.eyebrow && !D.title) { head.style.display = "none"; hair.style.display = "none"; }
+  else { anim(hair, "grow-x", 0.1, 0.5); }
+
+  var items = list(D.stats).slice(0, 4);
+  if (!items.length) { items = []; }
+  var count = items.length || 1;
+  stats.setAttribute("data-count", String(count));
+  if (!items.length) { stats.style.display = "none"; }
+
+  // The number scales down as the row fills up: one stat is huge, four are not.
+  var NUM_SIZE = { 1: 280, 2: 210, 3: 168, 4: 132 };
+  var baseNumSize = NUM_SIZE[count] || 132;
+  var numFloor = Math.max(44, Math.round(baseNumSize * 0.42));
+
+  var counters = [];
+
+  items.forEach(function (item, i) {
+    var data = (item && typeof item === "object") ? item : { value: item };
+    var spec = parseValue(data.value, data.prefix, data.suffix);
+
+    // Stat i starts at i * 0.10 of the clock. The figure rises and fades first
+    // and keeps counting well past its entrance; the accent rule then draws
+    // beneath it, and the label and caption follow, so the eye lands on the
+    // number before it is told what the number means.
+    //
+    // The last stat's windows deliberately run to ~0.98 rather than finishing
+    // early: a cubic ease-out is already 99.9% resolved at 90% of its window,
+    // so a short window would make the whole back half of the clock a still.
+    var start = i * 0.10;
+
+    var card = el("div", "stat");
+
+    var num = el("div", "num");
+    num.style.fontSize = baseNumSize + "px";
+    var numv = el("span", "numv", spec.finalText);
+    num.appendChild(numv);
+    anim(num, "rise", start, 0.34);
+    card.appendChild(num);
+
+    card.appendChild(anim(el("div", "srule"), "grow-x", start + 0.12, 0.44));
+
+    if (data.label) { card.appendChild(anim(el("div", "lab", data.label), "rise", start + 0.18, 0.44)); }
+    if (data.caption) { card.appendChild(anim(el("div", "cap", data.caption), "rise", start + 0.26, 0.42)); }
+
+    stats.appendChild(card);
+    counters.push({ spec: spec, node: numv, box: num, start: start, span: 0.68 });
+  });
+
+  // ---- fit -----------------------------------------------------------------
+  //
+  // Fitting always measures the FINAL authored string, never the intermediate
+  // count, so the font size is identical on every frame and the number cannot
+  // resize mid-animation. Only widths and the container are tested: Poppins
+  // ink-overflows a tight line-height, so an element's own scrollHeight is
+  // larger than its clientHeight on every heading and is useless as a signal.
+  function baseSize(node, fallback) {
+    var recorded = node.getAttribute("data-base-size");
+    if (recorded === null) {
+      recorded = String(parseFloat(window.getComputedStyle(node).fontSize) || fallback || 0);
+      node.setAttribute("data-base-size", recorded);
+    }
+    return parseFloat(recorded);
+  }
+
+  function contentOverflows() {
+    return content.scrollHeight > content.clientHeight + 6;
+  }
+
+  function fitText(node, floor) {
+    if (!node) { return; }
+    var size = baseSize(node);
+    node.style.fontSize = size + "px";
+    var guard = 0;
+    while (size > floor && guard < 80) {
+      if (!contentOverflows() && node.scrollWidth <= node.clientWidth + 2) { break; }
+      size -= 2;
+      node.style.fontSize = size + "px";
+      guard += 1;
+    }
+  }
+
+  function fitNumber(entry) {
+    var size = baseSize(entry.box, baseNumSize);
+    entry.box.style.fontSize = size + "px";
+    var guard = 0;
+    while (size > numFloor && guard < 120) {
+      if (entry.node.offsetWidth <= entry.box.clientWidth + 1 && !contentOverflows()) { break; }
+      size -= 2;
+      entry.box.style.fontSize = size + "px";
+      guard += 1;
+    }
+    return size;
+  }
+
+  function fitAll() {
+    fitText(stage.querySelector(".title"), 38);
+
+    var i, fitted = [], numericMin = Infinity;
+    for (i = 0; i < counters.length; i += 1) {
+      counters[i].node.textContent = counters[i].spec.finalText;   // measure final
+      fitted[i] = fitNumber(counters[i]);
+      if (counters[i].spec.numeric && fitted[i] < numericMin) { numericMin = fitted[i]; }
+    }
+    // Every numeric figure shares one size so the row reads as a single system;
+    // a word-value ("Same day") keeps its own smaller size but never outgrows them.
+    for (i = 0; i < counters.length; i += 1) {
+      var size = fitted[i];
+      if (counters[i].spec.numeric && isFinite(numericMin)) { size = numericMin; }
+      else if (isFinite(numericMin) && size > numericMin) { size = numericMin; }
+      counters[i].box.style.fontSize = size + "px";
+    }
+    // One shared cap height keeps the accent rules and the labels on a common
+    // line even when a word-value was set smaller than the figures.
+    var tallest = 0;
+    for (i = 0; i < counters.length; i += 1) {
+      counters[i].box.style.minHeight = "0px";
+      if (counters[i].box.offsetHeight > tallest) { tallest = counters[i].box.offsetHeight; }
+    }
+    for (i = 0; i < counters.length; i += 1) {
+      counters[i].box.style.minHeight = tallest + "px";
+    }
+
+    var labels = stage.querySelectorAll(".lab");
+    for (i = 0; i < labels.length; i += 1) { fitText(labels[i], 20); }
+  }
+
+  // ---- apply the frame -----------------------------------------------------
+  function applyFrame() {
+    var nodes = stage.querySelectorAll("[data-anim]");
+    for (var i = 0; i < nodes.length; i += 1) {
+      var node = nodes[i];
+      var delay = parseFloat(node.getAttribute("data-delay")) || 0;
+      var span = parseFloat(node.getAttribute("data-span")) || 0.4;
+      var p = phase(delay, span);
+      var kind = node.getAttribute("data-anim");
+      if (kind === "grow-x") {
+        node.style.opacity = "1";
+        node.style.transform = "scaleX(" + p.toFixed(4) + ")";
+      } else if (kind === "fade") {
+        node.style.opacity = p.toFixed(4);
+      } else {
+        node.style.opacity = p.toFixed(4);
+        node.style.transform = "translateY(" + ((1 - p) * 26).toFixed(2) + "px)";
+      }
+    }
+
+    var countUp = D.countUp !== false;
+    for (var j = 0; j < counters.length; j += 1) {
+      var entry = counters[j];
+      var q = countUp ? phase(entry.start, entry.span) : 1;
+      entry.node.textContent = frameText(entry.spec, q);
+    }
+  }
+
+  function render() { fitAll(); applyFrame(); }
+
+  render();
+  // Second pass: web fonts finish loading between parse and load, so anything
+  // that had to be shrunk to fit must be re-measured with the real metrics.
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>

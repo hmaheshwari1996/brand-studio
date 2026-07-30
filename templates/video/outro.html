@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>brand-studio outro</title>
+<!--
+  Outro: a dark lockup carrying the call to action. Logo sits top-left, per the
+  brand's logo placement rule. Colours, logo artwork and the brand face arrive in
+  the brand-variables block injected by build_video.py. No network reference, no
+  CSS animation - the frame is positioned from the ?t=<0..1> query parameter.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden; background: var(--surface-dark);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    background: var(--surface-dark);
+    color: var(--ink-on-dark);
+    font-family: var(--font-regular), var(--font-fallback);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  /* Both decorations stay inside the 5% safe area - a full-bleed bar would be
+     cropped by broadcast and by in-room 4:3 projection. */
+  #band {
+    position: absolute; left: var(--safe-x); right: var(--safe-x);
+    bottom: var(--safe-y); height: 14px;
+    background: var(--grad-accent); transform-origin: left center;
+  }
+  #glow {
+    position: absolute; right: var(--safe-x); top: var(--safe-y);
+    width: 520px; height: 520px; border-radius: 50%;
+    background: var(--surface-brand); opacity: .35;
+  }
+  #logo {
+    position: relative; flex: none;
+    height: 58px; width: calc(58px * var(--logo-reversed-aspect, 4.85));
+    background-image: var(--logo-reversed);
+    background-size: contain; background-repeat: no-repeat; background-position: left center;
+  }
+  #content {
+    position: relative;
+    flex: 1 1 auto; min-height: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 40px 0 24px 0;
+  }
+  #eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  #title {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 82px; line-height: 1.1; letter-spacing: -.02em;
+    margin-top: 22px; max-width: 1420px;
+  }
+  #rule { height: 6px; width: 240px; background: var(--accent); margin-top: 36px; transform-origin: left center; }
+  #contact {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 32px; line-height: 1.4; margin-top: 34px; max-width: 1420px;
+  }
+  #brand {
+    position: relative; flex: none;
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 22px; line-height: 1.3; opacity: .7; min-height: 30px;
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="glow"></div>
+    <div id="band"></div>
+    <div id="logo"></div>
+    <div id="content">
+      <div id="eyebrow"></div>
+      <div id="title"></div>
+      <div id="rule"></div>
+      <div id="contact"></div>
+    </div>
+    <div id="brand"></div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+
+  function queryT() {
+    var match = /[?&]t=([^&]*)/.exec(String(window.location.search || ""));
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+  function phase(start, span) { return easeOut(clamp((T - start) / span)); }
+
+  var stage = document.getElementById("stage");
+  var eyebrow = document.getElementById("eyebrow");
+  var title = document.getElementById("title");
+  var contact = document.getElementById("contact");
+  var brand = document.getElementById("brand");
+
+  if (D.eyebrow) { eyebrow.textContent = String(D.eyebrow); } else { eyebrow.style.display = "none"; }
+  if (D.title) { title.textContent = String(D.title); } else { title.style.display = "none"; }
+  if (D.contact) { contact.textContent = String(D.contact); } else { contact.style.display = "none"; }
+  if (D.brandName) { brand.textContent = String(D.brandName); }
+
+  // A block's own scrollHeight is not a usable overflow signal: Poppins
+  // ink-overflows a tight line-height, so only the stage is measured.
+  function baseSize(node) {
+    var recorded = node.getAttribute("data-base-size");
+    if (recorded === null) {
+      recorded = String(parseFloat(window.getComputedStyle(node).fontSize) || 0);
+      node.setAttribute("data-base-size", recorded);
+    }
+    return parseFloat(recorded);
+  }
+
+  function fit(node, minPx) {
+    if (!node || node.style.display === "none") { return; }
+    var size = baseSize(node);
+    node.style.fontSize = size + "px";
+    var guard = 0;
+    while (size > minPx && guard < 60) {
+      if (stage.scrollHeight <= stage.clientHeight + 6 &&
+          node.scrollWidth <= node.clientWidth + 2) { break; }
+      size -= 2;
+      node.style.fontSize = size + "px";
+      guard += 1;
+    }
+  }
+
+  function render() {
+    fit(title, 40);
+    fit(contact, 22);
+
+    var pLogo = phase(0.0, 0.32);
+    var logo = document.getElementById("logo");
+    logo.style.opacity = pLogo.toFixed(4);
+    logo.style.transform = "translateY(" + ((1 - pLogo) * 18).toFixed(2) + "px)";
+
+    var pGlow = phase(0.05, 0.55);
+    var glow = document.getElementById("glow");
+    glow.style.opacity = (0.35 * pGlow).toFixed(4);
+    glow.style.transform = "scale(" + (0.8 + 0.2 * pGlow).toFixed(4) + ")";
+
+    var pEyebrow = phase(0.14, 0.34);
+    eyebrow.style.opacity = pEyebrow.toFixed(4);
+    eyebrow.style.transform = "translateY(" + ((1 - pEyebrow) * 22).toFixed(2) + "px)";
+
+    var pTitle = phase(0.2, 0.42);
+    title.style.opacity = pTitle.toFixed(4);
+    title.style.transform = "translateY(" + ((1 - pTitle) * 34).toFixed(2) + "px)";
+
+    var pRule = phase(0.4, 0.36);
+    document.getElementById("rule").style.transform = "scaleX(" + pRule.toFixed(4) + ")";
+
+    var pContact = phase(0.5, 0.38);
+    contact.style.opacity = pContact.toFixed(4);
+    contact.style.transform = "translateY(" + ((1 - pContact) * 24).toFixed(2) + "px)";
+
+    var pBand = phase(0.3, 0.6);
+    document.getElementById("band").style.transform = "scaleX(" + pBand.toFixed(4) + ")";
+
+    var pBrand = phase(0.62, 0.32);
+    brand.style.opacity = (0.7 * pBrand).toFixed(4);
+  }
+
+  render();
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>

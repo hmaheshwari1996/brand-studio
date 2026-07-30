@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>brand-studio motion scene</title>
+<!--
+  Motion scene template. Self-contained: every colour arrives as a CSS custom
+  property in the brand-variables block that build_video.py substitutes, and the
+  brand face is registered there from local .ttf files over file:// URLs.
+  There is no network reference of any kind and no CSS animation: the frame's
+  position in the animation comes from the ?t=<0..1> query parameter, so every
+  frame is deterministic and reproducible.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden;
+    background: var(--surface-light);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ---- themes: surfaces and inks only ever reference brand tokens ------ */
+  html[data-theme="light"] {
+    --bg: var(--surface-light);   --fg: var(--ink-on-light);
+    --muted: var(--ink-soft);     --rule-c: var(--accent-text);
+    --acc: var(--accent-text);    --chip-bg: var(--surface-tint);
+    --chip-fg: var(--ink-on-tint);
+    --logo-url: var(--logo-primary); --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+  html[data-theme="tint"] {
+    --bg: var(--surface-tint);    --fg: var(--ink-on-tint);
+    --muted: var(--ink-soft);     --rule-c: var(--accent-text);
+    --acc: var(--accent-text);    --chip-bg: var(--surface-light);
+    --chip-fg: var(--ink-on-light);
+    --logo-url: var(--logo-primary); --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+  html[data-theme="brand"] {
+    --bg: var(--surface-brand);   --fg: var(--ink-on-brand);
+    --muted: var(--ink-on-brand); --rule-c: var(--accent);
+    --acc: var(--accent);         --chip-bg: var(--surface-dark);
+    --chip-fg: var(--ink-on-dark);
+    --logo-url: var(--logo-reversed); --logo-aspect: var(--logo-reversed-aspect, 4.85);
+  }
+  html[data-theme="navy"] {
+    --bg: var(--surface-dark);    --fg: var(--ink-on-dark);
+    --muted: var(--ink-on-dark);  --rule-c: var(--accent);
+    --acc: var(--accent);         --chip-bg: var(--surface-brand);
+    --chip-fg: var(--ink-on-brand);
+    --logo-url: var(--logo-reversed); --logo-aspect: var(--logo-reversed-aspect, 4.85);
+  }
+  html[data-theme="gradient"] {
+    --bg: var(--grad-field);      --fg: var(--ink-on-dark);
+    --muted: var(--ink-on-dark);  --rule-c: var(--accent);
+    --acc: var(--accent);         --chip-bg: var(--surface-dark);
+    --chip-fg: var(--ink-on-dark);
+    --logo-url: var(--logo-reversed); --logo-aspect: var(--logo-reversed-aspect, 4.85);
+  }
+  html[data-theme="accent"] {
+    --bg: var(--surface-accent);  --fg: var(--ink-on-accent);
+    --muted: var(--ink-on-accent);--rule-c: var(--surface-dark);
+    --acc: var(--surface-dark);   --chip-bg: var(--surface-light);
+    --chip-fg: var(--ink-on-light);
+    --logo-url: var(--logo-primary); --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    display: flex; flex-direction: column;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-regular), var(--font-fallback);
+  }
+
+  #logo {
+    flex: none; height: 58px;
+    width: calc(58px * var(--logo-aspect));
+    background-image: var(--logo-url);
+    background-size: contain; background-repeat: no-repeat;
+    background-position: left center;
+  }
+
+  #content {
+    flex: 1 1 auto; min-height: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 40px 0 8px 0;
+  }
+
+  #footer {
+    flex: none; min-height: 34px;
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 22px; line-height: 1.3; color: var(--muted); opacity: .75;
+  }
+
+  .eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--acc);
+  }
+  .title {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 76px; line-height: 1.08; letter-spacing: -.02em;
+    margin-top: 20px; max-width: 1480px;
+  }
+  .body {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 34px; line-height: 1.45; margin-top: 26px;
+    max-width: 1240px; opacity: .92;
+  }
+  .rule { height: 6px; width: 220px; background: var(--rule-c); margin-top: 30px; }
+
+  .stats { display: flex; gap: 28px; margin-top: 46px; }
+  .stat {
+    flex: 1 1 0; min-width: 0;
+    background: var(--chip-bg); color: var(--chip-fg);
+    border-radius: 22px; padding: 34px 32px;
+  }
+  .stat .v {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 72px; line-height: 1; letter-spacing: -.02em;
+  }
+  .stat .l {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 25px; line-height: 1.35; margin-top: 16px; opacity: .88;
+  }
+
+  .rows { margin-top: 38px; display: flex; flex-direction: column; gap: 24px; }
+  .row {
+    display: flex; align-items: flex-start; gap: 24px;
+    font-size: 32px; line-height: 1.35;
+  }
+  .row .dot {
+    flex: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--acc); margin-top: 14px;
+  }
+  .row .txt { min-width: 0; }
+  .row .lead {
+    font-family: var(--font-semibold), var(--font-fallback);
+  }
+
+  .quote {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 64px; line-height: 1.22; letter-spacing: -.015em; max-width: 1500px;
+  }
+  .attrib {
+    margin-top: 36px; font-family: var(--font-medium), var(--font-fallback);
+    font-size: 28px; line-height: 1.35;
+  }
+  .attrib-sub { font-size: 24px; opacity: .8; margin-top: 6px; }
+
+  .split { display: flex; gap: 56px; align-items: center; }
+  .split .col { flex: 1 1 0; min-width: 0; }
+  .split .art {
+    flex: 0 0 44%; height: 640px; border-radius: 24px;
+    background-size: cover; background-position: center; background-color: var(--chip-bg);
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="logo"></div>
+    <div id="content"></div>
+    <div id="footer"></div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+  var THEMES = ["light", "tint", "brand", "navy", "gradient", "accent"];
+  var theme = String(D.theme || "light");
+  if (THEMES.indexOf(theme) === -1) { theme = "light"; }
+  document.documentElement.setAttribute("data-theme", theme);
+
+  // ---- deterministic animation clock ------------------------------------
+  function queryT() {
+    var raw = String(window.location.search || "");
+    var match = /[?&]t=([^&]*)/.exec(raw);
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+
+  function text(tag, cls, value) {
+    var node = document.createElement(tag);
+    if (cls) { node.className = cls; }
+    if (value !== undefined && value !== null) { node.textContent = String(value); }
+    return node;
+  }
+
+  function anim(node, kind, delay, span) {
+    node.setAttribute("data-anim", kind || "rise");
+    node.setAttribute("data-delay", String(delay === undefined ? 0 : delay));
+    node.setAttribute("data-span", String(span === undefined ? 0.42 : span));
+    return node;
+  }
+
+  function list(value) {
+    return Object.prototype.toString.call(value) === "[object Array]" ? value : [];
+  }
+
+  // ---- content ----------------------------------------------------------
+  var stage = document.getElementById("stage");
+  var content = document.getElementById("content");
+  var logo = document.getElementById("logo");
+  var footer = document.getElementById("footer");
+
+  if (D.logo === false) { logo.style.display = "none"; } else { anim(logo, "fade", 0, 0.3); }
+
+  var variant = String(D.variant || "statement");
+  var step = 0;
+  function nextDelay() { step += 1; return 0.08 + step * 0.07; }
+
+  function addHeading(host) {
+    if (D.eyebrow) {
+      host.appendChild(anim(text("div", "eyebrow", D.eyebrow), "rise", nextDelay()));
+    }
+    if (D.title) {
+      host.appendChild(anim(text("div", "title", D.title), "rise", nextDelay()));
+    }
+    if (D.rule !== false) {
+      host.appendChild(anim(text("div", "rule", ""), "grow-x", nextDelay(), 0.5));
+    }
+    if (D.body) {
+      host.appendChild(anim(text("div", "body", D.body), "rise", nextDelay()));
+    }
+  }
+
+  if (variant === "quote") {
+    content.appendChild(anim(text("div", "quote", D.quote || D.title || ""), "rise", nextDelay()));
+    if (D.attrib) {
+      content.appendChild(anim(text("div", "attrib", D.attrib), "rise", nextDelay()));
+    }
+    if (D.attribSub) {
+      content.appendChild(anim(text("div", "attrib-sub", D.attribSub), "rise", nextDelay()));
+    }
+  } else if (variant === "split") {
+    var split = document.createElement("div");
+    split.className = "split";
+    var col = document.createElement("div");
+    col.className = "col";
+    addHeading(col);
+    var art = document.createElement("div");
+    art.className = "art";
+    if (D.image) { art.style.backgroundImage = "url('" + String(D.image) + "')"; }
+    anim(art, "rise", nextDelay(), 0.5);
+    split.appendChild(col);
+    split.appendChild(art);
+    content.appendChild(split);
+  } else {
+    addHeading(content);
+
+    if (variant === "stats" && list(D.stats).length) {
+      var stats = document.createElement("div");
+      stats.className = "stats";
+      list(D.stats).slice(0, 4).forEach(function (item) {
+        var card = document.createElement("div");
+        card.className = "stat";
+        card.appendChild(text("div", "v", item && item.value !== undefined ? item.value : ""));
+        card.appendChild(text("div", "l", item && item.label ? item.label : ""));
+        stats.appendChild(anim(card, "rise", nextDelay(), 0.4));
+      });
+      content.appendChild(stats);
+    }
+
+    if (variant === "bullets" && list(D.bullets).length) {
+      var rows = document.createElement("div");
+      rows.className = "rows";
+      list(D.bullets).slice(0, 6).forEach(function (item) {
+        var row = document.createElement("div");
+        row.className = "row";
+        row.appendChild(text("span", "dot", ""));
+        var txt = document.createElement("div");
+        txt.className = "txt";
+        if (item && typeof item === "object") {
+          if (item.lead) { txt.appendChild(text("span", "lead", item.lead + " ")); }
+          txt.appendChild(document.createTextNode(String(item.body || "")));
+        } else {
+          txt.appendChild(document.createTextNode(String(item)));
+        }
+        row.appendChild(txt);
+        rows.appendChild(anim(row, "rise", nextDelay(), 0.4));
+      });
+      content.appendChild(rows);
+    }
+  }
+
+  if (D.footer) {
+    footer.textContent = String(D.footer);
+    anim(footer, "fade", 0.5, 0.4);
+  }
+
+  // ---- fit: shrink oversized blocks until they sit inside the safe area --
+  //
+  // Only the container is tested for overflow. A block's own scrollHeight is
+  // never a reliable signal here: Poppins' ascenders and descenders ink-overflow
+  // a tight line-height, so scrollHeight exceeds clientHeight on every single
+  // heading whether or not anything is actually too big.
+  function baseSize(node) {
+    var recorded = node.getAttribute("data-base-size");
+    if (recorded === null) {
+      recorded = String(parseFloat(window.getComputedStyle(node).fontSize) || 0);
+      node.setAttribute("data-base-size", recorded);
+    }
+    return parseFloat(recorded);
+  }
+
+  function contentOverflows() {
+    return content.scrollHeight > content.clientHeight + 6;
+  }
+
+  function fit(node, minPx) {
+    if (!node) { return; }
+    var floor = minPx || 22;
+    var size = baseSize(node);
+    node.style.fontSize = size + "px";
+    var guard = 0;
+    while (size > floor && guard < 60) {
+      if (!contentOverflows() && node.scrollWidth <= node.clientWidth + 2) { break; }
+      size = size - 2;
+      node.style.fontSize = size + "px";
+      guard += 1;
+    }
+  }
+
+  function fitAll() {
+    fit(stage.querySelector(".title"), 40);
+    fit(stage.querySelector(".quote"), 36);
+    fit(stage.querySelector(".body"), 24);
+    var i;
+    var rows = stage.querySelectorAll(".row");
+    for (i = 0; i < rows.length; i += 1) { fit(rows[i], 22); }
+    var cards = stage.querySelectorAll(".stat .v");
+    for (i = 0; i < cards.length; i += 1) { fit(cards[i], 34); }
+  }
+
+  // ---- apply the frame --------------------------------------------------
+  function applyFrame() {
+    var nodes = stage.querySelectorAll("[data-anim]");
+    for (var i = 0; i < nodes.length; i += 1) {
+      var node = nodes[i];
+      var delay = parseFloat(node.getAttribute("data-delay")) || 0;
+      var span = parseFloat(node.getAttribute("data-span")) || 0.42;
+      var p = easeOut(clamp((T - delay) / span));
+      var kind = node.getAttribute("data-anim");
+      if (kind === "grow-x") {
+        node.style.opacity = "1";
+        node.style.transform = "scaleX(" + p.toFixed(4) + ")";
+        node.style.transformOrigin = "left center";
+      } else if (kind === "grow-y") {
+        node.style.opacity = "1";
+        node.style.transform = "scaleY(" + p.toFixed(4) + ")";
+      } else if (kind === "fade") {
+        node.style.opacity = p.toFixed(4);
+      } else {
+        node.style.opacity = p.toFixed(4);
+        node.style.transform = "translateY(" + ((1 - p) * 34).toFixed(2) + "px)";
+      }
+    }
+  }
+
+  function render() { fitAll(); applyFrame(); }
+
+  render();
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>
