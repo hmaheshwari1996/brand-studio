@@ -13,12 +13,18 @@
 #   3. Verifies ffmpeg, ffprobe, soffice and headless Chrome.
 #   4. Installs the bundled Poppins TTFs into the user font directory when they
 #      are not already there.
-#   5. Prints a PASS/FAIL table and exits non-zero if anything essential failed.
+#   5. OPTIONALLY pre-installs Piper neural voices, only when --voices asks for
+#      them by name. Nothing is downloaded by default: a voice is about 63 MB,
+#      and an unattended nightly build is the wrong place to discover that.
+#      Pre-install the ones a brand actually narrates in, once, here.
+#   6. Prints a PASS/FAIL table and exits non-zero if anything essential failed.
 #
 # Usage:
 #   bootstrap.sh              # set up and report
 #   bootstrap.sh --force      # rebuild the venv from scratch
 #   bootstrap.sh --no-fonts   # skip the Poppins install
+#   bootstrap.sh --voices "hi_IN-pratham-medium,en_GB-alba-medium"
+#                             # pre-download these Piper voices (comma separated)
 #   bootstrap.sh --quiet      # only print the table and failures
 #   bootstrap.sh -h
 
@@ -30,10 +36,17 @@ CACHE_DIR="${HOME}/.cache/brand-studio"
 VENV_DIR="${CACHE_DIR}/venv"
 VENV_PY="${VENV_DIR}/bin/python"
 FONT_SRC="${PLUGIN_ROOT}/brands/channelplay/assets/fonts"
+# Where make_voice.py looks for Piper models. Kept identical on purpose.
+VOICES_DIR="${CACHE_DIR}/voices"
+PIPER_BASE="https://huggingface.co/rhasspy/piper-voices/resolve/main"
+# The likeliest second language for this agency. Named in the hint, never
+# downloaded unless someone asks for it.
+VOICE_SUGGESTION="hi_IN-pratham-medium"
 
 FORCE=0
 DO_FONTS=1
 QUIET=0
+VOICES=""
 
 # Print the header comment block: everything after the shebang up to the first
 # non-comment line, with the leading '# ' stripped.
@@ -46,6 +59,12 @@ while [ "$#" -gt 0 ]; do
         -h|--help)     usage; exit 0 ;;
         --force)       FORCE=1 ;;
         --no-fonts)    DO_FONTS=0 ;;
+        --voices)
+            shift
+            [ "$#" -gt 0 ] || { printf 'bootstrap: --voices needs a comma-separated list, e.g. --voices "%s"\n' "${VOICE_SUGGESTION}" >&2; exit 1; }
+            VOICES="$1"
+            ;;
+        --voices=*)    VOICES="${1#--voices=}" ;;
         -q|--quiet)    QUIET=1 ;;
         *) printf 'bootstrap: unknown option %s\n\n' "$1" >&2; usage >&2; exit 1 ;;
     esac
@@ -351,7 +370,130 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 6. plugin self-check
+# 6. Piper voices (optional, and off by default)
+# ---------------------------------------------------------------------------
+#
+# make_voice.py can fetch a voice on demand, but a nightly run is exactly the
+# wrong moment to discover that a 63 MB model is missing: it stalls an
+# unattended build behind a download that may not even be reachable. So the
+# voices a brand actually narrates in are pulled here, once, deliberately.
+#
+# NOTHING is downloaded unless --voices names something. The table always says
+# what is already on the disk either way.
+
+# 'hi_IN-pratham-medium' -> hi hi_IN pratham medium
+voice_parts() {
+    local id="$1" locale rest name quality lang
+    case "${id}" in
+        *-*-*) : ;;
+        *) return 1 ;;
+    esac
+    locale="${id%%-*}"
+    rest="${id#*-}"
+    quality="${rest##*-}"
+    name="${rest%-*}"
+    lang="$(printf '%s' "${locale%%_*}" | tr '[:upper:]' '[:lower:]')"
+    [ -n "${lang}" ] && [ -n "${name}" ] && [ -n "${quality}" ] || return 1
+    printf '%s %s %s %s\n' "${lang}" "${locale}" "${name}" "${quality}"
+}
+
+installed_voices() {
+    local f base
+    [ -d "${VOICES_DIR}" ] || return 0
+    for f in "${VOICES_DIR}"/*.onnx; do
+        [ -e "${f}" ] || continue
+        base="$(basename -- "${f}" .onnx)"
+        # A model without its config is unusable, so it does not count.
+        [ -f "${VOICES_DIR}/${base}.onnx.json" ] || continue
+        printf '%s\n' "${base}"
+    done
+}
+
+# fetch <url> <destination> -- to a .part file first, so an interrupted download
+# can never masquerade as an installed voice.
+fetch_voice_file() {
+    local url="$1" dest="$2"
+    if ! curl -fsSL --retry 2 --connect-timeout 20 -o "${dest}.part" "${url}"; then
+        rm -f "${dest}.part"
+        return 1
+    fi
+    if [ ! -s "${dest}.part" ]; then
+        rm -f "${dest}.part"
+        return 1
+    fi
+    mv -f "${dest}.part" "${dest}"
+}
+
+VOICE_FAILED=""
+if [ -n "${VOICES}" ]; then
+    if ! command -v curl >/dev/null 2>&1; then
+        record "piper voices" "WARN" "curl is not on PATH; cannot pre-install voices"
+    else
+        mkdir -p "${VOICES_DIR}"
+        WANTED="$(printf '%s' "${VOICES}" | tr ',' ' ')"
+        PENDING=""
+        for vid in ${WANTED}; do
+            [ -n "${vid}" ] || continue
+            if [ -f "${VOICES_DIR}/${vid}.onnx" ] && [ -f "${VOICES_DIR}/${vid}.onnx.json" ]; then
+                say "Piper voice ${vid} is already installed"
+                continue
+            fi
+            PENDING="${PENDING} ${vid}"
+        done
+        if [ -n "${PENDING// /}" ]; then
+            # Say what this is about to cost before it costs it.
+            COUNT="$(printf '%s\n' ${PENDING} | wc -l | tr -d ' ')"
+            printf 'bootstrap: downloading %s Piper voice(s) --%s\n' "${COUNT}" "${PENDING}" >&2
+            printf '           about 63 MB each (%s MB total), one time, from huggingface.co/rhasspy/piper-voices\n' \
+                   "$((COUNT * 63))" >&2
+            printf '           into %s\n' "${VOICES_DIR}" >&2
+        fi
+        for vid in ${PENDING}; do
+            if ! PARTS="$(voice_parts "${vid}")"; then
+                VOICE_FAILED="${VOICE_FAILED} ${vid}(malformed id)"
+                continue
+            fi
+            # shellcheck disable=SC2086
+            set -- ${PARTS}
+            LANG_DIR="$1"; LOCALE_DIR="$2"; NAME_DIR="$3"; QUALITY_DIR="$4"
+            OK=1
+            # The config is tiny and is fetched first: when a voice id is wrong,
+            # this fails in a second instead of after 63 MB.
+            for ext in ".onnx.json" ".onnx"; do
+                DEST="${VOICES_DIR}/${vid}${ext}"
+                [ -f "${DEST}" ] && continue
+                URL="${PIPER_BASE}/${LANG_DIR}/${LOCALE_DIR}/${NAME_DIR}/${QUALITY_DIR}/${vid}${ext}?download=true"
+                say "  fetching ${vid}${ext}"
+                if ! fetch_voice_file "${URL}" "${DEST}"; then
+                    OK=0
+                    break
+                fi
+            done
+            if [ "${OK}" -eq 1 ] && [ -f "${VOICES_DIR}/${vid}.onnx" ] && \
+               [ -f "${VOICES_DIR}/${vid}.onnx.json" ]; then
+                say "Installed ${vid} into ${VOICES_DIR}"
+            else
+                # A half-installed voice is worse than none: make_voice would
+                # find the model and then fail on the missing config.
+                rm -f "${VOICES_DIR}/${vid}.onnx" "${VOICES_DIR}/${vid}.onnx.json"
+                VOICE_FAILED="${VOICE_FAILED} ${vid}"
+            fi
+        done
+    fi
+fi
+
+PRESENT="$(installed_voices | tr '\n' ' ')"
+PRESENT="${PRESENT% }"
+if [ -n "${VOICE_FAILED// /}" ]; then
+    record "piper voices" "WARN" "could not install:${VOICE_FAILED} (check the voice id at huggingface.co/rhasspy/piper-voices)"
+elif [ -n "${PRESENT}" ]; then
+    record "piper voices" "PASS" "${PRESENT}"
+else
+    record "piper voices" "PASS" "none installed; make_voice.py falls back to macOS 'say'"
+fi
+
+# ---------------------------------------------------------------------------
+# 7. plugin self-check
 # ---------------------------------------------------------------------------
 
 if [ -f "${SCRIPT_DIR}/lib/brandlib.py" ]; then
@@ -389,4 +531,8 @@ if [ "${FAILED}" -gt 0 ]; then
 fi
 
 printf 'bootstrap: ready. Python -> %s\n' "${VENV_PY}"
+# Always visible, whatever happened above: adding a language is one line, and
+# doing it here beats discovering it missing halfway through a nightly run.
+printf 'bootstrap: add Piper voices with: %s --voices "%s"\n' \
+       "${BASH_SOURCE[0]}" "${VOICE_SUGGESTION}"
 exit 0
