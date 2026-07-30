@@ -2380,7 +2380,13 @@ def build_audio_graph(elements, plan, first_input_index):
     if vo_out and music_out:
         duck = plan["duck"]
         if duck:
-            filters.append("[%s]asplit=2[vo_mix][vo_sc]" % vo_out)
+            filters.append("[%s]asplit=2[vo_mix][vo_sc0]" % vo_out)
+            # sidechaincompress stops when EITHER input runs out, and it is the
+            # key that runs out first: the narration branch is only as long as
+            # the last thing said. Topping the key up to the full timeline keeps
+            # the bed playing under the outro instead of ending the film on
+            # silence. A branch that already spans the timeline is unaffected.
+            filters.append("[vo_sc0]apad,atrim=0:%.4f,asetpts=N/SR/TB[vo_sc]" % total)
             filters.append(
                 "[%s][vo_sc]sidechaincompress=threshold=%0.5f:ratio=%0.2f:attack=20:"
                 "release=400:makeup=1:level_sc=1[ducked0]"
@@ -3033,19 +3039,30 @@ def pick_music_slot(cache, inputs):
     # type: (Any, Dict[str, Any]) -> Tuple[str, bool]
     """(slot, hit): the slot already holding this exact bed, else the one to write.
 
-    A free slot is taken before an occupied one; when every slot is taken the
-    oldest is evicted. Eviction is an overwrite rather than a delete, so the
-    directory and the manifest both stay bounded however many nights run.
+    The bed this film needs comes first: if any slot already holds it, that is
+    the answer and nothing is generated. Otherwise the bed goes to its own
+    fingerprint's home slot when that is free, then to any free slot, and only
+    when all of them are taken does it evict its home slot.
+
+    Home slots are derived from the fingerprint rather than from age on purpose.
+    The nightly run builds two films at once, and two DIFFERENT beds that both
+    picked "the oldest slot" would race for one filename; deriving the slot from
+    what is being written sends them to different files five times in six. Two
+    films wanting the SAME bed can still race, and that is harmless: make_music
+    is byte-identical for the same parameters, so they write the same file.
     """
     assets = cache.manifest.get("assets") or {}
-    for slot in music_bed_slots():
+    slots = music_bed_slots()
+    for slot in slots:
         if cache.lookup(slot, inputs):
             return slot, True
-    for slot in music_bed_slots():
+    home = slots[int(asset_cache.fingerprint(inputs)[:8], 16) % len(slots)]
+    if home not in assets:
+        return home, False
+    for slot in slots:
         if slot not in assets:
             return slot, False
-    return min(music_bed_slots(),
-               key=lambda s: (str(assets[s].get("created") or ""), s)), False
+    return home, False
 
 
 def resolve_music_mood(music_cfg, requested):
@@ -3279,10 +3296,14 @@ def resolve_music_bed(brand, music_cfg, ir_music, args, duration, work_dir, tool
             path, reused = cache.get_or_create(slot, inputs, produce,
                                                ext=MUSIC_BED_EXT, force=force,
                                                stamp=stamp)
-            if reused and not music_bed_is_usable(tools, path, duration):
+            # Checked whether it was reused or just written: a cached bed can
+            # have been truncated, and a bed written seconds ago can have been
+            # replaced by another build racing for the same slot. Either way the
+            # film gets a bed of its own length, not whatever is lying there.
+            if not music_bed_is_usable(tools, path, duration):
                 warnings.append(
-                    "the cached music bed at %s is missing or the wrong length; it "
-                    "was synthesised again" % path)
+                    "the music bed at %s was missing or the wrong length for this "
+                    "film; it was synthesised again" % path)
                 path, reused = cache.get_or_create(slot, inputs, produce,
                                                    ext=MUSIC_BED_EXT, force=True,
                                                    stamp=stamp)

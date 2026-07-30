@@ -54,13 +54,6 @@
     "text": "{\"brandName\": \"Channelplay\", \"contact\": \"\", \"eyebrow\": \"\", \"title\": \"\"}"
    }
   },
-  "music-bed": {
-   "bytes": 1,
-   "created": "",
-   "file": "x.mp3",
-   "fingerprint": "z",
-   "inputs": {}
-  },
   "outro": {
    "bytes": 98135,
    "created": "2026-07-30T22:58:48",

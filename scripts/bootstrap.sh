@@ -434,8 +434,14 @@ if [ -n "${VOICES}" ]; then
         PENDING=""
         for vid in ${WANTED}; do
             [ -n "${vid}" ] || continue
+            # Already on disk: skip it without touching the network.
             if [ -f "${VOICES_DIR}/${vid}.onnx" ] && [ -f "${VOICES_DIR}/${vid}.onnx.json" ]; then
                 say "Piper voice ${vid} is already installed"
+                continue
+            fi
+            # Reject a bad id here, before anyone is warned about megabytes.
+            if ! voice_parts "${vid}" >/dev/null; then
+                VOICE_FAILED="${VOICE_FAILED} ${vid}(malformed id)"
                 continue
             fi
             PENDING="${PENDING} ${vid}"
@@ -449,10 +455,7 @@ if [ -n "${VOICES}" ]; then
             printf '           into %s\n' "${VOICES_DIR}" >&2
         fi
         for vid in ${PENDING}; do
-            if ! PARTS="$(voice_parts "${vid}")"; then
-                VOICE_FAILED="${VOICE_FAILED} ${vid}(malformed id)"
-                continue
-            fi
+            PARTS="$(voice_parts "${vid}")"
             # shellcheck disable=SC2086
             set -- ${PARTS}
             LANG_DIR="$1"; LOCALE_DIR="$2"; NAME_DIR="$3"; QUALITY_DIR="$4"
@@ -461,7 +464,9 @@ if [ -n "${VOICES}" ]; then
             # this fails in a second instead of after 63 MB.
             for ext in ".onnx.json" ".onnx"; do
                 DEST="${VOICES_DIR}/${vid}${ext}"
-                [ -f "${DEST}" ] && continue
+                if [ -f "${DEST}" ]; then
+                    continue
+                fi
                 URL="${PIPER_BASE}/${LANG_DIR}/${LOCALE_DIR}/${NAME_DIR}/${QUALITY_DIR}/${vid}${ext}?download=true"
                 say "  fetching ${vid}${ext}"
                 if ! fetch_voice_file "${URL}" "${DEST}"; then
@@ -485,7 +490,8 @@ fi
 PRESENT="$(installed_voices | tr '\n' ' ')"
 PRESENT="${PRESENT% }"
 if [ -n "${VOICE_FAILED// /}" ]; then
-    record "piper voices" "WARN" "could not install:${VOICE_FAILED} (check the voice id at huggingface.co/rhasspy/piper-voices)"
+    record "piper voices" "WARN" \
+           "could not install:${VOICE_FAILED} -- check the id at huggingface.co/rhasspy/piper-voices; present: ${PRESENT:-none}"
 elif [ -n "${PRESENT}" ]; then
     record "piper voices" "PASS" "${PRESENT}"
 else
