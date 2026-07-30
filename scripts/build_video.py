@@ -3103,26 +3103,36 @@ def run_make_music(brand_id, dest, duration, spec, lufs, log):
     log("  synthesising a %0.2fs music bed with make_music.py (copyright-free, "
         "no samples and no model)" % float(duration))
     try:
-        proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                              timeout=MUSIC_TIMEOUT_SEC)
-    except OSError as exc:
-        raise RuntimeError("make_music.py failed to start: %s" % exc)
-    except subprocess.TimeoutExpired:
-        raise RuntimeError("make_music.py timed out after %gs" % MUSIC_TIMEOUT_SEC)
-    if proc.returncode != 0:
-        err = (proc.stderr or b"").decode("utf-8", "replace").strip()
-        tail = "; ".join(err.splitlines()[-3:]) or "no output"
-        raise RuntimeError("make_music.py exited %d: %s" % (proc.returncode, tail))
-    if not os.path.isfile(tmp) or os.path.getsize(tmp) == 0:
-        raise RuntimeError("make_music.py wrote nothing to %s" % tmp)
+        try:
+            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                  timeout=MUSIC_TIMEOUT_SEC)
+        except OSError as exc:
+            raise RuntimeError("make_music.py failed to start: %s" % exc)
+        except subprocess.TimeoutExpired:
+            raise RuntimeError("make_music.py timed out after %gs" % MUSIC_TIMEOUT_SEC)
+        if proc.returncode != 0:
+            err = (proc.stderr or b"").decode("utf-8", "replace").strip()
+            tail = "; ".join(err.splitlines()[-3:]) or "no output"
+            raise RuntimeError("make_music.py exited %d: %s" % (proc.returncode, tail))
+        if not os.path.isfile(tmp) or os.path.getsize(tmp) == 0:
+            raise RuntimeError("make_music.py wrote nothing to %s" % tmp)
 
-    # The sidecar is the record of what was played: mood, key, bpm, seed, the
-    # measured loudness. It travels with the bed so a cache hit can still say
-    # exactly what is in the film.
-    for suffix in ("", ".music.json"):
-        source = tmp + suffix
-        if os.path.exists(source):
-            os.replace(source, dest + suffix)
+        # The sidecar is the record of what was played: mood, key, bpm, seed, the
+        # measured loudness. It travels with the bed so a cache hit can still say
+        # exactly what is in the film.
+        for suffix in ("", ".music.json"):
+            source = tmp + suffix
+            if os.path.exists(source):
+                os.replace(source, dest + suffix)
+    finally:
+        # A half-written bed must not be left behind in a directory that is
+        # shared with the team through the repo.
+        for suffix in ("", ".music.json"):
+            if os.path.exists(tmp + suffix):
+                try:
+                    os.remove(tmp + suffix)
+                except OSError:
+                    pass
     try:
         with open(dest + ".music.json", encoding="utf-8") as handle:
             return json.load(handle)
