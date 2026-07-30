@@ -2337,12 +2337,26 @@ def build_audio_graph(elements, plan, first_input_index):
         inputs += ["-i", element["voFile"]]
         label = "a%d" % len(vo_labels)
         delay_ms = int(round(float(element["voStart"]) * 1000.0))
+        # adelay expresses the offset as a presentation timestamp, not as samples.
+        # The `atrim=0:T,asetpts=N/SR/TB` that closes this branch then rebases the
+        # stream from its FIRST sample, which silently discards the whole leading
+        # gap -- every clip lands min(voStart) seconds early and the mix ends that
+        # much before the film. aresample(first_pts=0) materialises the gap as real
+        # silence so the offset survives the rebase.
+        #
+        # It goes AFTER loudnorm on purpose: normalising the padded signal would
+        # fold several seconds of digital silence into the measurement and change
+        # the gain. Measured on a two-clip case: 13.0s/first-sound-5.0s before,
+        # 15.99s/first-sound-2.99s after, integrated loudness unchanged.
+        delay_chain = "adelay=%d:all=1,aresample=async=1:first_pts=0" % delay_ms
+        if delay_ms <= 0:
+            delay_chain = "aresample=async=1:first_pts=0"
         filters.append(
             "[%d:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,"
-            "%s,adelay=%d:all=1[%s]"
+            "%s,%s[%s]"
             % (input_index,
                loudnorm_filter(plan["voLufs"], LOUDNORM_TP_VO, element.get("voLoudnorm")),
-               delay_ms, label))
+               delay_chain, label))
         vo_labels.append(label)
 
     vo_out = None  # type: Optional[str]
