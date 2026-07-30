@@ -1,0 +1,469 @@
+{
+  "$schema": "../_schema.json",
+  "id": "channelplay",
+  "name": "Channelplay",
+  "aliases": [
+    "channel play",
+    "cp",
+    "channelplay technologies"
+  ],
+  "kind": "house",
+  "description": "Retail training and field-execution agency, Delhi India. Audience is client-side brand and sales leadership plus a large field workforce.",
+  "version": "1.0.0",
+  "updated": "2026-07-30",
+  "provenance": {
+    "tokens": "Channelplay design system (DESIGN_SYSTEM.md v1.0), derived from Channelplay_Brand_Guidelines.pptx",
+    "geometry": "Channelplay Deck Template 3.pptx (28 slides, 12 layouts)",
+    "resolution": "Owner ruled on 2026-07-30: design system wins for colour and type; master template supplies geometry only. Template palette (#0000D5 family) is recorded as superseded, not approved.",
+    "review-2026-07-30-voice": "morning review banned 'solutions'; mirrored into voice.forbiddenPhrases so validate_video.py enforces it (it does not read learnedRules)."
+  },
+  "color": {
+    "brand": {
+      "blue": "#0000FF",
+      "navy": "#0F0A6C",
+      "mint": "#41E7AB",
+      "teal": "#29AFA7",
+      "sky": "#0194DD",
+      "azure": "#2F80ED",
+      "tint": "#EBF6F9"
+    },
+    "blue": {
+      "50": "#EDEDFF",
+      "100": "#D6D6FF",
+      "200": "#ADADFF",
+      "300": "#7A7AFF",
+      "400": "#4747FF",
+      "500": "#1A1AFF",
+      "600": "#0000FF",
+      "700": "#0000CC",
+      "800": "#0A0794",
+      "900": "#0F0A6C",
+      "950": "#080540"
+    },
+    "mint": {
+      "50": "#EAFCF5",
+      "100": "#CBF8E7",
+      "200": "#96F1CE",
+      "300": "#63ECBB",
+      "400": "#41E7AB",
+      "500": "#29AFA7",
+      "600": "#1F8C86",
+      "700": "#1B7A74",
+      "800": "#145B57",
+      "900": "#0D3A38"
+    },
+    "sky": {
+      "50": "#E6F5FC",
+      "100": "#EBF6F9",
+      "300": "#5EC2EE",
+      "500": "#0194DD",
+      "600": "#0180BE",
+      "700": "#016FA8",
+      "900": "#014567"
+    },
+    "neutral": {
+      "0": "#FFFFFF",
+      "50": "#F7F8FC",
+      "100": "#EDEFF5",
+      "200": "#DCE0EA",
+      "300": "#B9C0D0",
+      "400": "#8A93A8",
+      "500": "#5E6678",
+      "600": "#3C4356",
+      "700": "#262B38",
+      "800": "#171B25",
+      "900": "#12141C"
+    },
+    "semantic": {
+      "success": "#1B7A74",
+      "success.bg": "#EAFCF5",
+      "warning": "#B26A00",
+      "warning.bg": "#FFF4E0",
+      "danger": "#C4262E",
+      "danger.bg": "#FDECEC",
+      "info": "#016FA8",
+      "info.bg": "#E6F5FC"
+    },
+    "gradient": {
+      "blue": {
+        "stops": [
+          "#0F0A6C",
+          "#0000FF"
+        ],
+        "angle": 135
+      },
+      "mint": {
+        "stops": [
+          "#42E6AB",
+          "#29AFA7"
+        ],
+        "angle": 135
+      }
+    },
+    "superseded": {
+      "note": "Observed in the master deck template. NOT approved. Validator maps these to the canonical token and reports a violation.",
+      "map": {
+        "#0000D5": "#0000FF",
+        "#0029E3": "#0000FF",
+        "#0036AA": "#0F0A6C",
+        "#0F237B": "#0F0A6C",
+        "#00006B": "#0F0A6C",
+        "#272525": "#0F0A6C",
+        "#08F8B9": "#41E7AB",
+        "#0094DE": "#0194DD",
+        "#E90C29": "#C4262E"
+      }
+    }
+  },
+  "colorRules": {
+    "defaultText": "#0F0A6C",
+    "secondaryText": "#5E6678",
+    "forbiddenText": {
+      "#000000": "Pure black is never used. Body text is navy #0F0A6C.",
+      "#41E7AB": "Mint is decorative only (1.6:1 on white). Use mint.700 #1B7A74 for mint-family text.",
+      "#29AFA7": "Teal is decorative only (2.7:1 on white). Use mint.700 #1B7A74.",
+      "#FF0000": "Pure red is a template scaffold marker, not a brand colour. Must not ship."
+    },
+    "onSurface": {
+      "#0000FF": "#FFFFFF",
+      "#0F0A6C": "#FFFFFF",
+      "#080540": "#FFFFFF",
+      "#41E7AB": "#0F0A6C",
+      "#29AFA7": "#0F0A6C",
+      "#42E6AB": "#0F0A6C",
+      "#FFFFFF": "#0F0A6C",
+      "#F7F8FC": "#0F0A6C",
+      "#EBF6F9": "#0F0A6C"
+    },
+    "minContrastBody": 4.5,
+    "minContrastLarge": 3.0,
+    "largeTextPt": 18.0,
+    "gradientTextForbidden": true,
+    "maxGradientsPerSurface": 1,
+    "chartSeries": [
+      "#0000FF",
+      "#41E7AB",
+      "#0194DD",
+      "#0F0A6C",
+      "#29AFA7",
+      "#2F80ED"
+    ],
+    "chartGradientFillForbidden": true
+  },
+  "type": {
+    "family": "Poppins",
+    "fallback": [
+      "ui-sans-serif",
+      "Segoe UI",
+      "Roboto",
+      "Helvetica Neue",
+      "Arial",
+      "sans-serif"
+    ],
+    "weightToPptxFamily": {
+      "400": "Poppins",
+      "500": "Poppins Medium",
+      "600": "Poppins SemiBold"
+    },
+    "approvedWeights": [
+      400,
+      500,
+      600
+    ],
+    "forbiddenWeights": [
+      100,
+      200,
+      300,
+      700,
+      800,
+      900
+    ],
+    "italicsAllowed": false,
+    "syntheticBoldAllowed": false,
+    "deckScalePt": {
+      "cover": {
+        "size": 54,
+        "leading": 60,
+        "weight": 600,
+        "tracking": -0.02
+      },
+      "section": {
+        "size": 44,
+        "leading": 50,
+        "weight": 600,
+        "tracking": -0.02
+      },
+      "title": {
+        "size": 32,
+        "leading": 38,
+        "weight": 600,
+        "tracking": -0.01
+      },
+      "subtitle": {
+        "size": 18,
+        "leading": 26,
+        "weight": 400,
+        "tracking": 0
+      },
+      "cardTitle": {
+        "size": 14,
+        "leading": 20,
+        "weight": 600,
+        "tracking": 0
+      },
+      "label": {
+        "size": 12,
+        "leading": 17,
+        "weight": 500,
+        "tracking": 0
+      },
+      "body": {
+        "size": 12,
+        "leading": 18,
+        "weight": 400,
+        "tracking": 0
+      },
+      "bodySmall": {
+        "size": 11,
+        "leading": 16,
+        "weight": 400,
+        "tracking": 0
+      },
+      "caption": {
+        "size": 10.5,
+        "leading": 15,
+        "weight": 400,
+        "tracking": 0.01
+      },
+      "eyebrow": {
+        "size": 10.5,
+        "leading": 15,
+        "weight": 500,
+        "tracking": 0.08,
+        "case": "upper"
+      },
+      "footer": {
+        "size": 10.5,
+        "leading": 15,
+        "weight": 400,
+        "tracking": 0
+      },
+      "statNumber": {
+        "size": 32,
+        "leading": 38,
+        "weight": 600,
+        "tracking": -0.01
+      }
+    },
+    "minBodyPt": 10.5,
+    "negativeTrackingAbovePt": 22
+  },
+  "logo": {
+    "placement": "top-left",
+    "placementRationale": "Design system section 3 rules top-left in headers. The master template used top-right; owner ruled top-left on 2026-07-30.",
+    "variants": {
+      "primary": {
+        "file": "assets/logos/channelplay-logo-primary.png",
+        "use": "light backgrounds",
+        "aspect": 4.846
+      },
+      "reversed": {
+        "file": "assets/logos/channelplay-logo-reversed.png",
+        "use": "dark and brand-blue backgrounds",
+        "aspect": 4.846
+      },
+      "monoWhite": {
+        "file": "assets/logos/channelplay-logo-mono-white.png",
+        "use": "over photography",
+        "aspect": 4.685
+      }
+    },
+    "variantForBackground": {
+      "light": "primary",
+      "dark": "reversed",
+      "photo": "monoWhite",
+      "gradient": "reversed"
+    },
+    "deckSizeIn": {
+      "w": 1.397,
+      "h": 0.288
+    },
+    "coverSizeIn": {
+      "w": 1.91,
+      "h": 0.394
+    },
+    "minWidthIn": 1.25,
+    "clearSpaceRatio": 1.0,
+    "clearSpaceBasis": "height of the play mark == logo height",
+    "forbidden": [
+      "redraw",
+      "recolour",
+      "stretch",
+      "rotate",
+      "effects",
+      "retype wordmark",
+      "place on busy photo without mono-white"
+    ],
+    "vectorAvailable": false,
+    "vectorNote": "Raster only at 1982px wide. Request SVG/EPS from the brand owner before print or large format."
+  },
+  "voice": {
+    "case": "sentence",
+    "caseExceptions": [
+      "eyebrow"
+    ],
+    "tense": "present",
+    "voice": "active",
+    "forbiddenChars": [
+      "!"
+    ],
+    "forbiddenPhrases": [
+      "Submit",
+      "Click here",
+      "Lorem ipsum",
+      "Place Table / Image / Chart",
+      "Replace Icons from Icon slide",
+      "Chapter Name Goes Here",
+      "This is the title text right here",
+      "Place Subtitle here",
+      "This is placeholder copy",
+      "Person Name",
+      "solutions"
+    ],
+    "guidance": "Plain, operational, confident, never salesy. Buttons and CTAs name the action. One word per concept throughout. Errors say what happened and what to do next. No exclamation marks."
+  },
+  "video": {
+    "resolution": {
+      "w": 1920,
+      "h": 1080
+    },
+    "fps": 30,
+    "formats": {
+      "$note": "Delivery formats. 'landscape' is the default and the one the validator checks against unless the IR names another via meta.format. Reels and stories are vertical; LinkedIn and in-feed posts read best square.",
+      "landscape": {
+        "w": 1920,
+        "h": 1080,
+        "ratio": "16:9",
+        "use": "client presentations, YouTube, in-room playback",
+        "safeMarginPct": 5,
+        "captionSizePt": 28
+      },
+      "square": {
+        "w": 1080,
+        "h": 1080,
+        "ratio": "1:1",
+        "use": "LinkedIn and in-feed social",
+        "safeMarginPct": 6,
+        "captionSizePt": 32
+      },
+      "vertical": {
+        "w": 1080,
+        "h": 1920,
+        "ratio": "9:16",
+        "use": "reels, stories, shorts",
+        "safeMarginPct": 8,
+        "captionSizePt": 36,
+        "chromeTopPct": 12,
+        "chromeBottomPct": 20,
+        "$note": "chromeTopPct / chromeBottomPct are the authoritative platform-chrome reserve and are what the builder reads. Do not encode layout numbers in this sentence -- rewording prose must never change a layout. Captions sit above the lower band, not at the true bottom."
+      }
+    },
+    "container": "mp4",
+    "vcodec": "libx264",
+    "acodec": "aac",
+    "safeMarginPct": 5,
+    "intro": {
+      "type": "generated",
+      "durationSec": 3.0,
+      "style": "blue-gradient-logo-reveal",
+      "file": null
+    },
+    "outro": {
+      "type": "generated",
+      "durationSec": 3.5,
+      "style": "navy-lockup-cta",
+      "file": null,
+      "contact": "channelplay.in",
+      "$note": "The standard closing line for every Channelplay film. Override per film with meta.outroTitle / meta.contact, which bypasses the shared cached outro."
+    },
+    "music": {
+      "enabled": true,
+      "file": null,
+      "targetLufs": -23.0,
+      "duckUnderVoiceDb": -18.0,
+      "fadeInSec": 1.0,
+      "fadeOutSec": 2.0,
+      "mood": [
+        "confident",
+        "understated",
+        "corporate-modern"
+      ],
+      "avoid": [
+        "dramatic orchestral",
+        "lo-fi hiphop",
+        "aggressive EDM"
+      ]
+    },
+    "voiceover": {
+      "enabled": true,
+      "engine": "say",
+      "voice": "Samantha",
+      "rateWpm": 165,
+      "targetLufs": -16.0
+    },
+    "captions": {
+      "enabled": true,
+      "required": true,
+      "burnIn": false,
+      "sidecar": "srt",
+      "font": "Poppins Medium",
+      "sizePt": 28,
+      "color": "#FFFFFF",
+      "background": "#0F0A6C",
+      "backgroundOpacity": 0.82,
+      "position": "bottom-center",
+      "bottomMarginPct": 8,
+      "maxCharsPerLine": 42,
+      "maxLines": 2,
+      "minDurationSec": 1.2
+    },
+    "transition": {
+      "type": "crossfade",
+      "durationSec": 0.4
+    },
+    "slideHoldSec": {
+      "min": 3.0,
+      "default": 5.0,
+      "max": 12.0
+    },
+    "storyline": {
+      "required": true,
+      "arc": [
+        "hook",
+        "problem",
+        "approach",
+        "proof",
+        "outcome",
+        "call-to-action"
+      ],
+      "$arcNote": "The six-stage arc is for films of 45s and up. Short form cannot carry it: a 15s reel has room for about 38 spoken words, which is three beats. Judging a reel against the full arc warns on every single one, and a warning that always fires teaches people to ignore warnings. arcByFormat overrides it per delivery format.",
+      "arcByFormat": {
+        "$note": "Stages must come from the canonical arc vocabulary above. A reel's beats are called hook/turn/payoff in the queue and in concept.md, but they map onto the same roles so one validator vocabulary covers every format.",
+        "vertical": ["hook", "problem", "proof"],
+        "square": ["hook", "problem", "proof", "call-to-action"]
+      },
+      "shortFormMaxSec": 20,
+      "rules": [
+        "Open on the client's problem, never on Channelplay's credentials.",
+        "One idea per scene. If a scene needs two sentences of setup, it is two scenes.",
+        "Proof is specific and numeric wherever possible: stores, SKUs, states, headcount.",
+        "Close with a single, concrete next step."
+      ]
+    },
+    "referenceVideos": []
+  },
+  "learned": {
+    "file": "LEARNED.md",
+    "rules": "rules.local.json"
+  }
+}

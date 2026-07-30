@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en" data-surface="light">
+<head>
+<meta charset="utf-8">
+<title>brand-studio motion compare</title>
+<!--
+  compare.html - the CONTRAST beat of a brand story.
+
+  Two states shown against one another - before/after, problem/approach, them/us -
+  with the second revealed by a wipe so the change is felt rather than read.
+
+  Self-contained. Every colour, font face, logo and canvas dimension arrives in the
+  brand-vars <style> block that build_video.py substitutes below; there is no
+  network reference of any kind. There is also no CSS animation or transition:
+  Chrome screenshots one instant, so the frame's position comes entirely from the
+  ?t=<0..1> query parameter read synchronously at parse time. The same t always
+  produces the same pixels.
+
+  ---------------------------------------------------------------------------
+  data contract  (visual.data for  "template": "compare")
+  ---------------------------------------------------------------------------
+  {
+    "mode": "wipe" | "split" | "stack",   // default "wipe"
+    "before": {
+      "label":    "Before",               // small uppercase tag
+      "headline": "Self-reported",        // set inside the panel's figure
+      "body":     "No evidence attached.",
+      "image":    null,                   // absolute file:// URL, or null
+      "stat":     "61%"
+    },
+    "after":  { ...same shape... },
+    "eyebrow":   "Measurement",
+    "title":     "What changed when evidence became mandatory",
+    "surface":   "light" | "tint",        // default "light" - the page behind the panels
+    "emphasise": "after"                  // "after" | "before" | "none" - which side
+                                          //   carries the accent (stat colour + the
+                                          //   underline that draws at the end)
+  }
+  Every field is optional. "emphasize" is accepted as a spelling of "emphasise".
+
+  Panel surfaces are derived, not authored: the AFTER panel is always the dark
+  surface (that contrast is what sells the change) and the BEFORE panel takes the
+  light surface the page is not using. Text on each panel uses the --ink-on-*
+  variable that matches that panel's own surface, so both sides stay legible on
+  every frame. Accent colours are decorative only; where accent-coloured *text* is
+  needed it is --accent-text on light surfaces and --accent on dark ones.
+
+  Where "image" is null the figure becomes a typographic placeholder - a panel in
+  a contrasting brand surface with that side's headline set in it - never a broken
+  image box. Where an image is supplied the figure shows it and the headline moves
+  into the text column beside the body.
+
+  ---------------------------------------------------------------------------
+  modes  (one layout engine; they differ only in how t drives the reveal)
+  ---------------------------------------------------------------------------
+  wipe   both panels occupy the same area. The after panel is revealed over the
+         before panel by a clip-path inset that runs 100% -> 0%, with an accent
+         leading-edge rule travelling with it. The before panel's content clears
+         out ahead of the edge, so a half-wiped frame never glues half of one
+         state's text onto half of the other's.
+  split  the panels sit side by side. The before panel holds the left half from
+         the first frame; the after panel travels in from the arena's right edge
+         to meet it at an accent centre line that grows out of the centre.
+  stack  before on top, after below, revealed top-down by a clip-path inset with
+         an accent rule riding the edge - for narrow or text-heavy content.
+
+  In every mode the before state is complete and static at t = 0 and the after
+  state is complete and static at t = 1.
+
+  ---------------------------------------------------------------------------
+  timeline  (all of it a pure function of t)
+  ---------------------------------------------------------------------------
+  0.00 - 0.15  logo, eyebrow and title land; the before panel is fully present.
+  0.15 - 0.75  the reveal runs, cubic ease-in-out so it starts and ends softly.
+  0.72 - 0.98  the after side's stat and body settle.
+  0.75 - 1.00  the emphasised label's accent underline draws left to right.
+  t = 1.0      fully settled and static, after state completely visible.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden;
+    background: var(--surface-light);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+  html[data-surface="tint"], html[data-surface="tint"] body { background: var(--surface-tint); }
+
+  /* ---- page ------------------------------------------------------------ */
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    display: flex; flex-direction: column;
+    background: var(--surface-light); color: var(--ink);
+    font-family: var(--font-regular), var(--font-fallback);
+  }
+  html[data-surface="tint"] #stage { background: var(--surface-tint); }
+
+  #logo {
+    flex: none; height: 54px;
+    width: calc(54px * var(--logo-primary-aspect, 4.85));
+    background-image: var(--logo-primary);
+    background-size: contain; background-repeat: no-repeat;
+    background-position: left center;
+  }
+
+  #head { flex: none; padding-top: 26px; max-height: 216px; overflow: hidden; }
+  .eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--accent-text);
+  }
+  .title {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 58px; line-height: 1.08; letter-spacing: -.02em;
+    margin-top: 16px; max-width: 1560px; color: var(--ink);
+  }
+
+  #arena { position: relative; flex: 1 1 auto; min-height: 0; margin-top: 30px; overflow: hidden; }
+
+  /* ---- panel surfaces: role tokens only, never a hex --------------------- */
+  .panel {
+    position: relative; overflow: hidden;
+    border-radius: 26px; border: 1px solid var(--p-border);
+    background: var(--p-bg); color: var(--p-fg);
+  }
+  .panel[data-surface="light"] {
+    --p-bg: var(--surface-light);  --p-fg: var(--ink-on-light);
+    --p-muted: var(--ink-soft);    --p-acc: var(--accent-text);
+    --p-rule: var(--rule);         --p-border: var(--rule);
+    --p-fig-bg: var(--surface-tint); --p-fig-fg: var(--ink-on-tint);
+  }
+  .panel[data-surface="tint"] {
+    --p-bg: var(--surface-tint);   --p-fg: var(--ink-on-tint);
+    --p-muted: var(--ink-soft);    --p-acc: var(--accent-text);
+    --p-rule: var(--rule);         --p-border: var(--rule);
+    --p-fig-bg: var(--surface-light); --p-fig-fg: var(--ink-on-light);
+  }
+  .panel[data-surface="dark"] {
+    --p-bg: var(--surface-dark);   --p-fg: var(--ink-on-dark);
+    --p-muted: var(--ink-on-dark); --p-acc: var(--accent);
+    --p-rule: var(--accent-2);     --p-border: var(--surface-dark);
+    --p-fig-bg: var(--surface-brand); --p-fig-fg: var(--ink-on-brand);
+  }
+
+  /* ---- one layout engine, three arrangements ---------------------------- */
+  .p-content { display: grid; width: 100%; height: 100%; }
+
+  #arena[data-mode="wipe"] .panel { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+  #arena[data-mode="wipe"] .panel[data-side="before"] { z-index: 1; }
+  #arena[data-mode="wipe"] .panel[data-side="after"]  { z-index: 2; }
+  #arena[data-mode="wipe"] .p-content {
+    padding: 52px 56px;
+    grid-template-columns: minmax(0, 1fr) 34%;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "head fig" "foot fig";
+    column-gap: 60px; row-gap: 26px;
+  }
+  /* label at the top, numbers at the foot - the same rhythm the figure keeps */
+  #arena[data-mode="wipe"] .p-foot { justify-content: flex-end; }
+
+  #arena[data-mode="split"] { display: flex; flex-direction: row; gap: 34px; }
+  #arena[data-mode="split"] .panel { flex: 1 1 0; min-width: 0; }
+  #arena[data-mode="split"] .p-content {
+    padding: 40px 44px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "head" "fig" "foot";
+    row-gap: 24px;
+  }
+
+  #arena[data-mode="stack"] { display: flex; flex-direction: column; gap: 22px; }
+  #arena[data-mode="stack"] .panel { flex: 1 1 0; min-height: 0; }
+  #arena[data-mode="stack"] .p-content {
+    padding: 26px 40px;
+    grid-template-columns: 17% minmax(0, 1fr) 26%;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "head foot fig";
+    column-gap: 36px; align-items: center;
+  }
+
+  .p-head { grid-area: head; align-self: start; }
+  #arena[data-mode="stack"] .p-head { align-self: center; }
+  .p-figure { grid-area: fig; align-self: stretch; }
+  .p-foot {
+    grid-area: foot; min-width: 0;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #arena[data-mode="stack"] .p-foot { flex-direction: row; align-items: center; gap: 34px; }
+
+  /* ---- panel parts ------------------------------------------------------ */
+  .p-labelwrap { display: inline-block; }
+  .p-label {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 22px; line-height: 1.2; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--p-muted);
+  }
+  .panel[data-emph="1"] .p-label { color: var(--p-acc); }
+  .p-underline {
+    height: 5px; width: 100%; margin-top: 12px;
+    background: var(--p-rule); transform-origin: left center;
+  }
+  .panel[data-emph="1"] .p-underline { background: var(--p-acc); }
+
+  .p-stat {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 152px; line-height: 1; letter-spacing: -.03em;
+    color: var(--p-muted);
+  }
+  .panel[data-emph="1"] .p-stat { color: var(--p-acc); }
+  #arena[data-mode="split"] .p-stat { font-size: 100px; }
+  #arena[data-mode="stack"] .p-stat { font-size: 82px; flex: none; }
+
+  .p-foot-text { min-width: 0; }
+  .p-stat + .p-foot-text { margin-top: 18px; }
+  #arena[data-mode="stack"] .p-stat + .p-foot-text { margin-top: 0; }
+  .p-headline {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 38px; line-height: 1.16; letter-spacing: -.015em;
+  }
+  .p-headline + .p-body { margin-top: 14px; }
+  .p-body {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 29px; line-height: 1.42; color: var(--p-fg); max-width: 820px;
+  }
+  #arena[data-mode="split"] .p-body { font-size: 26px; }
+  #arena[data-mode="stack"] .p-body { font-size: 25px; }
+
+  .p-figure {
+    background: var(--p-fig-bg); color: var(--p-fig-fg);
+    border-radius: 20px; padding: 34px; min-width: 0; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .p-figure[data-kind="image"] {
+    padding: 0; background-size: cover;
+    background-position: center; background-repeat: no-repeat;
+  }
+  #arena[data-mode="stack"] .p-figure { padding: 24px; border-radius: 16px; }
+  .fig-mark { flex: none; width: 72px; height: 6px; background: var(--accent); border-radius: 3px; }
+  #arena[data-mode="stack"] .fig-mark { width: 52px; height: 5px; }
+  .fig-headline {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 62px; line-height: 1.12; letter-spacing: -.015em; margin-top: 24px;
+  }
+  #arena[data-mode="split"] .fig-headline { font-size: 46px; }
+  #arena[data-mode="stack"] .fig-headline { font-size: 30px; margin-top: 16px; }
+
+  /* the reveal's leading edge - decorative accent, positioned from JS */
+  #edge {
+    position: absolute; z-index: 5; left: 0; top: 0;
+    width: 0; height: 0; opacity: 0;
+    background: var(--accent); border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="logo"></div>
+    <div id="head">
+      <div class="eyebrow" id="eyebrow"></div>
+      <div class="title" id="title"></div>
+    </div>
+    <div id="arena" data-mode="wipe"><div id="edge"></div></div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+
+  function isArray(v) { return Object.prototype.toString.call(v) === "[object Array]"; }
+  function obj(v) { return (v && typeof v === "object" && !isArray(v)) ? v : {}; }
+  function str(v) { return (v === undefined || v === null) ? "" : String(v); }
+
+  // ---- deterministic animation clock --------------------------------------
+  function queryT() {
+    var match = /[?&]t=([^&]*)/.exec(String(window.location.search || ""));
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+  function easeInOut(x) {
+    return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  }
+  function seg(start, span) { return clamp((T - start) / span); }
+
+  // ---- options ------------------------------------------------------------
+  var mode = str(D.mode || "wipe").toLowerCase();
+  if (["wipe", "split", "stack"].indexOf(mode) === -1) { mode = "wipe"; }
+
+  var surface = str(D.surface || "light").toLowerCase();
+  if (surface !== "tint") { surface = "light"; }
+  document.documentElement.setAttribute("data-surface", surface);
+
+  var emphasise = str(D.emphasise || D.emphasize || "after").toLowerCase();
+  if (emphasise !== "before" && emphasise !== "none") { emphasise = "after"; }
+
+  var stage = document.getElementById("stage");
+  var head = document.getElementById("head");
+  var arena = document.getElementById("arena");
+  var edge = document.getElementById("edge");
+  var eyebrowNode = document.getElementById("eyebrow");
+  var titleNode = document.getElementById("title");
+  var logoNode = document.getElementById("logo");
+
+  arena.setAttribute("data-mode", mode);
+
+  if (D.eyebrow) { eyebrowNode.textContent = str(D.eyebrow); }
+  else { eyebrowNode.style.display = "none"; }
+  if (D.title) { titleNode.textContent = str(D.title); }
+  else { titleNode.style.display = "none"; }
+  if (D.logo === false) { logoNode.style.display = "none"; }
+
+  // ---- panel construction (textContent only; never innerHTML) -------------
+  function text(tag, cls, value) {
+    var node = document.createElement(tag);
+    if (cls) { node.className = cls; }
+    if (value !== undefined && value !== null) { node.textContent = String(value); }
+    return node;
+  }
+
+  // The builder hands us an absolute file:// URL; strip anything that could
+  // close the url() token or the declaration regardless.
+  function cssUrl(value) { return str(value).replace(/["'()\\\s]/g, ""); }
+
+  function buildPanel(spec, side, surfKey, fallbackLabel) {
+    var P = { side: side };
+    var panel = document.createElement("div");
+    panel.className = "panel";
+    panel.setAttribute("data-side", side);
+    panel.setAttribute("data-surface", surfKey);
+    if (emphasise === side) { panel.setAttribute("data-emph", "1"); }
+
+    var content = document.createElement("div");
+    content.className = "p-content";
+
+    var headBlock = document.createElement("div");
+    headBlock.className = "p-head";
+    var wrap = document.createElement("div");
+    wrap.className = "p-labelwrap";
+    wrap.appendChild(text("div", "p-label", str(spec.label) || fallbackLabel));
+    P.underline = text("div", "p-underline", "");
+    wrap.appendChild(P.underline);
+    headBlock.appendChild(wrap);
+
+    var figure = document.createElement("div");
+    figure.className = "p-figure";
+    var image = str(spec.image);
+    var headline = str(spec.headline);
+    if (image) {
+      figure.setAttribute("data-kind", "image");
+      figure.style.backgroundImage = "url('" + cssUrl(image) + "')";
+    } else {
+      figure.setAttribute("data-kind", "placeholder");
+      figure.appendChild(text("div", "fig-mark", ""));
+      if (headline) {
+        P.figHeadline = text("div", "fig-headline", headline);
+        figure.appendChild(P.figHeadline);
+      }
+    }
+    P.figure = figure;
+
+    var foot = document.createElement("div");
+    foot.className = "p-foot";
+    if (str(spec.stat)) {
+      P.stat = text("div", "p-stat", spec.stat);
+      foot.appendChild(P.stat);
+    }
+    var footText = document.createElement("div");
+    footText.className = "p-foot-text";
+    if (image && headline) {
+      P.headline = text("div", "p-headline", headline);
+      footText.appendChild(P.headline);
+    }
+    if (str(spec.body)) {
+      P.body = text("div", "p-body", spec.body);
+      footText.appendChild(P.body);
+    }
+    P.footText = footText;
+    foot.appendChild(footText);
+
+    content.appendChild(headBlock);
+    content.appendChild(figure);
+    content.appendChild(foot);
+    panel.appendChild(content);
+
+    P.panel = panel;
+    P.content = content;
+    return P;
+  }
+
+  var before = buildPanel(obj(D.before), "before",
+                          surface === "light" ? "tint" : "light", "Before");
+  var after = buildPanel(obj(D.after), "after", "dark", "After");
+  arena.insertBefore(before.panel, edge);
+  arena.insertBefore(after.panel, edge);
+
+  // ---- fit: step oversized text down until its container holds it ---------
+  //
+  // Only containers are measured. A block's own scrollHeight is never a usable
+  // signal: Poppins' ascenders and descenders ink-overflow a tight line-height,
+  // so scrollHeight exceeds clientHeight on every heading whether or not
+  // anything is actually too big.
+  function baseSize(node) {
+    var recorded = node.getAttribute("data-base-size");
+    if (recorded === null) {
+      recorded = String(parseFloat(window.getComputedStyle(node).fontSize) || 0);
+      node.setAttribute("data-base-size", recorded);
+    }
+    return parseFloat(recorded);
+  }
+
+  function fitText(node, container, floor) {
+    if (!node || !container) { return; }
+    var size = baseSize(node);
+    node.style.fontSize = size + "px";
+    var guard = 0;
+    while (size > floor && guard < 80) {
+      if (container.scrollHeight <= container.clientHeight + 6 &&
+          node.scrollWidth <= node.clientWidth + 2) { break; }
+      size -= 2;
+      node.style.fontSize = size + "px";
+      guard += 1;
+    }
+  }
+
+  function fitPanel(P) {
+    fitText(P.stat, P.panel, 44);
+    fitText(P.figHeadline, P.figure, 24);
+    fitText(P.headline, P.panel, 24);
+    fitText(P.body, P.panel, 20);
+  }
+
+  function fitAll() {
+    fitText(titleNode, head, 34);
+    fitPanel(before);
+    fitPanel(after);
+  }
+
+  // ---- apply the frame ----------------------------------------------------
+  function applyFrame() {
+    // 0.00 - 0.15  the frame's furniture lands
+    var pLogo = easeOut(seg(0.00, 0.12));
+    logoNode.style.opacity = pLogo.toFixed(4);
+
+    var pEyebrow = easeOut(seg(0.00, 0.10));
+    eyebrowNode.style.opacity = pEyebrow.toFixed(4);
+    eyebrowNode.style.transform = "translateY(" + ((1 - pEyebrow) * 18).toFixed(2) + "px)";
+
+    var pTitle = easeOut(seg(0.04, 0.11));
+    titleNode.style.opacity = pTitle.toFixed(4);
+    titleNode.style.transform = "translateY(" + ((1 - pTitle) * 26).toFixed(2) + "px)";
+
+    // 0.15 - 0.75  the reveal, softly in and softly out
+    var R = easeInOut(seg(0.15, 0.60));
+    var clearOut = easeOut(clamp((R - 0.05) / 0.30)); // before content ahead of the edge
+    var arrive = easeOut(clamp((R - 0.60) / 0.40));   // after content behind the edge
+    var settle = easeOut(seg(0.72, 0.26));            // 0.72 - 0.98 stat and body
+    var draw = easeInOut(seg(0.75, 0.25));            // 0.75 - 1.00 accent underline
+
+    var aw = arena.clientWidth;
+    var ah = arena.clientHeight;
+
+    before.panel.style.transform = "";
+    after.panel.style.transform = "";
+    before.panel.style.clipPath = "";
+    after.panel.style.clipPath = "";
+    after.figure.style.opacity = "1";
+    edge.style.transform = "";
+
+    if (mode === "wipe") {
+      // Same area for both. The after panel is opaque and clipped, so nothing
+      // shows through it; the before content clears ahead of the edge so the
+      // seam never splices one state's text onto the other's.
+      before.content.style.opacity = (1 - clearOut).toFixed(4);
+      before.content.style.transform = "translateX(" + (-clearOut * 30).toFixed(2) + "px)";
+
+      after.panel.style.clipPath = "inset(0 " + ((1 - R) * 100).toFixed(3) + "% 0 0)";
+      after.content.style.opacity = arrive.toFixed(4);
+      after.content.style.transform = "translateX(" + ((1 - arrive) * 30).toFixed(2) + "px)";
+      // The figure sits furthest right, so it is the last thing the edge clears;
+      // holding it back keeps the wipe from slicing a word mid-glyph.
+      after.figure.style.opacity = easeOut(clamp((R - 0.84) / 0.16)).toFixed(4);
+
+      edge.style.width = "8px";
+      edge.style.height = ah + "px";
+      edge.style.top = "0px";
+      edge.style.left = (R * aw - 4).toFixed(2) + "px";
+      edge.style.opacity = edgePulse(R).toFixed(4);
+
+    } else if (mode === "stack") {
+      // Separate rows, so both states can hold full opacity throughout.
+      before.content.style.opacity = "1";
+      before.content.style.transform = "";
+
+      // cut from the bottom, so the panel is revealed downwards from its own top
+      // edge and the accent rule below sits exactly on the boundary
+      after.panel.style.clipPath = "inset(0 0 " + ((1 - R) * 100).toFixed(3) + "% 0)";
+      after.content.style.opacity = arrive.toFixed(4);
+      after.content.style.transform = "translateY(" + ((1 - arrive) * 26).toFixed(2) + "px)";
+
+      edge.style.width = aw + "px";
+      edge.style.height = "8px";
+      edge.style.left = "0px";
+      edge.style.top =
+        (after.panel.offsetTop + R * after.panel.offsetHeight - 4).toFixed(2) + "px";
+      edge.style.opacity = edgePulse(R).toFixed(4);
+
+    } else {
+      // split: the before panel holds the left half from the first frame; the
+      // after panel travels in from the arena's right edge to meet it at the
+      // accent centre line, which grows out of the centre as they close.
+      var gap = 34;
+      var awp = after.panel.offsetWidth || (aw / 2);
+      before.content.style.opacity = "1";
+      before.content.style.transform = "";
+
+      after.panel.style.transform =
+        "translateX(" + ((1 - R) * (awp + gap)).toFixed(2) + "px)";
+      after.content.style.opacity = R.toFixed(4);
+      after.content.style.transform = "";
+
+      edge.style.width = "6px";
+      edge.style.height = ah + "px";
+      edge.style.top = "0px";
+      edge.style.left = (aw / 2 - 3).toFixed(2) + "px";
+      edge.style.transform = "scaleY(" + R.toFixed(4) + ")";
+      edge.style.opacity = Math.min(1, R / 0.08).toFixed(4);
+    }
+
+    // 0.72 - 0.98  the after side's stat and body settle in last. Their opacity
+    // multiplies with the content wrapper's, so they can only ever land later.
+    if (after.stat) {
+      after.stat.style.opacity = settle.toFixed(4);
+      after.stat.style.transform = "translateY(" + ((1 - settle) * 20).toFixed(2) + "px)";
+    }
+    after.footText.style.opacity = settle.toFixed(4);
+    after.footText.style.transform = "translateY(" + ((1 - settle) * 14).toFixed(2) + "px)";
+    if (before.stat) { before.stat.style.opacity = "1"; }
+    before.footText.style.opacity = "1";
+
+    // 0.75 - 1.00  the emphasised label's accent underline draws left to right
+    before.underline.style.transform =
+      "scaleX(" + (emphasise === "before" ? draw : 1).toFixed(4) + ")";
+    after.underline.style.transform =
+      "scaleX(" + (emphasise === "after" ? draw : 1).toFixed(4) + ")";
+  }
+
+  // The leading edge exists only while the wipe is travelling.
+  function edgePulse(R) {
+    return Math.min(1, R / 0.04) * Math.min(1, (1 - R) / 0.04);
+  }
+
+  function render() { fitAll(); applyFrame(); }
+
+  render();
+  // Second pass: web fonts finish loading between parse and load, and anything
+  // that had to be shrunk must be re-measured against the real metrics.
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>

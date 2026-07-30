@@ -1,0 +1,166 @@
+{
+ "$comment": [
+  "Machine-enforceable rules learned for Channelplay after the profile was created.",
+  "brandlib.load_brand() merges this file into brand['learnedRules']; validate_deck.py reads",
+  "learnedRules.rules and enforces every entry. Tier 2 of the three-tier learn protocol \u2014 every",
+  "rule here must also have a dated entry in LEARNED.md explaining who asked for it and why.",
+  "",
+  "RULE OBJECT",
+  "  id        required. Prefix with 'LOCAL.' so learned rules are distinguishable from built-in",
+  "            ones in validator output. Becomes the violation id verbatim. Defaults to",
+  "            'LEARNED.RULE' when missing, which makes the report useless \u2014 always set it.",
+  "  kind      required. One of the seven kinds below. An unknown kind is reported as an info",
+  "            violation rather than silently ignored.",
+  "  value     required. A single value, or a list of values that are all checked.",
+  "  scope     'any' (default), 'title', 'body' or 'eyebrow'. 'body' means every text shape that",
+  "            is neither a title nor an eyebrow.",
+  "  severity  'error' or 'warn'. 'info' is accepted but reserved for the validator's own",
+  "            diagnostics. Use 'error' only for something that must block a build; an error is",
+  "            a hard stop for every future deck in this brand, not a strong opinion.",
+  "  rule      required in practice. The one-line statement shown in the report.",
+  "  fix       required in practice. What the author should do instead. Be specific: name the",
+  "            replacement token, size or wording.",
+  "  added     ISO date the rule was learned.",
+  "  source    where it came from, e.g. 'user correction, session 2026-07-30'.",
+  "",
+  "KINDS",
+  "  forbid_text       value is a string or list of strings. Fires when the string appears in",
+  "                    text in scope. Case-insensitive substring match.",
+  "  require_text      value is a string or list of strings. Fires when the string appears",
+  "                    NOWHERE in scope. Case-insensitive. Reported once against the whole deck.",
+  "  forbid_color      value is a hex or list of hexes. Fires when the colour is used anywhere in",
+  "                    the deck. NOTE: colour is checked across every fill, line and text run in",
+  "                    the file \u2014 'scope' is not applied to this kind, so a scoped colour ban is",
+  "                    not currently expressible.",
+  "  min_font_size     value is a number in points. Fires when a run in scope is smaller.",
+  "  max_font_size     value is a number in points. Fires when a run in scope is larger.",
+  "  forbid_font_size  value is a number or list of numbers in points. Fires on an exact match.",
+  "  regex             value is a Python regular expression, or a list of them. Fires when the",
+  "                    pattern MATCHES text in scope \u2014 it is a forbid, always, and always",
+  "                    case-insensitive. There is no require-style regex; use require_text.",
+  "                    An uncompilable pattern is reported as an info violation, not a crash.",
+  "",
+  "SAFETY",
+  "  A rule that raises is caught and reported as an info violation, so one bad rule can never",
+  "  abort a validation run. But a malformed FILE \u2014 invalid JSON \u2014 makes load_brand() raise and",
+  "  takes every downstream skill with it. After editing, re-load the brand to prove it parses:",
+  "    python -c \"import sys;sys.path.insert(0,'scripts/lib');import brandlib;",
+  "               b=brandlib.load_brand('channelplay');print(len(b['learnedRules']['rules']))\"",
+  "",
+  "The '$examples' array below is documentation. The validator only reads 'rules'; anything under",
+  "a key beginning with '$' is ignored. Copy an example into 'rules', do not enable it in place."
+ ],
+ "$examples": [
+  {
+   "$note": "forbid_text \u2014 a word the brand has banned outright. This is the kind to reach for after 'never call it that again'. Prefer voice.forbiddenPhrases in brand.json for placeholder strings that ship with a template; use a local rule for a client-specific or brand-specific ban that came out of a session.",
+   "id": "LOCAL.NO_SYNERGY",
+   "kind": "forbid_text",
+   "scope": "any",
+   "value": [
+    "synergy",
+    "leverage our",
+    "best-in-class"
+   ],
+   "severity": "warn",
+   "rule": "Channelplay copy is operational, not salesy. These three phrases are not.",
+   "fix": "Say what the team actually does: 'one field force covers both brands', not 'synergy'.",
+   "added": "2026-07-30",
+   "source": "example only \u2014 not enabled"
+  },
+  {
+   "$note": "require_text \u2014 something that must appear somewhere in the deck. Reported once, against the deck rather than a slide, because absence has no location. Use sparingly: it fires on every deck for this brand forever, including the two-slide ones.",
+   "id": "LOCAL.REQUIRE_CONFIDENTIALITY",
+   "kind": "require_text",
+   "scope": "any",
+   "value": "Confidential",
+   "severity": "warn",
+   "rule": "Client decks carry a confidentiality marker.",
+   "fix": "Set meta.confidentiality in the Deck IR so it renders in the footer band.",
+   "added": "2026-07-30",
+   "source": "example only \u2014 not enabled"
+  },
+  {
+   "$note": "forbid_color \u2014 the mint-text correction, and the canonical example of a tier 2 rule. Note the scope is written as 'title' for documentation, but this kind checks the whole file: every fill, line and text colour. Do not read a narrow scope here as a narrow check.",
+   "id": "LOCAL.NO_MINT_TEXT",
+   "kind": "forbid_color",
+   "scope": "title",
+   "value": [
+    "#41E7AB",
+    "#29AFA7"
+   ],
+   "severity": "error",
+   "rule": "Mint and teal are decorative only; 1.6:1 and 2.7:1 on white. Neither carries text.",
+   "fix": "Use mint.700 #1B7A74 for mint-family text, or navy #0F0A6C.",
+   "added": "2026-07-30",
+   "source": "example only \u2014 already covered by colorRules.forbiddenText"
+  },
+  {
+   "$note": "min_font_size \u2014 a floor tighter than the profile's own type.minBodyPt, for one scope. The profile floor is 10.5pt everywhere; this would raise it for body copy only.",
+   "id": "LOCAL.BODY_FLOOR_11",
+   "kind": "min_font_size",
+   "scope": "body",
+   "value": 11,
+   "severity": "warn",
+   "rule": "Body copy on a projected deck does not survive below 11pt.",
+   "fix": "Cut the copy. Shrinking type past the floor is how a slide becomes unreadable at the back of a room.",
+   "added": "2026-07-30",
+   "source": "example only \u2014 not enabled"
+  },
+  {
+   "$note": "max_font_size \u2014 a ceiling. Useful when a client finds the 54pt cover shouty and the fix is a scale change rather than a per-deck override.",
+   "id": "LOCAL.TITLE_CEILING_40",
+   "kind": "max_font_size",
+   "scope": "title",
+   "value": 40,
+   "severity": "warn",
+   "rule": "Slide titles stay at or below 40pt for this client.",
+   "fix": "Lower type.deckScalePt.title.size in brand.json rather than fighting it per deck.",
+   "added": "2026-07-30",
+   "source": "example only \u2014 not enabled"
+  },
+  {
+   "$note": "forbid_font_size \u2014 bans exact sizes rather than a range. The use for it is catching an off-scale size that keeps reappearing, e.g. a 13pt that belongs to no role in the type scale.",
+   "id": "LOCAL.NO_OFF_SCALE_SIZES",
+   "kind": "forbid_font_size",
+   "scope": "any",
+   "value": [
+    13,
+    15,
+    17
+   ],
+   "severity": "warn",
+   "rule": "13, 15 and 17pt are not steps of the Channelplay type scale.",
+   "fix": "Pick the nearest role in type.deckScalePt: 12 body, 14 cardTitle, 18 subtitle.",
+   "added": "2026-07-30",
+   "source": "example only \u2014 not enabled"
+  },
+  {
+   "$note": "regex \u2014 for patterns a literal string cannot express. Always a forbid, always case-insensitive. This one catches the trailing-full-stop-on-a-title habit and any digit-space-percent spacing error. Test the pattern before committing it: an uncompilable pattern is reported as info and the rule then checks nothing at all.",
+   "id": "LOCAL.NO_TITLE_FULL_STOP",
+   "kind": "regex",
+   "scope": "title",
+   "value": [
+    "\\.\\s*$",
+    "\\d\\s+%"
+   ],
+   "severity": "warn",
+   "rule": "Titles do not end in a full stop, and a percentage sign is closed up to its number.",
+   "fix": "Drop the full stop. Write '82%', not '82 %'.",
+   "added": "2026-07-30",
+   "source": "example only \u2014 not enabled"
+  }
+ ],
+ "rules": [
+  {
+   "id": "LOCAL.NO_SOLUTIONS",
+   "kind": "forbid_text",
+   "scope": "any",
+   "value": "solutions",
+   "severity": "warn",
+   "rule": "'solutions' is not used in this brand's copy.",
+   "fix": "Rewrite the line without 'solutions' -- say what the team actually does.",
+   "added": "2026-07-30",
+   "source": "morning review 2026-07-30"
+  }
+ ]
+}

@@ -1,0 +1,121 @@
+{
+ "assets": {
+  "intro": {
+   "bytes": 203382,
+   "created": "2026-07-30T22:54:56",
+   "file": "intro.mp4",
+   "fingerprint": "d3ed36ca212e3986",
+   "inputs": {
+    "angle": 135,
+    "brand_name": "Channelplay",
+    "duration": 3.0,
+    "format": "landscape",
+    "fps": 30,
+    "gradient": [
+     "#0F0A6C",
+     "#0000FF"
+    ],
+    "kind": "intro",
+    "logo_file": "channelplay-logo-reversed.png",
+    "resolution": {
+     "h": 1080,
+     "w": 1920
+    },
+    "safeMarginPct": 5.0,
+    "style": "blue-gradient-logo-reveal",
+    "supplied_file": "",
+    "text": "{\"brandName\": \"Channelplay\", \"contact\": \"\", \"eyebrow\": \"\", \"title\": \"\"}"
+   }
+  },
+  "intro-vertical": {
+   "bytes": 196660,
+   "created": "2026-07-30T22:23:16",
+   "file": "intro-vertical.mp4",
+   "fingerprint": "39ec3c873413df61",
+   "inputs": {
+    "angle": 135,
+    "brand_name": "Channelplay",
+    "duration": 3.0,
+    "format": "vertical",
+    "fps": 30,
+    "gradient": [
+     "#0F0A6C",
+     "#0000FF"
+    ],
+    "kind": "intro",
+    "logo_file": "channelplay-logo-reversed.png",
+    "resolution": {
+     "h": 1920,
+     "w": 1080
+    },
+    "safeMarginPct": 8.0,
+    "style": "blue-gradient-logo-reveal",
+    "supplied_file": "",
+    "text": "{\"brandName\": \"Channelplay\", \"contact\": \"\", \"eyebrow\": \"\", \"title\": \"\"}"
+   }
+  },
+  "music-bed": {
+   "bytes": 1,
+   "created": "",
+   "file": "x.mp3",
+   "fingerprint": "z",
+   "inputs": {}
+  },
+  "outro": {
+   "bytes": 98135,
+   "created": "2026-07-30T22:58:48",
+   "file": "outro.mp4",
+   "fingerprint": "87c47d336e3f8f7b",
+   "inputs": {
+    "angle": 135,
+    "brand_name": "Channelplay",
+    "duration": 3.5,
+    "format": "landscape",
+    "fps": 30,
+    "gradient": [
+     "#0F0A6C",
+     "#0000FF"
+    ],
+    "kind": "outro",
+    "logo_file": "channelplay-logo-reversed.png",
+    "resolution": {
+     "h": 1080,
+     "w": 1920
+    },
+    "safeMarginPct": 5.0,
+    "style": "navy-lockup-cta",
+    "supplied_file": "",
+    "text": "{\"brandName\": \"Channelplay\", \"contact\": \"channelplay.in\", \"eyebrow\": \"\", \"title\": \"\"}"
+   }
+  },
+  "outro-vertical": {
+   "bytes": 95865,
+   "created": "2026-07-30T22:27:05",
+   "file": "outro-vertical.mp4",
+   "fingerprint": "ed63cffdb9e20ea8",
+   "inputs": {
+    "angle": 135,
+    "brand_name": "Channelplay",
+    "duration": 3.5,
+    "format": "vertical",
+    "fps": 30,
+    "gradient": [
+     "#0F0A6C",
+     "#0000FF"
+    ],
+    "kind": "outro",
+    "logo_file": "channelplay-logo-reversed.png",
+    "resolution": {
+     "h": 1920,
+     "w": 1080
+    },
+    "safeMarginPct": 8.0,
+    "style": "navy-lockup-cta",
+    "supplied_file": "",
+    "text": "{\"brandName\": \"Channelplay\", \"contact\": \"channelplay.in\", \"eyebrow\": \"\", \"title\": \"\"}"
+   }
+  }
+ },
+ "brand": "channelplay",
+ "version": 1
+}

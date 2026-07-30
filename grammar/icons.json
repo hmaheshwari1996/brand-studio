@@ -1,0 +1,439 @@
+{
+ "$comment": "Brand-agnostic icon library harvested from the Channelplay master deck template. These are Microsoft Office stock icon paths; all hardcoded fills were replaced with currentColor so the builder tints them from the active brand profile. Rasterise with headless Chrome at build time.",
+ "source": "Channelplay Deck Template  3.pptx (ppt/media/*.svg)",
+ "count": 86,
+ "viewBox": "0 0 96 96",
+ "usage": "Set colour by wrapping in <svg style=\"color:<brand hex>\"> or substituting currentColor before rasterising.",
+ "icons": [
+  {
+   "name": "anchor",
+   "file": "grammar/icons/anchor.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "architecture",
+   "file": "grammar/icons/architecture.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "artificial-intelligence",
+   "file": "grammar/icons/artificial-intelligence.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "asia",
+   "file": "grammar/icons/asia.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "atom",
+   "file": "grammar/icons/atom.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "badge-tick1",
+   "file": "grammar/icons/badge-tick1.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "battery-charging",
+   "file": "grammar/icons/battery-charging.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "blackboard",
+   "file": "grammar/icons/blackboard.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "blog-r-t-l",
+   "file": "grammar/icons/blog-r-t-l.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "blueprint",
+   "file": "grammar/icons/blueprint.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "box-trolley",
+   "file": "grammar/icons/box-trolley.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "building",
+   "file": "grammar/icons/building.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "carp-streamer",
+   "file": "grammar/icons/carp-streamer.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "carrot-right",
+   "file": "grammar/icons/carrot-right.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "charm",
+   "file": "grammar/icons/charm.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "chevron-arrows-l-t-r",
+   "file": "grammar/icons/chevron-arrows-l-t-r.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "circle-with-right-arrow",
+   "file": "grammar/icons/circle-with-right-arrow.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "circles-with-arrows",
+   "file": "grammar/icons/circles-with-arrows.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "circular-flowchart",
+   "file": "grammar/icons/circular-flowchart.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "city",
+   "file": "grammar/icons/city.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "classroom",
+   "file": "grammar/icons/classroom.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "compass",
+   "file": "grammar/icons/compass.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "confetti-ball",
+   "file": "grammar/icons/confetti-ball.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "confused-person",
+   "file": "grammar/icons/confused-person.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "connected",
+   "file": "grammar/icons/connected.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "connections",
+   "file": "grammar/icons/connections.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "cursor",
+   "file": "grammar/icons/cursor.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "daily-calendar",
+   "file": "grammar/icons/daily-calendar.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "decision-chart",
+   "file": "grammar/icons/decision-chart.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "earth-globe-asia",
+   "file": "grammar/icons/earth-globe-asia.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "ethernet",
+   "file": "grammar/icons/ethernet.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "flag",
+   "file": "grammar/icons/flag.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "gears",
+   "file": "grammar/icons/gears.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "globe",
+   "file": "grammar/icons/globe.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "good-inventory",
+   "file": "grammar/icons/good-inventory.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "grocery-bag",
+   "file": "grammar/icons/grocery-bag.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "grocery-bag-1",
+   "file": "grammar/icons/grocery-bag-1.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "home",
+   "file": "grammar/icons/home.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "inbox1",
+   "file": "grammar/icons/inbox1.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "laptop",
+   "file": "grammar/icons/laptop.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "lecturer",
+   "file": "grammar/icons/lecturer.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "line-rotate-left",
+   "file": "grammar/icons/line-rotate-left.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "link",
+   "file": "grammar/icons/link.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "male-profile",
+   "file": "grammar/icons/male-profile.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "man",
+   "file": "grammar/icons/man.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "management",
+   "file": "grammar/icons/management.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "map-with-pin",
+   "file": "grammar/icons/map-with-pin.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "marker",
+   "file": "grammar/icons/marker.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "marketing",
+   "file": "grammar/icons/marketing.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "modern-architecture",
+   "file": "grammar/icons/modern-architecture.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "monthly-calendar",
+   "file": "grammar/icons/monthly-calendar.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "network",
+   "file": "grammar/icons/network.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "network-diagram",
+   "file": "grammar/icons/network-diagram.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "office-chair",
+   "file": "grammar/icons/office-chair.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "officeworker-female",
+   "file": "grammar/icons/officeworker-female.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "officeworker-male",
+   "file": "grammar/icons/officeworker-male.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "online-meeting",
+   "file": "grammar/icons/online-meeting.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "online-network",
+   "file": "grammar/icons/online-network.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "open-quotation-mark",
+   "file": "grammar/icons/open-quotation-mark.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "open-quotation-mark-1",
+   "file": "grammar/icons/open-quotation-mark-1.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "pin",
+   "file": "grammar/icons/pin.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "play",
+   "file": "grammar/icons/play.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "playbook",
+   "file": "grammar/icons/playbook.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "plug",
+   "file": "grammar/icons/plug.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "produce",
+   "file": "grammar/icons/produce.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "programmer-female",
+   "file": "grammar/icons/programmer-female.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "rectangular-prism",
+   "file": "grammar/icons/rectangular-prism.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "register",
+   "file": "grammar/icons/register.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "repeat",
+   "file": "grammar/icons/repeat.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "return",
+   "file": "grammar/icons/return.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "rotate-right",
+   "file": "grammar/icons/rotate-right.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "rotate-right-1",
+   "file": "grammar/icons/rotate-right-1.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "selfie",
+   "file": "grammar/icons/selfie.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "settings",
+   "file": "grammar/icons/settings.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "shuffle1",
+   "file": "grammar/icons/shuffle1.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "slight-curve",
+   "file": "grammar/icons/slight-curve.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "smart-phone",
+   "file": "grammar/icons/smart-phone.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "store",
+   "file": "grammar/icons/store.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "team",
+   "file": "grammar/icons/team.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "transfer",
+   "file": "grammar/icons/transfer.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "ui-ux",
+   "file": "grammar/icons/ui-ux.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "user",
+   "file": "grammar/icons/user.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "users",
+   "file": "grammar/icons/users.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "vlog-l-t-r",
+   "file": "grammar/icons/vlog-l-t-r.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "wireless",
+   "file": "grammar/icons/wireless.svg",
+   "viewBox": "0 0 96 96"
+  },
+  {
+   "name": "woman-shrugging",
+   "file": "grammar/icons/woman-shrugging.svg",
+   "viewBox": "0 0 96 96"
+  }
+ ]
+}

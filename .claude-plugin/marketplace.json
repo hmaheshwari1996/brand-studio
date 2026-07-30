@@ -1,0 +1,22 @@
+{
+  "$comment": "This file makes the repository itself a Claude Code plugin marketplace, so a teammate installs with two commands and gets updates with git pull. Keep it beside plugin.json.",
+  "name": "channelplay",
+  "owner": {
+    "name": "Channelplay"
+  },
+  "metadata": {
+    "description": "Channelplay's internal tooling for brand-compliant decks, videos and product CGI.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "brand-studio",
+      "source": "./",
+      "description": "Build enterprise decks, videos, reels and product CGI for any brand, and enforce that brand's guidelines automatically on every artifact.",
+      "version": "1.0.0",
+      "author": { "name": "Channelplay" },
+      "keywords": ["pptx", "video", "reel", "cgi", "brand", "design-system", "validation"],
+      "category": "productivity"
+    }
+  ]
+}

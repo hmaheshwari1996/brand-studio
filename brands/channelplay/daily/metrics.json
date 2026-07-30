@@ -1,0 +1,16 @@
+{
+  "brand": "channelplay",
+  "generatedAt": "2026-07-30T22:27:59",
+  "windowDays": 30,
+  "reviewedDays": 0,
+  "totalNotes": 0,
+  "perDay": [],
+  "byCategory": {},
+  "byKind": {},
+  "mechanised": 0,
+  "ledgerOnly": 0,
+  "ruleCount": 2,
+  "rolling7": null,
+  "previous7": null,
+  "verdict": "no data"
+}

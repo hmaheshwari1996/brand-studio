@@ -1,0 +1,91 @@
+{
+  "$comment": "The daily production queue. brand-daily takes the next pending item each night, builds a reel and a video from it, and marks it done. Keep 5-10 items ahead so an overnight run never starves; when the queue is empty it falls back to 'evergreen' and says so in the review packet.",
+  "brand": "channelplay",
+  "version": 1,
+  "defaults": {
+    "reel": {
+      "format": "vertical",
+      "durationSec": 15,
+      "pipeline": "explainer",
+      "beats": [
+        "hook",
+        "turn",
+        "payoff"
+      ]
+    },
+    "video": {
+      "format": "landscape",
+      "durationSec": 30,
+      "pipeline": "explainer",
+      "beats": [
+        "hook",
+        "problem",
+        "proof",
+        "call-to-action"
+      ]
+    }
+  },
+  "rules": {
+    "reelWordBudget": 38,
+    "videoWordBudget": 78,
+    "$note": "At the brand's 165 wpm: 15s ~= 38 words, 30s ~= 78 words, leaving room for the intro/outro bookends and breath. The runner enforces these so a script can never overrun its slot.",
+    "noRepeatWithinDays": 21,
+    "requireProof": true
+  },
+  "queue": [
+    {
+      "id": "2026-07-31",
+      "topic": "Self-reported compliance is not compliance",
+      "angle": "contrast",
+      "oneThing": "An unverified number is a measure of optimism, not of the shelf.",
+      "proof": {
+        "claim": "Audited compliance rose from 61% to 92% once evidence capture was mandatory",
+        "source": "national FMCG programme, 4 quarters"
+      },
+      "status": "pending"
+    },
+    {
+      "id": "2026-08-01",
+      "topic": "The person in the store is the product",
+      "angle": "single-person",
+      "oneThing": "Certification decides which doors a person can work, and it is re-earned quarterly.",
+      "proof": {
+        "claim": "80% of deployed staff at level 3 or above",
+        "source": "certification register"
+      },
+      "status": "pending"
+    },
+    {
+      "id": "2026-08-02",
+      "topic": "A month-old report describes a month you already lost",
+      "angle": "problem-first",
+      "oneThing": "Latency is the cost nobody puts on the invoice.",
+      "proof": {
+        "claim": "Median 31 days from field event to brand visibility at handover, same-day after",
+        "source": "inherited programmes, 3 years"
+      },
+      "status": "pending"
+    }
+  ],
+  "evergreen": [
+    {
+      "topic": "What 4,200 stores actually looks like",
+      "angle": "number-first",
+      "oneThing": "Scale is only meaningful when every point on the map is verified.",
+      "proof": {
+        "claim": "4,200 stores, 19 states, 1,100 field staff",
+        "source": "live programmes"
+      }
+    },
+    {
+      "topic": "The shopper never sees the plan",
+      "angle": "outsider",
+      "oneThing": "Execution is the only part of the strategy a customer can see.",
+      "proof": {
+        "claim": "18% of availability loss traced to undetected stock-outs",
+        "source": "inherited programmes"
+      }
+    }
+  ],
+  "history": []
+}

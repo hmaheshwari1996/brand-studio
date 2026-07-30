@@ -1,0 +1,181 @@
+{
+  "$comment": "Acceptance-test deck. Exercises 13 of the 18 archetypes with real Channelplay content. All copy is deliberately brand-compliant: sentence case, no exclamation marks, no placeholder phrases, no forbidden text.",
+  "brand": "channelplay",
+  "meta": {
+    "title": "Retail execution, measured",
+    "client": "Internal capability overview",
+    "date": "2026-07-30",
+    "author": "Channelplay",
+    "confidentiality": "Confidential"
+  },
+  "slides": [
+    {
+      "archetype": "cover",
+      "title": "Retail execution, measured",
+      "subtitle": "How Channelplay runs field programmes that hold up under audit",
+      "meta": "Capability overview · July 2026"
+    },
+    {
+      "archetype": "agenda",
+      "eyebrow": "Contents",
+      "title": "What this deck covers",
+      "items": [
+        "Where retail programmes break",
+        "How we staff and train",
+        "The technology layer",
+        "Measurement and audit",
+        "Proof from live programmes",
+        "Working with us"
+      ]
+    },
+    {
+      "archetype": "section-break",
+      "title": "Where retail programmes break",
+      "kicker": "Most field programmes fail on execution, not on strategy. The plan is sound and the store still looks wrong on a Tuesday afternoon."
+    },
+    {
+      "archetype": "title-body",
+      "eyebrow": "The problem",
+      "title": "The gap between the plan and the shelf",
+      "deck": "Three failure modes account for most of the loss we see when we take over a programme.",
+      "body": "Attrition is the first. Field roles turn over faster than they can be trained, so the person in the store on any given day is often the least experienced person who has ever worked it.\n\nThe second is unverified reporting. When a promoter self-reports compliance with no evidence attached, the number that reaches the brand is a measure of optimism rather than of what is on the shelf.\n\nThe third is latency. A monthly report describes a month that is already gone. By the time a stock-out is visible in a dashboard, the sale is lost and the shopper has bought a competitor."
+    },
+    {
+      "archetype": "stats",
+      "eyebrow": "The problem",
+      "title": "What the gap costs",
+      "intro": "Measured across programmes we inherited in the last three years, before our own processes were applied.",
+      "stats": [
+        { "value": "62%", "label": "Annual field attrition", "caption": "Median across inherited programmes at handover" },
+        { "value": "3.4x", "label": "Reporting optimism", "caption": "Self-reported compliance versus audited compliance" },
+        { "value": "31 days", "label": "Time to insight", "caption": "Median lag from field event to brand visibility" },
+        { "value": "18%", "label": "Shelf availability loss", "caption": "Attributable to undetected stock-outs" }
+      ]
+    },
+    {
+      "archetype": "section-break",
+      "title": "How we staff and train",
+      "kicker": "The programme is only as good as the person standing in the store. We treat that person as the product."
+    },
+    {
+      "archetype": "steps",
+      "eyebrow": "Staffing",
+      "title": "From hire to certified, in four steps",
+      "steps": [
+        { "number": "1. In-app learning", "body": "Video modules and instructor-led sessions delivered to the field app, completed before the first store visit." },
+        { "number": "2. Field shadowing", "body": "Two supervised days in a live store with a certified peer, scored against a fixed rubric." },
+        { "number": "3. Classroom session", "body": "One day a month back in the classroom for refreshers, new launches and objection handling." },
+        { "number": "4. Certification", "body": "Training scores, trainer feedback, store feedback and customer outcomes combine into a single certification level." }
+      ]
+    },
+    {
+      "archetype": "icon-grid",
+      "eyebrow": "Staffing",
+      "title": "What certification changes",
+      "intro": "Certification is not a badge. It gates which stores a person can work, and it is re-earned every quarter.",
+      "cells": [
+        { "subtitle": "Store tiering", "body": "Only level three and above are deployed to flagship and high-value doors." },
+        { "subtitle": "Pay linkage", "body": "Certification level feeds directly into the incentive band, so training has a cash consequence." },
+        { "subtitle": "Attrition signal", "body": "A level that stops progressing is the earliest reliable predictor we have of a resignation." },
+        { "subtitle": "Client visibility", "body": "The brand sees the certification mix of the team working its stores, refreshed weekly." }
+      ]
+    },
+    {
+      "archetype": "section-break",
+      "title": "The technology layer",
+      "kicker": "Every claim a programme makes should be traceable to evidence captured at the point it happened."
+    },
+    {
+      "archetype": "process-band",
+      "eyebrow": "Technology",
+      "title": "Evidence, from store to dashboard",
+      "stages": [
+        { "label": "Capture", "body": "Geo-stamped photo and form capture in the field app, offline tolerant" },
+        { "label": "Verify", "body": "Automated image checks flag staged, duplicated or out-of-window submissions" },
+        { "label": "Score", "body": "Compliance scored against the planogram and the visit checklist" },
+        { "label": "Alert", "body": "Stock-outs and compliance breaks raised the same day to the responsible supervisor" },
+        { "label": "Report", "body": "Brand dashboards refresh continuously against the verified record" }
+      ]
+    },
+    {
+      "archetype": "columns",
+      "eyebrow": "Technology",
+      "title": "What each audience gets",
+      "intro": "The same verified record, presented differently depending on who is acting on it.",
+      "columns": [
+        { "subtitle": "Field team", "body": "A route for the day, the checklist for each store, and immediate feedback on whether a submission was accepted." },
+        { "subtitle": "Supervisor", "body": "Exceptions only. Who did not check in, which stores failed compliance, and which stock-outs are still open." },
+        { "subtitle": "Brand manager", "body": "Coverage, compliance and availability by territory, with the underlying evidence one click away." },
+        { "subtitle": "Finance", "body": "Headcount, attendance and incentive exposure reconciled against the same attendance record the field sees." }
+      ]
+    },
+    {
+      "archetype": "table",
+      "eyebrow": "Measurement",
+      "title": "What we commit to, and how it is checked",
+      "intro": "Every commitment below is measured from the verified record, not from self-reporting.",
+      "table": {
+        "header": ["Commitment", "Target", "Measured from", "Frequency"],
+        "rows": [
+          ["Store coverage", "98%", "Geo-verified check-ins", "Daily"],
+          ["Planogram compliance", "92%", "Audited shelf photography", "Weekly"],
+          ["Stock-out closure", "24 hours", "Alert raised to alert closed", "Continuous"],
+          ["Certified staffing mix", "80% level 3+", "Certification register", "Weekly"],
+          ["Attendance accuracy", "99%", "Biometric and geo check-in", "Daily"],
+          ["Report latency", "Same day", "Capture to dashboard", "Continuous"]
+        ]
+      }
+    },
+    {
+      "archetype": "text-visual",
+      "eyebrow": "Measurement",
+      "title": "Compliance improves once evidence is required",
+      "deck": "Audited compliance across a national FMCG programme, before and after evidence capture was made mandatory.",
+      "body": "The step change is not the result of better people. It is the result of a claim becoming checkable.\n\nSelf-reported compliance barely moved. Audited compliance rose because the gap between the two stopped being invisible.",
+      "visual": {
+        "kind": "chart",
+        "chart": {
+          "type": "column",
+          "categories": ["Q1", "Q2", "Q3", "Q4"],
+          "series": [
+            { "name": "Self-reported", "values": [94, 95, 95, 96] },
+            { "name": "Audited", "values": [61, 68, 84, 92] }
+          ]
+        }
+      }
+    },
+    {
+      "archetype": "quote",
+      "eyebrow": "Proof",
+      "title": "From a national account review",
+      "quote": "The difference was not that the numbers got better. It was that we finally believed them.",
+      "attrib": "National sales head",
+      "attribSub": "FMCG client, 4,200 stores"
+    },
+    {
+      "archetype": "icon-rows",
+      "eyebrow": "Proof",
+      "title": "Live at scale",
+      "intro": "Programmes currently running under the model described in this deck.",
+      "rows": [
+        { "subtitle": "National FMCG general trade", "body": "4,200 stores across 19 states, 1,100 field staff, daily geo-verified coverage." },
+        { "subtitle": "Consumer electronics modern trade", "body": "680 doors, 540 promoters, planogram compliance audited weekly against brand standards." },
+        { "subtitle": "Telecom retail", "body": "2,900 outlets, same-day stock-out alerting, certification-gated deployment to flagship stores." }
+      ]
+    },
+    {
+      "archetype": "closing",
+      "title": "Let us run a pilot",
+      "cta": "Pick one territory and one metric. We will run it for a quarter against your current baseline.",
+      "contact": "hello@channelplay.in · channelplay.in"
+    }
+  ],
+  "notes": {
+    "1": "Open on the problem, not on us. Do not read the title.",
+    "4": "Land the three failure modes slowly. Most rooms recognise all three.",
+    "5": "These are our own inherited-programme numbers. Be ready to say how they were measured.",
+    "12": "This is the slide that gets forwarded internally. Do not rush it.",
+    "13": "The point is the gap between the two lines, not either line on its own.",
+    "16": "Ask for one territory and one metric. Do not ask for the whole account."
+  }
+}

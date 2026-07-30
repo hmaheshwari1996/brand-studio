@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en" data-surface="light">
+<head>
+<meta charset="utf-8">
+<title>brand-studio chart reveal</title>
+<!--
+  chart-reveal — the DATA beat of a brand story.
+  ============================================================================
+  An animated chart that grows into place, built for the shape this agency
+  tells most often: a GAP between two series that widens or closes over time
+  (self-reported vs audited, before vs after, promised vs delivered).
+
+  Self-contained. Every colour arrives as a CSS custom property in the brand
+  variables block that build_video.py substitutes for the marker below, and the
+  brand face is registered there from local .ttf files over file:// URLs. There
+  is no network reference of any kind.
+
+  Each substitution marker appears exactly once in this file, and nowhere in
+  this comment: the builder substitutes with a plain string replace, so a second
+  literal occurrence would have the whole brand stylesheet injected into it.
+
+  There is NO CSS animation and NO transition. Chrome screenshots one instant,
+  so the frame's position in the animation comes from the ?t=<0..1> query
+  parameter, read synchronously at parse time. The same t always produces
+  identical pixels.
+
+  ---------------------------------------------------------------------------
+  DATA CONTRACT  (the scene-data marker -> window.__SCENE__)
+  ---------------------------------------------------------------------------
+  {
+    "type": "column" | "bar" | "line",   // default "column"
+    "categories": ["Q1","Q2","Q3","Q4"],
+    "series": [
+      {"name": "Self-reported", "values": [94,95,95,96]},
+      {"name": "Audited",       "values": [61,68,84,92]}
+    ],
+    "eyebrow": "Measurement",
+    "title": "Compliance improves once evidence is required",
+    "valueSuffix": "%",           // appended to data labels and axis ticks
+    "highlightGap": true,         // exactly 2 series -> annotate the gap at the
+                                  //   last category. Default true; set false to
+                                  //   suppress. Ignored unless series.length===2
+    "surface": "light" | "tint",  // default "light"
+    "max": null                   // optional y-axis ceiling; otherwise computed
+                                  //   from the data with headroom
+  }
+
+  Also honoured, following scene.html:
+    "logo":   true | false        // default true, top-left
+    "footer": "Optional small footer line"
+    "gapLabel": "gap"             // caption word beside the gap number; "" hides it
+
+  Every field is optional. Unknown types fall back to "column", unknown
+  surfaces to "light". Missing categories are numbered from the longest series;
+  missing values are treated as 0. Negative values are clamped to the baseline.
+
+  ---------------------------------------------------------------------------
+  SERIES COLOURS
+  ---------------------------------------------------------------------------
+  Read in order from the brand's approved categorical series
+  (colorRules.chartSeries), which the builder exports as --c-* properties. Each
+  slot falls back through a ramp step and then to a role variable, so a brand
+  that names its colours differently still renders in approved paint:
+
+    0  --c-brand-blue   -> --c-blue-600  -> --surface-brand
+    1  --c-brand-mint   -> --c-mint-400  -> --accent
+    2  --c-brand-sky    -> --c-sky-500   -> --accent-2
+    3  --c-brand-navy   -> --c-blue-900  -> --ink
+    4  --c-brand-teal   -> --c-mint-500  -> --accent-2
+    5  --c-brand-azure  -> --c-blue-500  -> --surface-brand
+
+  FLAT FILLS ONLY. A gradient fill inside a chart is an explicit brand
+  violation (colorRules.chartGradientFillForbidden) and the validator enforces
+  it. Series colour is never used as text: mint and teal fail contrast, so data
+  labels are --ink, axis labels --ink-soft, and the gap number --accent-text.
+
+  ---------------------------------------------------------------------------
+  ANIMATION (all derived from t)
+  ---------------------------------------------------------------------------
+    0.00 - 0.15  baseline extends left to right; gridlines fade in bottom-up;
+                 axis tick and category labels follow
+    0.15 - ~0.68 columns/bars grow from the baseline. Series 0 leads, series 1
+                 follows 0.08 later; within a series categories stagger left to
+                 right. Cubic ease-out. Line charts draw the path with
+                 stroke-dasharray/dashoffset from getTotalLength(), markers
+                 popping in as the line reaches them.
+    per element  the data label fades in only once its element has finished
+                 growing, never before
+    0.75 - 0.95  when highlightGap and exactly 2 series: a measure is drawn
+                 between the two final values at the last category, the rule in
+                 --accent, the difference in --accent-text
+    1.00         fully settled and static
+
+  Stagger is scaled down automatically when there are many categories or many
+  series, so the last data label always lands before t = 1.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden;
+    background: var(--surface-light);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ---- surfaces: only the two the data beat is ever shown on ------------ */
+  html[data-surface="light"] {
+    --bg: var(--surface-light);  --fg: var(--ink-on-light);
+    --muted: var(--ink-soft);    --acc: var(--accent-text);
+    --logo-url: var(--logo-primary); --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+  html[data-surface="tint"] {
+    --bg: var(--surface-tint);   --fg: var(--ink-on-tint);
+    --muted: var(--ink-soft);    --acc: var(--accent-text);
+    --logo-url: var(--logo-primary); --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+
+  /* ---- categorical series, in the brand's approved order ---------------- */
+  #stage {
+    --series-0: var(--c-brand-blue,  var(--c-blue-600, var(--surface-brand)));
+    --series-1: var(--c-brand-mint,  var(--c-mint-400, var(--accent)));
+    --series-2: var(--c-brand-sky,   var(--c-sky-500,  var(--accent-2)));
+    --series-3: var(--c-brand-navy,  var(--c-blue-900, var(--ink)));
+    --series-4: var(--c-brand-teal,  var(--c-mint-500, var(--accent-2)));
+    --series-5: var(--c-brand-azure, var(--c-blue-500, var(--surface-brand)));
+  }
+
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    display: flex; flex-direction: column;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-regular), var(--font-fallback);
+  }
+
+  #logo {
+    flex: none; height: 58px;
+    width: calc(58px * var(--logo-aspect));
+    background-image: var(--logo-url);
+    background-size: contain; background-repeat: no-repeat;
+    background-position: left center;
+  }
+
+  #head { flex: none; padding-top: 30px; }
+  .eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--acc);
+  }
+  .title {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 54px; line-height: 1.1; letter-spacing: -.02em;
+    margin-top: 16px; max-width: 1560px;
+  }
+
+  #legend {
+    flex: none; display: flex; flex-wrap: wrap;
+    gap: 14px 40px; margin-top: 26px; min-height: 0;
+  }
+  .key { display: flex; align-items: center; gap: 14px; }
+  .key .swatch { width: 20px; height: 20px; border-radius: 5px; flex: none; }
+  .key .name {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; color: var(--muted);
+  }
+  .key-0 .swatch { background: var(--series-0); }
+  .key-1 .swatch { background: var(--series-1); }
+  .key-2 .swatch { background: var(--series-2); }
+  .key-3 .swatch { background: var(--series-3); }
+  .key-4 .swatch { background: var(--series-4); }
+  .key-5 .swatch { background: var(--series-5); }
+
+  #chart { flex: 1 1 auto; min-height: 0; margin-top: 20px; }
+
+  #footer {
+    flex: none; min-height: 0;
+    font-size: 22px; line-height: 1.3; color: var(--muted); opacity: .75;
+  }
+
+  /* ---- the chart itself: flat fills, never a gradient ------------------- */
+  .chart { display: block; }
+  .chart text {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+  .chart .ax {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 22px; fill: var(--ink-soft);
+  }
+  .chart .val {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 25px; fill: var(--ink);
+  }
+  .chart .gapnum {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 36px; fill: var(--accent-text);
+  }
+  .chart .gapcap {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 20px; fill: var(--ink-soft);
+  }
+  .chart .grid   { stroke: var(--rule); fill: none; }
+  .chart .axis   { stroke: var(--rule); fill: none; stroke-linecap: square; }
+  .chart .leader { stroke: var(--rule); fill: none; }
+  .chart .gaprule { stroke: var(--accent); fill: none; stroke-linecap: butt; }
+
+  .chart .f0 { fill: var(--series-0); }
+  .chart .f1 { fill: var(--series-1); }
+  .chart .f2 { fill: var(--series-2); }
+  .chart .f3 { fill: var(--series-3); }
+  .chart .f4 { fill: var(--series-4); }
+  .chart .f5 { fill: var(--series-5); }
+
+  .chart .k0 { stroke: var(--series-0); fill: none; }
+  .chart .k1 { stroke: var(--series-1); fill: none; }
+  .chart .k2 { stroke: var(--series-2); fill: none; }
+  .chart .k3 { stroke: var(--series-3); fill: none; }
+  .chart .k4 { stroke: var(--series-4); fill: none; }
+  .chart .k5 { stroke: var(--series-5); fill: none; }
+
+  .chart .plot   { stroke-linejoin: round; stroke-linecap: round; }
+  .chart .marker { fill: var(--bg); }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="logo"></div>
+    <div id="head"></div>
+    <div id="legend"></div>
+    <div id="chart"></div>
+    <div id="footer"></div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+
+  // ---- surface ----------------------------------------------------------
+  var SURFACES = ["light", "tint"];
+  var surface = String(D.surface || "light");
+  if (SURFACES.indexOf(surface) === -1) { surface = "light"; }
+  document.documentElement.setAttribute("data-surface", surface);
+
+  // ---- deterministic animation clock ------------------------------------
+  function queryT() {
+    var raw = String(window.location.search || "");
+    var match = /[?&]t=([^&]*)/.exec(raw);
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp01(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+  function phase(delay, span) {
+    var s = span > 0 ? span : 0.001;
+    return easeOut(clamp01((T - delay) / s));
+  }
+  function r2(n) { return Math.round(n * 100) / 100; }
+
+  // ---- timeline ---------------------------------------------------------
+  var AXIS_SPAN    = 0.12;   // baseline sweep
+  var GRID_START   = 0.03;
+  var GRID_SPAN    = 0.11;
+  var GRID_STAGGER = 0.02;
+  var CAT_FADE     = 0.06;
+  var MARKS_START  = 0.15;   // first element leaves the baseline
+  var SERIES_LAG   = 0.08;   // series 1 follows series 0 by this much
+  var CAT_STAGGER  = 0.035;  // within a series, left to right
+  var BAR_SPAN     = 0.34;
+  var LABEL_AT     = 0.85;   // fraction of the growth the label waits for
+  var LABEL_SPAN   = 0.12;
+  var LINE_SPAN    = 0.45;
+  var POP_SPAN     = 0.09;
+  var GAP_START    = 0.75;
+  var GAP_SPAN     = 0.20;
+  var SETTLE_BY    = 0.98;
+
+  // ---- data -------------------------------------------------------------
+  function list(v) {
+    return Object.prototype.toString.call(v) === "[object Array]" ? v : [];
+  }
+  function num(v, fallback) {
+    var n = typeof v === "number" ? v : parseFloat(v);
+    return isFinite(n) ? n : fallback;
+  }
+
+  var TYPES = ["column", "bar", "line"];
+  var type = String(D.type || "column");
+  if (TYPES.indexOf(type) === -1) { type = "column"; }
+
+  var series = [];
+  list(D.series).slice(0, 6).forEach(function (raw, i) {
+    var item = (raw && typeof raw === "object") ? raw : {};
+    var values = list(item.values).map(function (v) { return Math.max(0, num(v, 0)); });
+    if (!values.length) { return; }
+    series.push({
+      name: item.name === undefined || item.name === null ? "Series " + (i + 1) : String(item.name),
+      values: values
+    });
+  });
+
+  var cats = list(D.categories).map(function (c) { return String(c); });
+  var longest = 0;
+  series.forEach(function (s) { longest = Math.max(longest, s.values.length); });
+  if (!cats.length) {
+    for (var ci = 0; ci < longest; ci += 1) { cats.push(String(ci + 1)); }
+  }
+  var nCats = Math.max(cats.length, longest);
+  while (cats.length < nCats) { cats.push(""); }
+  cats = cats.slice(0, nCats);
+
+  var nSeries = series.length;
+  var suffix = D.valueSuffix === undefined || D.valueSuffix === null ? "" : String(D.valueSuffix);
+  var wantGap = D.highlightGap !== false && nSeries === 2 && nCats >= 1;
+  var gapWord = D.gapLabel === undefined || D.gapLabel === null ? "gap" : String(D.gapLabel);
+
+  function value(s, i) {
+    var v = series[s].values[i];
+    return v === undefined ? 0 : v;
+  }
+
+  // ---- scale ------------------------------------------------------------
+  var dataMax = 0;
+  series.forEach(function (s) {
+    s.values.forEach(function (v) { if (v > dataMax) { dataMax = v; } });
+  });
+
+  function niceStep(x) {
+    if (!(x > 0)) { return 1; }
+    var mag = Math.pow(10, Math.floor(Math.log(x) / Math.LN10));
+    var n = x / mag;
+    var s = n <= 1 ? 1 : (n <= 2 ? 2 : (n <= 2.5 ? 2.5 : (n <= 5 ? 5 : 10)));
+    return s * mag;
+  }
+
+  var TARGET_TICKS = 5;
+  var ceiling;
+  var step;
+  var declaredMax = num(D.max, NaN);
+  if (isFinite(declaredMax) && declaredMax > 0) {
+    ceiling = declaredMax;
+    step = niceStep(ceiling / TARGET_TICKS);
+  } else {
+    step = niceStep((dataMax || 1) / TARGET_TICKS);
+    ceiling = Math.ceil((dataMax * 1.02) / step) * step;
+  }
+  if (!(ceiling > 0)) { ceiling = step * TARGET_TICKS; }
+
+  var ticks = [];
+  (function () {
+    var v = 0;
+    var guard = 0;
+    while (v <= ceiling + step * 0.001 && guard < 40) {
+      ticks.push(Math.round(v / step) * step);
+      v += step;
+      guard += 1;
+    }
+    if (ticks[ticks.length - 1] < ceiling) { ticks.push(ceiling); }
+  }());
+
+  var tickDecimals = (function () {
+    for (var d = 0; d <= 3; d += 1) {
+      var ok = true;
+      for (var i = 0; i < ticks.length; i += 1) {
+        if (Math.abs(parseFloat(ticks[i].toFixed(d)) - ticks[i]) > 1e-9) { ok = false; break; }
+      }
+      if (ok) { return d; }
+    }
+    return 3;
+  }());
+
+  function trimZeros(str) {
+    if (str.indexOf(".") === -1) { return str; }
+    return str.replace(/0+$/, "").replace(/\.$/, "");
+  }
+  function fmtTick(v) { return trimZeros(v.toFixed(tickDecimals)) + suffix; }
+  function fmtValue(v) {
+    var rounded = Math.abs(v - Math.round(v)) < 1e-9 ? String(Math.round(v)) : trimZeros(v.toFixed(1));
+    return rounded + suffix;
+  }
+
+  // ---- stagger that always settles before t = 1 -------------------------
+  var seriesLag = SERIES_LAG;
+  var catStagger = type === "line" ? 0 : CAT_STAGGER;
+  var pieceSpan = type === "line"
+    ? LINE_SPAN + POP_SPAN + LABEL_SPAN
+    : Math.max(BAR_SPAN, BAR_SPAN * LABEL_AT + LABEL_SPAN);
+  (function () {
+    var nominal = seriesLag * Math.max(0, nSeries - 1) + catStagger * Math.max(0, nCats - 1);
+    var allowed = SETTLE_BY - MARKS_START - pieceSpan;
+    if (nominal > allowed && nominal > 0) {
+      var k = Math.max(0, allowed) / nominal;
+      seriesLag *= k;
+      catStagger *= k;
+    }
+  }());
+  function markDelay(s, i) { return MARKS_START + seriesLag * s + catStagger * i; }
+
+  // ---- DOM helpers ------------------------------------------------------
+  function div(cls) {
+    var node = document.createElement("div");
+    if (cls) { node.className = cls; }
+    return node;
+  }
+  function textDiv(cls, value) {
+    var node = div(cls);
+    node.textContent = String(value);
+    return node;
+  }
+  function anim(node, kind, delay, span) {
+    node.setAttribute("data-anim", kind || "rise");
+    node.setAttribute("data-delay", String(delay === undefined ? 0 : delay));
+    node.setAttribute("data-span", String(span === undefined ? 0.4 : span));
+    return node;
+  }
+
+  var NS = "http://www.w3.org/2000/svg";
+  function svgEl(name, attrs) {
+    var el = document.createElementNS(NS, name);
+    if (attrs) {
+      for (var k in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, k)) { el.setAttribute(k, String(attrs[k])); }
+      }
+    }
+    return el;
+  }
+  function svgText(str, cls, x, y, anchor) {
+    var el = svgEl("text", { x: r2(x), y: r2(y) });
+    el.setAttribute("class", cls);
+    if (anchor) { el.setAttribute("text-anchor", anchor); }
+    el.textContent = String(str);
+    return el;
+  }
+
+  // ---- static chrome ----------------------------------------------------
+  var stage = document.getElementById("stage");
+  var logo = document.getElementById("logo");
+  var head = document.getElementById("head");
+  var legendHost = document.getElementById("legend");
+  var host = document.getElementById("chart");
+  var footer = document.getElementById("footer");
+
+  if (D.logo === false) { logo.style.display = "none"; } else { anim(logo, "fade", 0, 0.3); }
+
+  if (D.eyebrow) { head.appendChild(anim(textDiv("eyebrow", D.eyebrow), "rise", 0.02, 0.4)); }
+  if (D.title) { head.appendChild(anim(textDiv("title", D.title), "rise", 0.06, 0.4)); }
+
+  if (nSeries) {
+    series.forEach(function (s, i) {
+      var key = div("key key-" + i);
+      key.appendChild(div("swatch"));
+      key.appendChild(textDiv("name", s.name));
+      legendHost.appendChild(anim(key, "rise", 0.10 + i * 0.04, 0.34));
+    });
+  } else {
+    legendHost.style.display = "none";
+  }
+
+  if (D.footer) {
+    footer.style.minHeight = "34px";
+    footer.textContent = String(D.footer);
+    anim(footer, "fade", 0.5, 0.4);
+  }
+
+  // ---- fit the title to at most two lines -------------------------------
+  //
+  // Line boxes are counted with a Range rather than compared against
+  // scrollHeight: Poppins ink-overflows a tight line-height, so scrollHeight is
+  // always larger than clientHeight and says nothing useful.
+  function lineCount(node) {
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      var rects = range.getClientRects();
+      return rects.length || 1;
+    } catch (e) {
+      return 1;
+    }
+  }
+  function fitTitle() {
+    var node = head.querySelector(".title");
+    if (!node) { return; }
+    var base = node.getAttribute("data-base-size");
+    if (base === null) {
+      base = String(parseFloat(window.getComputedStyle(node).fontSize) || 54);
+      node.setAttribute("data-base-size", base);
+    }
+    var size = parseFloat(base);
+    var guard = 0;
+    node.style.fontSize = size + "px";
+    while (size > 34 && guard < 30 && lineCount(node) > 2) {
+      size -= 2;
+      node.style.fontSize = size + "px";
+      guard += 1;
+    }
+  }
+
+  // ---- the chart --------------------------------------------------------
+  function measure(svg, str, cls) {
+    var probe = svgText(str, cls, -9999, -9999, "start");
+    svg.appendChild(probe);
+    var w = 0;
+    try { w = probe.getComputedTextLength(); } catch (e) { w = 0; }
+    svg.removeChild(probe);
+    if (!(w > 0)) { w = String(str).length * 11; }
+    return w;
+  }
+
+  function growLine(x1, y1, x2, y2, p, cls, width) {
+    var len = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) || 1;
+    var el = svgEl("line", { x1: r2(x1), y1: r2(y1), x2: r2(x2), y2: r2(y2) });
+    el.setAttribute("class", cls);
+    el.setAttribute("stroke-width", String(width));
+    el.setAttribute("stroke-dasharray", r2(len));
+    el.setAttribute("stroke-dashoffset", r2(len * (1 - p)));
+    if (p <= 0) { el.setAttribute("opacity", "0"); }
+    return el;
+  }
+
+  // A column with rounded shoulders only, so it never detaches from the axis.
+  function capPath(x, y, w, h, r, side) {
+    if (h <= 0 || w <= 0) { return ""; }
+    var rad = Math.min(r, w / 2, h);
+    if (side === "top") {
+      return "M" + r2(x) + " " + r2(y + h) +
+             " L" + r2(x) + " " + r2(y + rad) +
+             " Q" + r2(x) + " " + r2(y) + " " + r2(x + rad) + " " + r2(y) +
+             " L" + r2(x + w - rad) + " " + r2(y) +
+             " Q" + r2(x + w) + " " + r2(y) + " " + r2(x + w) + " " + r2(y + rad) +
+             " L" + r2(x + w) + " " + r2(y + h) + " Z";
+    }
+    rad = Math.min(r, h / 2, w);
+    return "M" + r2(x) + " " + r2(y) +
+           " L" + r2(x + w - rad) + " " + r2(y) +
+           " Q" + r2(x + w) + " " + r2(y) + " " + r2(x + w) + " " + r2(y + rad) +
+           " L" + r2(x + w) + " " + r2(y + h - rad) +
+           " Q" + r2(x + w) + " " + r2(y + h) + " " + r2(x + w - rad) + " " + r2(y + h) +
+           " L" + r2(x) + " " + r2(y + h) + " Z";
+  }
+
+  function fadeText(node, p, dx, dy) {
+    node.setAttribute("opacity", p.toFixed(4));
+    if (p < 1) {
+      node.setAttribute("transform",
+        "translate(" + r2((1 - p) * (dx || 0)) + " " + r2((1 - p) * (dy || 0)) + ")");
+    }
+    return node;
+  }
+
+  function buildChart() {
+    host.textContent = "";
+    var W = host.clientWidth;
+    var H = host.clientHeight;
+    if (!(W > 60) || !(H > 60) || !nSeries) { return; }
+
+    var svg = svgEl("svg", { width: W, height: H, viewBox: "0 0 " + W + " " + H });
+    svg.setAttribute("class", "chart");
+    host.appendChild(svg);
+
+    var horizontal = (type === "bar");
+
+    // widest strings we will need room for
+    var wTick = 0;
+    ticks.forEach(function (v) { wTick = Math.max(wTick, measure(svg, fmtTick(v), "ax")); });
+    var wCat = 0;
+    cats.forEach(function (c) { wCat = Math.max(wCat, measure(svg, c, "ax")); });
+    var wVal = 0;
+    series.forEach(function (s, si) {
+      for (var i = 0; i < nCats; i += 1) {
+        wVal = Math.max(wVal, measure(svg, fmtValue(value(si, i)), "val"));
+      }
+    });
+
+    var gapDiff = wantGap ? Math.abs(value(0, nCats - 1) - value(1, nCats - 1)) : 0;
+    var gapNumStr = fmtValue(gapDiff);
+    var wNum = 0;
+    var wWord = 0;
+    if (wantGap) {
+      wNum = measure(svg, gapNumStr, "gapnum");
+      wWord = gapWord ? measure(svg, gapWord, "gapcap") : 0;
+    }
+    // horizontal: the caption sits on one line beside the longer bar.
+    // vertical: the number stacks over the word, right of the plot.
+    var gapInline = 18 + wNum + (wWord ? 10 + wWord : 0);
+    var gapColumn = 26 + 16 + Math.max(wNum, wWord) + 8;
+
+    // A horizontal gap measure gets its own lane under the plot, so it never
+    // crowds the value-axis labels.
+    var gapLane = (horizontal && wantGap) ? 56 : 0;
+
+    var padTop, padBottom, padLeft, padRight;
+    if (horizontal) {
+      padTop = 18;
+      padBottom = 44 + gapLane;
+      padLeft = wCat + 20;
+      padRight = 24 + Math.max(wVal, wantGap ? gapInline : 0);
+    } else {
+      padTop = 46;
+      padBottom = 48;
+      padLeft = wTick + 18;
+      padRight = 16 + (wantGap ? gapColumn : 0);
+    }
+
+    var x0 = padLeft;
+    var x1 = Math.max(padLeft + 40, W - padRight);
+    var y0 = padTop;
+    var y1 = Math.max(padTop + 40, H - padBottom);
+    var plotW = x1 - x0;
+    var plotH = y1 - y0;
+
+    var gGrid = svgEl("g");
+    var gMarks = svgEl("g");
+    var gLabels = svgEl("g");
+    var gGap = svgEl("g");
+    svg.appendChild(gGrid);
+    svg.appendChild(gMarks);
+    svg.appendChild(gLabels);
+    svg.appendChild(gGap);
+
+    // value -> pixel
+    function vPos(v) {
+      var f = ceiling > 0 ? v / ceiling : 0;
+      return horizontal ? x0 + plotW * f : y1 - plotH * f;
+    }
+
+    // ---- gridlines and value ticks (0 -> 0.15) --------------------------
+    var axisP = phase(0, AXIS_SPAN);
+    ticks.forEach(function (v, k) {
+      var gp = phase(GRID_START + k * GRID_STAGGER, GRID_SPAN);
+      var at = vPos(v);
+      if (k > 0) {
+        var gl = horizontal
+          ? svgEl("line", { x1: r2(at), y1: r2(y0), x2: r2(at), y2: r2(y1) })
+          : svgEl("line", { x1: r2(x0), y1: r2(at), x2: r2(x1), y2: r2(at) });
+        gl.setAttribute("class", "grid");
+        gl.setAttribute("stroke-width", "2");
+        gl.setAttribute("opacity", (gp * 0.9).toFixed(4));
+        gGrid.appendChild(gl);
+      }
+      var label = horizontal
+        ? svgText(fmtTick(v), "ax", at, y1 + 34 + gapLane, "middle")
+        : svgText(fmtTick(v), "ax", x0 - 14, at + 8, "end");
+      gGrid.appendChild(fadeText(label, k === 0 ? axisP : gp, 0, 0));
+    });
+
+    // ---- the baseline sweeps in first -----------------------------------
+    if (horizontal) {
+      gGrid.appendChild(growLine(x0, y0, x0, y1, axisP, "axis", 3));
+    } else {
+      gGrid.appendChild(growLine(x0, y1, x1, y1, axisP, "axis", 3));
+    }
+
+    // ---- category labels -------------------------------------------------
+    var bandSize = (horizontal ? plotH : plotW) / Math.max(1, nCats);
+    function bandStart(i) { return (horizontal ? y0 : x0) + bandSize * i; }
+    function bandCenter(i) { return bandStart(i) + bandSize / 2; }
+
+    cats.forEach(function (c, i) {
+      if (!c) { return; }
+      var cp = phase(CAT_FADE + i * 0.015, GRID_SPAN);
+      var node = horizontal
+        ? svgText(c, "ax", x0 - 16, bandCenter(i) + 8, "end")
+        : svgText(c, "ax", bandCenter(i), y1 + 34, "middle");
+      gGrid.appendChild(fadeText(node, cp, 0, 0));
+    });
+
+    // anchors used by the gap annotation
+    var lastAnchor = [];
+
+    if (type === "line") {
+      // A point's label goes above only when it is the highest at that
+      // category; every other series drops below, so two lines that converge
+      // never stack their labels on top of each other.
+      var topAt = [];
+      for (var c = 0; c < nCats; c += 1) {
+        var best = 0;
+        for (var sj = 1; sj < nSeries; sj += 1) {
+          if (value(sj, c) > value(best, c)) { best = sj; }
+        }
+        topAt.push(best);
+      }
+
+      // ---- line: the path draws, markers pop as it reaches them ---------
+      series.forEach(function (s, si) {
+        var pts = [];
+        for (var i = 0; i < nCats; i += 1) {
+          pts.push({ x: bandCenter(i), y: vPos(value(si, i)) });
+        }
+        var d = pts.map(function (p, i) {
+          return (i === 0 ? "M" : "L") + r2(p.x) + " " + r2(p.y);
+        }).join(" ");
+
+        var delay = markDelay(si, 0);
+        var path = svgEl("path", { d: d });
+        path.setAttribute("class", "plot k" + si);
+        path.setAttribute("stroke-width", "5");
+        gMarks.appendChild(path);
+        var len = 1;
+        try { len = path.getTotalLength() || 1; } catch (e) { len = 1; }
+        var lp = phase(delay, LINE_SPAN);
+        path.setAttribute("stroke-dasharray", r2(len));
+        path.setAttribute("stroke-dashoffset", r2(len * (1 - lp)));
+        if (lp <= 0) { path.setAttribute("opacity", "0"); }
+
+        pts.forEach(function (p, i) {
+          var reach = nCats > 1 ? i / (nCats - 1) : 0;
+          var at = delay + LINE_SPAN * reach;
+          var pop = phase(at, POP_SPAN);
+          var ring = svgEl("circle", { cx: r2(p.x), cy: r2(p.y), r: r2(9 * pop) });
+          ring.setAttribute("class", "marker k" + si);
+          ring.setAttribute("stroke-width", "5");
+          gMarks.appendChild(ring);
+
+          if (wVal + 12 <= bandSize) {
+            var above = topAt[i] === si;
+            var lab = svgText(fmtValue(value(si, i)), "val",
+                              p.x, p.y + (above ? -22 : 36), "middle");
+            gLabels.appendChild(fadeText(lab, phase(at + 0.04, LABEL_SPAN), 0, above ? 10 : -10));
+          }
+
+          if (i === nCats - 1) { lastAnchor[si] = { x: p.x + 12, y: p.y }; }
+        });
+      });
+    } else {
+      // ---- columns / bars grow from the baseline -------------------------
+      var band = bandSize * 0.62;
+      var slotGap = nSeries > 1 ? 8 : 0;
+      var slot = (band - slotGap * (nSeries - 1)) / nSeries;
+      var maxSlot = horizontal ? 74 : 140;
+      if (slot > maxSlot) { slot = maxSlot; }
+      var used = slot * nSeries + slotGap * (nSeries - 1);
+      // A crowded chart drops its data labels rather than overprinting the
+      // neighbouring element. The axis still carries the reading.
+      var showLabels = horizontal ? (slot >= 30) : (wVal <= slot + slotGap + 4);
+
+      series.forEach(function (s, si) {
+        for (var i = 0; i < nCats; i += 1) {
+          var v = value(si, i);
+          var delay = markDelay(si, i);
+          var p = phase(delay, BAR_SPAN);
+          var off = bandStart(i) + (bandSize - used) / 2 + si * (slot + slotGap);
+          var full = Math.abs(vPos(v) - (horizontal ? x0 : y1));
+          var grown = full * p;
+
+          var node = svgEl("path", { d: "" });
+          node.setAttribute("class", "f" + si);
+          var lab;
+          if (horizontal) {
+            node.setAttribute("d", capPath(x0, off, grown, slot, 7, "right"));
+            lab = svgText(fmtValue(v), "val", x0 + grown + 14, off + slot / 2 + 9, "start");
+            if (i === nCats - 1) {
+              lastAnchor[si] = { x: x0 + full, y: off + slot / 2 };
+            }
+          } else {
+            node.setAttribute("d", capPath(off, y1 - grown, slot, grown, 7, "top"));
+            lab = svgText(fmtValue(v), "val", off + slot / 2, y1 - grown - 16, "middle");
+            if (i === nCats - 1) {
+              lastAnchor[si] = { x: off + slot, y: y1 - full };
+            }
+          }
+          gMarks.appendChild(node);
+          if (showLabels) {
+            gLabels.appendChild(
+              fadeText(lab, phase(delay + BAR_SPAN * LABEL_AT, LABEL_SPAN), 0, 10));
+          }
+        }
+      });
+    }
+
+    // ---- the gap: drawn only after the marks have landed ----------------
+    if (!wantGap || !lastAnchor[0] || !lastAnchor[1]) { return; }
+    var gp2 = phase(GAP_START, GAP_SPAN);
+    if (gp2 <= 0) { return; }
+
+    if (horizontal) {
+      var xA = lastAnchor[0].x;
+      var xB = lastAnchor[1].x;
+      var lo = Math.min(xA, xB);
+      var hi = Math.max(xA, xB);
+      // in the reserved lane below the plot, clear of the value-axis labels
+      var gy = y1 + 26;
+
+      gGap.appendChild(growLine(xA, lastAnchor[0].y, xA, gy, gp2, "leader", 2));
+      gGap.appendChild(growLine(xB, lastAnchor[1].y, xB, gy, gp2, "leader", 2));
+      gGap.appendChild(growLine(lo, gy, lo + (hi - lo) * gp2, gy, 1, "gaprule", 3));
+      gGap.appendChild(growLine(xA, gy - 11, xA, gy + 11, gp2, "gaprule", 3));
+      gGap.appendChild(growLine(xB, gy - 11, xB, gy + 11, gp2, "gaprule", 3));
+
+      gGap.appendChild(fadeText(svgText(gapNumStr, "gapnum", hi + 18, gy + 12, "start"), gp2, 0, 8));
+      if (gapWord) {
+        gGap.appendChild(fadeText(
+          svgText(gapWord, "gapcap", hi + 18 + wNum + 10, gy + 12, "start"), gp2, 0, 8));
+      }
+      return;
+    }
+
+    var yA = lastAnchor[0].y;
+    var yB = lastAnchor[1].y;
+    var top = Math.min(yA, yB);
+    var bottom = Math.max(yA, yB);
+    var gx = Math.min(x1 + 26, W - 8);
+    // both leaders start clear of the whole group, so neither crosses a bar
+    var leadFrom = Math.max(lastAnchor[0].x, lastAnchor[1].x) + 8;
+
+    gGap.appendChild(growLine(leadFrom, yA, gx, yA, gp2, "leader", 2));
+    gGap.appendChild(growLine(leadFrom, yB, gx, yB, gp2, "leader", 2));
+    gGap.appendChild(growLine(gx, top, gx, top + (bottom - top) * gp2, 1, "gaprule", 3));
+    gGap.appendChild(growLine(gx - 11, yA, gx + 11, yA, gp2, "gaprule", 3));
+    gGap.appendChild(growLine(gx - 11, yB, gx + 11, yB, gp2, "gaprule", 3));
+
+    var mid = (top + bottom) / 2;
+    gGap.appendChild(fadeText(svgText(gapNumStr, "gapnum", gx + 16, mid - 2, "start"), gp2, 0, 8));
+    if (gapWord) {
+      gGap.appendChild(fadeText(svgText(gapWord, "gapcap", gx + 16, mid + 26, "start"), gp2, 0, 8));
+    }
+  }
+
+  // ---- apply the frame to the surrounding chrome ------------------------
+  function applyFrame() {
+    var nodes = stage.querySelectorAll("[data-anim]");
+    for (var i = 0; i < nodes.length; i += 1) {
+      var node = nodes[i];
+      var delay = parseFloat(node.getAttribute("data-delay")) || 0;
+      var span = parseFloat(node.getAttribute("data-span")) || 0.4;
+      var p = phase(delay, span);
+      var kind = node.getAttribute("data-anim");
+      if (kind === "fade") {
+        node.style.opacity = p.toFixed(4);
+      } else {
+        node.style.opacity = p.toFixed(4);
+        node.style.transform = "translateY(" + ((1 - p) * 26).toFixed(2) + "px)";
+      }
+    }
+  }
+
+  // Rendered twice: once at parse, once on load. Web fonts land between the
+  // two, so the title fit and every text measurement is redone with real
+  // metrics before the screenshot is taken.
+  function render() { fitTitle(); applyFrame(); buildChart(); }
+
+  render();
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>

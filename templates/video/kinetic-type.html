@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en" data-surface="light" data-align="left">
+<head>
+<meta charset="utf-8">
+<title>brand-studio kinetic type</title>
+<!--
+  kinetic-type — the hook beat of a brand story.
+
+  A short, decisive statement that assembles itself on screen and lands. Meant to
+  open a film: confident and deliberate, never bouncy. Purely typographic — the
+  statement is the whole frame.
+
+  Self-contained: every colour, font face and canvas dimension arrives as a CSS
+  custom property in the BRAND_VARS style block that build_video.py substitutes
+  below, and the brand face is registered there from local .ttf files over
+  file:// URLs.
+  There is no network reference of any kind and no CSS animation or transition:
+  a frame's position in the animation comes solely from the ?t=<0..1> query
+  parameter, read synchronously at parse time, so every frame is deterministic.
+
+  ---------------------------------------------------------------------------
+  Data contract  (the SCENE_DATA payload, assigned to window.__SCENE__ below)
+  ---------------------------------------------------------------------------
+  {
+    "lines": [                       // the statement, one entry per typeset line.
+      "A retail plan is agreed in a boardroom.",
+      "It is executed by one person."
+    ],                               // a bare string is accepted as a single line.
+                                     // at most 5 lines are rendered.
+
+    "emphasis": [1],                 // indices into `lines` to set in
+                                     // --font-semibold and one size step larger.
+                                     // a bare number is accepted.
+
+    "eyebrow": "The problem",        // optional. rendered uppercase and tracked,
+                                     // lands before the first line.
+
+    "surface": "light",              // light | tint | brand | dark | accent
+                                     // default "light". picks the page background
+                                     // (--surface-* / --grad-primary for "brand")
+                                     // and the matching --ink-on-* text colour.
+
+    "align": "left",                 // left | center. default "left".
+
+    "mark": true                     // optional. an --accent rule that draws
+                                     // left-to-right once the last line has landed.
+  }
+
+  Every field is optional; anything absent is simply not rendered. Unknown
+  surfaces fall back to "light", unknown alignments to "left".
+
+  ---------------------------------------------------------------------------
+  Motion  (all derived from t, fully settled and static by t = 1.0)
+  ---------------------------------------------------------------------------
+  eyebrow   0.00 -> 0.22   fade + short rise, lands before line 0 begins
+  lines     0.15 -> 0.70   per line p = easeOut(clamp((t - i*stagger - start)/dur))
+                           each line rises 0.35em into place while its opacity
+                           goes 0 -> 1 behind a left-to-right clip-path inset
+                           wipe. `dur` and `stagger` are solved from the line
+                           count so the last line always lands at the same beat,
+                           with a ~38% overlap so the sequence reads as one
+                           continuous movement rather than n separate events.
+  mark      lastEnd+0.02 -> 0.96   accent rule scales 0 -> 1 from its left edge.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden;
+    /* --bg is set by the data-surface block below; the fallback covers the
+       instant before the script has chosen a surface. */
+    background: var(--bg, var(--surface-light));
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ---- surfaces: backgrounds and inks only ever reference brand tokens ----
+     --accent / --accent-2 are decorative only and are never used as a text
+     colour. Where accent-family text is wanted, --accent-text is used, which is
+     the mint step the brand clears for text on a light surface. On brand, dark
+     and accent surfaces the eyebrow simply takes that surface's mandated ink at
+     a slightly reduced alpha so it still sits below the statement. */
+  html[data-surface="light"] {
+    --bg: var(--surface-light); --fg: var(--ink-on-light);
+    --eyebrow-c: var(--accent-text); --eyebrow-a: 1;
+    --mark-c: var(--accent);
+  }
+  html[data-surface="tint"] {
+    --bg: var(--surface-tint); --fg: var(--ink-on-tint);
+    --eyebrow-c: var(--accent-text); --eyebrow-a: 1;
+    --mark-c: var(--accent);
+  }
+  html[data-surface="brand"] {
+    --bg: var(--grad-primary); --fg: var(--ink-on-brand);
+    --eyebrow-c: var(--ink-on-brand); --eyebrow-a: .82;
+    --mark-c: var(--accent);
+  }
+  html[data-surface="dark"] {
+    --bg: var(--surface-dark); --fg: var(--ink-on-dark);
+    --eyebrow-c: var(--ink-on-dark); --eyebrow-a: .82;
+    --mark-c: var(--accent);
+  }
+  /* On the accent surface the accent rule would be invisible against its own
+     ground, so the mark borrows that surface's ink instead. */
+  html[data-surface="accent"] {
+    --bg: var(--surface-accent); --fg: var(--ink-on-accent);
+    --eyebrow-c: var(--ink-on-accent); --eyebrow-a: .8;
+    --mark-c: var(--ink-on-accent);
+  }
+
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    display: flex; flex-direction: column; justify-content: center;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-regular), var(--font-fallback);
+    overflow: hidden;
+  }
+
+  /* Both columns are explicitly full width. Left to shrink-wrap they would size
+     themselves from the lines' intrinsic widths, which makes the width the fit
+     loop measures against depend on the very font sizes that loop is deciding —
+     a circular dependency that settles on an arbitrary column and wraps lines
+     that had room to spare. */
+  #block {
+    width: 100%;
+    display: flex; flex-direction: column; align-items: flex-start;
+  }
+  html[data-align="center"] #block { align-items: center; text-align: center; }
+
+  #eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 26px; line-height: 1.3; letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--eyebrow-c);
+    margin-bottom: 40px;
+  }
+
+  #stack { width: 100%; display: flex; flex-direction: column; align-items: inherit; }
+
+  /* Each line is its own clip box, sized to its own text so the wipe percentage
+     maps to the glyphs and not to the column. The em padding (cancelled by an
+     equal negative margin, so layout is untouched) keeps ascenders, descenders
+     and the last glyph's side bearing outside the clip edge. */
+  .line {
+    width: fit-content; max-width: 100%;
+    padding: .14em .06em .14em 0;
+    margin: -.14em -.06em -.14em 0;
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 80px; line-height: 1.14; letter-spacing: -.015em;
+  }
+  .line + .line { margin-top: calc(-.14em + 14px); }
+  .line.em {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 100px; line-height: 1.06; letter-spacing: -.025em;
+  }
+
+  #mark {
+    flex: none;
+    width: 240px; height: 6px;
+    background: var(--mark-c);
+    margin-top: 48px;
+    transform-origin: left center;
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="block">
+      <div id="eyebrow"></div>
+      <div id="stack"></div>
+      <div id="mark"></div>
+    </div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+
+  // ---- deterministic animation clock --------------------------------------
+  function queryT() {
+    var match = /[?&]t=([^&]*)/.exec(String(window.location.search || ""));
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+  function phase(start, span) {
+    if (span <= 0) { return T >= start ? 1 : 0; }
+    return easeOut(clamp((T - start) / span));
+  }
+  function isArray(v) {
+    return Object.prototype.toString.call(v) === "[object Array]";
+  }
+
+  // ---- surface and alignment ----------------------------------------------
+  var SURFACES = ["light", "tint", "brand", "dark", "accent"];
+  var surface = String(D.surface || "light");
+  if (SURFACES.indexOf(surface) === -1) { surface = "light"; }
+  document.documentElement.setAttribute("data-surface", surface);
+
+  var align = String(D.align || "left");
+  if (align !== "center") { align = "left"; }
+  document.documentElement.setAttribute("data-align", align);
+
+  var stage = document.getElementById("stage");
+  var eyebrowEl = document.getElementById("eyebrow");
+  var stack = document.getElementById("stack");
+  var mark = document.getElementById("mark");
+
+  // ---- content (textContent only; the payload is authored copy) ------------
+  var hasEyebrow = D.eyebrow !== undefined && D.eyebrow !== null && String(D.eyebrow) !== "";
+  if (hasEyebrow) { eyebrowEl.textContent = String(D.eyebrow); }
+  else { eyebrowEl.style.display = "none"; }
+
+  var lines = [];
+  if (isArray(D.lines)) {
+    for (var li = 0; li < D.lines.length; li += 1) {
+      var raw = D.lines[li];
+      if (raw === undefined || raw === null) { continue; }
+      if (String(raw) === "") { continue; }
+      lines.push(String(raw));
+    }
+  } else if (D.lines !== undefined && D.lines !== null && String(D.lines) !== "") {
+    lines.push(String(D.lines));
+  }
+  lines = lines.slice(0, 5);
+
+  var emphasis = {};
+  if (isArray(D.emphasis)) {
+    for (var ei = 0; ei < D.emphasis.length; ei += 1) {
+      emphasis[parseInt(D.emphasis[ei], 10)] = true;
+    }
+  } else if (typeof D.emphasis === "number") {
+    emphasis[D.emphasis] = true;
+  }
+
+  var lineEls = [];
+  for (var i = 0; i < lines.length; i += 1) {
+    var node = document.createElement("div");
+    node.className = emphasis[i] ? "line em" : "line";
+    node.textContent = lines[i];
+    stack.appendChild(node);
+    lineEls.push(node);
+  }
+
+  var wantMark = D.mark === true;
+  if (!wantMark) { mark.style.display = "none"; }
+
+  // ---- timing -------------------------------------------------------------
+  //
+  // dur and stagger are solved from the line count so the final line always
+  // lands on the same beat regardless of how many lines there are. The 0.62
+  // factor is the stagger-to-duration ratio: each line starts when the previous
+  // one is 62% through, which is enough overlap to read as a single movement.
+  var n = lineEls.length;
+  var EYEBROW_SPAN = 0.22;
+  var start = hasEyebrow ? 0.15 : 0.05;
+  var linesEnd = wantMark ? 0.70 : 0.90;
+  var dur = n > 0 ? (linesEnd - start) / (1 + 0.62 * (n - 1)) : 0;
+  if (dur > 0.44) { dur = 0.44; }
+  if (n > 0 && dur < 0.14) { dur = 0.14; }
+  var stagger = dur * 0.62;
+  var lastEnd = n > 0 ? start + (n - 1) * stagger + dur : start;
+  var markStart = Math.min(lastEnd + 0.02, 0.72);
+  var markSpan = Math.max(0.12, 0.96 - markStart);
+
+  // ---- fit: step type down until the statement sits inside the safe area ---
+  //
+  // Only container-level overflow is a usable signal. Poppins' ascenders and
+  // descenders ink-overflow a tight line-height, so an element's own
+  // scrollHeight always exceeds its clientHeight and says nothing about fit.
+  // A line is treated as too wide when it has wrapped onto a second visual row.
+  function baseSize(node) {
+    var recorded = node.getAttribute("data-base-size");
+    if (recorded === null) {
+      recorded = String(parseFloat(window.getComputedStyle(node).fontSize) || 0);
+      node.setAttribute("data-base-size", recorded);
+    }
+    return parseFloat(recorded);
+  }
+
+  function wrapped(node) {
+    var cs = window.getComputedStyle(node);
+    var lh = parseFloat(cs.lineHeight);
+    var size = parseFloat(cs.fontSize) || 0;
+    if (!isFinite(lh) || lh <= 0) { lh = size * 1.14; }
+    var pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    return node.offsetHeight > lh + pad + lh * 0.5;
+  }
+
+  function fitAll() {
+    var k, size, guard;
+
+    // 1. each line down to one visual row.
+    for (k = 0; k < lineEls.length; k += 1) {
+      size = baseSize(lineEls[k]);
+      lineEls[k].style.fontSize = size + "px";
+      guard = 0;
+      while (size > 40 && guard < 60) {
+        if (!wrapped(lineEls[k])) { break; }
+        size -= 2;
+        lineEls[k].style.fontSize = size + "px";
+        guard += 1;
+      }
+    }
+
+    // 2. the whole block down until it clears the safe area vertically.
+    guard = 0;
+    while (guard < 60 && stage.scrollHeight > stage.clientHeight + 6) {
+      var shrank = false;
+      for (k = 0; k < lineEls.length; k += 1) {
+        size = parseFloat(lineEls[k].style.fontSize) || baseSize(lineEls[k]);
+        if (size > 36) {
+          lineEls[k].style.fontSize = (size - 2) + "px";
+          shrank = true;
+        }
+      }
+      if (!shrank) { break; }
+      guard += 1;
+    }
+  }
+
+  // ---- apply the frame ----------------------------------------------------
+  function applyFrame() {
+    if (hasEyebrow) {
+      var alpha = parseFloat(
+        window.getComputedStyle(document.documentElement).getPropertyValue("--eyebrow-a"));
+      if (!isFinite(alpha)) { alpha = 1; }
+      var pe = phase(0, EYEBROW_SPAN);
+      eyebrowEl.style.opacity = (pe * alpha).toFixed(4);
+      eyebrowEl.style.transform = "translateY(" + ((1 - pe) * 16).toFixed(2) + "px)";
+    }
+
+    for (var k = 0; k < lineEls.length; k += 1) {
+      var el = lineEls[k];
+      var p = phase(start + k * stagger, dur);
+      var size = parseFloat(window.getComputedStyle(el).fontSize) || 0;
+      el.style.opacity = p.toFixed(4);
+      // Short travel. A long slide reads as amateur; 0.35em is enough to give
+      // the reveal a direction without turning it into a move.
+      el.style.transform = "translateY(" + ((1 - p) * size * 0.35).toFixed(2) + "px)";
+      // The wipe is on the same element as the transform, so it travels with the
+      // glyphs and can never crop them vertically.
+      el.style.clipPath = p >= 1
+        ? "none"
+        : "inset(0 " + ((1 - p) * 100).toFixed(3) + "% 0 0)";
+    }
+
+    if (wantMark) {
+      var pm = phase(markStart, markSpan);
+      mark.style.transform = "scaleX(" + pm.toFixed(4) + ")";
+    }
+  }
+
+  function render() { fitAll(); applyFrame(); }
+
+  render();
+  // Second pass: web fonts finish loading between parse and load, so anything
+  // that was measured has to be measured again against the real metrics.
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>

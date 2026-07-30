@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en" data-surface="light">
+<head>
+<meta charset="utf-8">
+<title>brand-studio process flow</title>
+<!--
+  ===========================================================================
+  process-flow  -  the APPROACH beat of a brand story
+  ===========================================================================
+
+  A sequence of stages that draws itself one at a time, with a connector
+  growing between each pair. The connector between step i and step i+1 always
+  finishes BEFORE step i+1 starts to appear, so the eye is led along the flow
+  in order. That ordering is the point of the template.
+
+  Self-contained by contract. Every colour, font face, logo and canvas
+  dimension arrives in the brand-vars style block that build_video.py
+  substitutes; there is no <link>, no CDN, no remote image and no font URL
+  outside the brand's own asset folder. Nothing here makes a network request.
+
+  There are NO CSS animations or transitions. Headless Chrome screenshots a
+  single instant, so anything time-based in CSS would be captured at an
+  arbitrary point. The frame's position comes entirely from the ?t=<0..1>
+  query parameter, read synchronously at parse time, so the same t always
+  produces identical pixels. The frame is applied twice - once during parse
+  and once on `load` - because web fonts finish loading between the two and
+  any text that had to be shrunk must be re-measured with real metrics.
+
+
+  ---------------------------------------------------------------------------
+  DATA CONTRACT  (the scene-data marker, i.e. `visual.data` in the IR)
+  ---------------------------------------------------------------------------
+
+  {
+    "steps": [
+      {"label": "Capture", "body": "Geo-stamped photo capture in the field app",
+       "icon": "camera"},
+      {"label": "Verify",  "body": "Automated checks flag staged submissions"}
+    ],
+    "orientation": "horizontal" | "vertical",  // default "horizontal"
+    "numbered":    true,                       // default true: draw 1..n in the node
+    "eyebrow":     "Technology",
+    "title":       "Evidence, from store to dashboard",
+    "surface":     "light" | "tint",           // default "light"
+    "emphasis":    2,                          // optional 0-BASED index of the
+                                               // step that holds emphasis
+    "rule":        true,                       // default true; false hides the
+                                               // short accent rule under the title
+    "logo":        true,                       // default true
+    "footer":      "Optional small footer line"
+  }
+
+  A step may also be a plain string, which is treated as its label.
+  Every field is optional. Anything absent is simply not rendered.
+
+  Limits and automatic fallbacks:
+    * 1..8 steps; a single step renders with no connector. Anything past the
+      eighth is dropped with a console.warn.
+    * Horizontal is only legible up to 5 steps. If the data asks for
+      "horizontal" with more than 5 steps the template silently switches to
+      vertical and records the reason with console.warn.
+    * "vertical" is always honoured, at any count.
+    * Unknown orientation -> horizontal. Unknown surface -> light.
+    * `emphasis` outside 0..n-1 (or not an integer) is ignored.
+
+  Layout:
+    * Horizontal puts the heading above a single row of evenly weighted
+      columns; every node sits on one baseline and the connectors run between
+      their centres.
+    * Vertical puts the heading in a left column and runs the flow down the
+      full height of the safe area beside it, so even eight steps keep real
+      distance between nodes. Rows are equal-height (flex: 1 1 0).
+    * Node diameter, connector gap and type sizes come from a per-count table,
+      and any block that still would not fit is stepped down 2px at a time
+      until the CONTAINER stops overflowing.
+
+
+  ---------------------------------------------------------------------------
+  ICONS
+  ---------------------------------------------------------------------------
+
+  A step's optional `icon` names a glyph in the plugin's shared icon library at
+  grammar/icons/<name>.svg (86 icons, every fill normalised to `currentColor`).
+
+  THE BUILDER DOES NOT INLINE THOSE FILES. This template therefore never has
+  the artwork unless the caller hands it over in the data, and it must NOT try
+  to fetch it: there is no network, and a file:// fetch of a sibling path is
+  blocked under the render's file-scoped origin. Any such attempt would either
+  throw or - worse - render an empty node on some frames and not others,
+  destroying determinism.
+
+  So the icon is resolved from the data only, in this order:
+
+    1. step.iconSvg          - raw <svg> markup for this step, or
+    2. data.icons[step.icon] - a { "<name>": "<svg .../>" } map supplied once
+                               for the whole scene.
+
+  If neither is present (the normal case today), the node degrades to:
+
+    3. the step number, when `numbered` is not false, else
+    4. a filled dot in the node's own accent ink (--accent-text on a plain
+       node, --ink-on-accent on the emphasised one, so it never disappears).
+
+  When markup IS supplied it is never inserted into the document. It is
+  percent-encoded into a data: URI and used as a CSS mask, with the node's own
+  ink painted through it. That keeps the authored payload out of the DOM - the
+  same reason the rest of this template reads its data with textContent and
+  never innerHTML - while still letting the glyph take the node's colour. If
+  the engine cannot do masks, or the string is not an <svg>, the node falls
+  back to 3/4 above.
+
+
+  ---------------------------------------------------------------------------
+  TIMING  (all derived from t, nothing from the wall clock)
+  ---------------------------------------------------------------------------
+
+  With n steps and unit = 0.8 / n, step i occupies:
+
+    node i        start i*unit             span 0.56*unit   (1.45x if emphasised)
+    label i       start i*unit             span 0.56*unit
+    body i        start i*unit + 0.05      span 0.18
+    connector i   start i*unit + 0.56*unit span 0.38*unit
+                  -> ends at i*unit + 0.94*unit, a clear 0.06*unit before
+                     node i+1 begins at (i+1)*unit.
+
+  The node scales from 0.85 (0.80 when emphasised) under a damped ease-out
+  with exactly one small overshoot inside the span - a settle, not a spring -
+  while its opacity rises on a plain cubic so it never flickers. An emphasised
+  step takes 1.45x as long to settle and carries the accent fill plus a ring,
+  so it reads as the important one.
+
+  The last thing to finish is the final step's body at 0.8 - unit + 0.23,
+  which is < 1.0 for every supported n. Everything is settled and static at
+  t = 1.0, with every node and every connector at full opacity.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden;
+    background: var(--surface-light);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ---- surfaces: only ever reference role tokens ------------------------ */
+  html[data-surface="light"] {
+    --bg: var(--surface-light);   --fg: var(--ink-on-light);
+    --muted: var(--ink-soft);     --chip-bg: var(--surface-tint);
+    --acc: var(--accent-text);
+  }
+  html[data-surface="tint"] {
+    --bg: var(--surface-tint);    --fg: var(--ink-on-tint);
+    --muted: var(--ink-soft);     --chip-bg: var(--surface-light);
+    --acc: var(--accent-text);
+  }
+
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    display: flex; flex-direction: column;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-regular), var(--font-fallback);
+
+    /* geometry, overwritten from JS once the step count is known */
+    --node: 136px;
+    --cgap: 24px;
+    --conn-w: 6px;
+    --label-size: 29px;
+    --body-size: 22px;
+    --ring-off: calc(var(--node) * -0.105);
+  }
+
+  #logo {
+    flex: none; height: 58px;
+    width: calc(58px * var(--logo-primary-aspect, 4.85));
+    background-image: var(--logo-primary, none);
+    background-size: contain; background-repeat: no-repeat;
+    background-position: left center;
+  }
+
+  #content {
+    flex: 1 1 auto; min-height: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 36px 0 8px 0;
+  }
+  /* Vertical runs the flow down the full height of the safe area with the
+     heading beside it, so tall step counts still get room between nodes. */
+  #content.split {
+    flex-direction: row; align-items: stretch; justify-content: flex-start;
+    gap: 64px;
+  }
+  #content.split #head { flex: 0 0 38%; align-self: center; }
+  #content.split .title { font-size: 56px; }
+  /* Rows are tighter than columns, so the emphasis ring is drawn closer in. */
+  #content.split { --ring-off: calc(var(--node) * -0.075); }
+  /* #flow is an id, so this has to be at least as specific to win. */
+  #content.split #flow { margin-top: 0; }
+
+  #head { flex: none; }
+  .eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--acc);
+  }
+  .title {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 66px; line-height: 1.1; letter-spacing: -.02em;
+    margin-top: 16px; max-width: 1480px;
+  }
+  .rule {
+    height: 6px; width: 180px; background: var(--acc);
+    margin-top: 24px; transform-origin: left center;
+  }
+
+  #footer {
+    flex: none; min-height: 34px;
+    font-size: 22px; line-height: 1.3; color: var(--muted); opacity: .75;
+  }
+
+  /* ---- the flow --------------------------------------------------------- */
+  #flow { margin-top: 54px; }
+
+  .step { position: relative; min-width: 0; }
+
+  .node-wrap { flex: none; }
+  .node {
+    position: relative;
+    width: var(--node); height: var(--node); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--chip-bg);
+    border: 2px solid var(--rule);
+    color: var(--acc);
+  }
+  .node.is-emph {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--ink-on-accent);
+  }
+  /* The ring reaches |--ring-off| + 3px past the node edge, and every --cgap
+     in the geometry tables is at least 4px wider than that, so a connector
+     never runs into the ring. */
+  .ring {
+    position: absolute; inset: var(--ring-off);
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    opacity: .42;
+  }
+
+  .num {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: calc(var(--node) * 0.36); line-height: 1;
+    letter-spacing: -.02em;
+  }
+  .glyph {
+    width: calc(var(--node) * 0.44); height: calc(var(--node) * 0.44);
+    background-color: currentColor;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center;  mask-position: center;
+    -webkit-mask-size: contain;     mask-size: contain;
+  }
+  .dot {
+    width: calc(var(--node) * 0.26); height: calc(var(--node) * 0.26);
+    border-radius: 50%; background: currentColor;
+  }
+
+  .conn { position: absolute; background: var(--accent); }
+
+  .label {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: var(--label-size); line-height: 1.22; letter-spacing: -.01em;
+    color: var(--fg);
+  }
+  .body {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: var(--body-size); line-height: 1.4;
+    color: var(--muted); margin-top: 10px;
+  }
+
+  /* ---- horizontal ------------------------------------------------------- */
+  .flow-h { display: flex; align-items: flex-start; }
+  .flow-h .step {
+    flex: 1 1 0;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 0 22px;
+  }
+  .flow-h .node-wrap { height: var(--node); }
+  .flow-h .txt { margin-top: 30px; width: 100%; }
+  .flow-h .conn {
+    top: calc(var(--node) / 2 - var(--conn-w) / 2);
+    left: calc(50% + var(--node) / 2 + var(--cgap));
+    width: calc(100% - var(--node) - var(--cgap) * 2);
+    height: var(--conn-w);
+    transform-origin: left center;
+  }
+
+  /* ---- vertical --------------------------------------------------------- */
+  .flow-v {
+    display: flex; flex-direction: column;
+    flex: 1 1 auto; min-width: 0; min-height: 0;
+  }
+  .flow-v .step {
+    flex: 1 1 0; min-height: 0;
+    display: flex; align-items: flex-start; gap: 34px;
+  }
+  .flow-v .node-wrap { width: var(--node); height: var(--node); }
+  .flow-v .num { font-size: calc(var(--node) * 0.40); }
+  .flow-v .glyph { width: calc(var(--node) * 0.50); height: calc(var(--node) * 0.50); }
+  .flow-v .txt {
+    flex: 1 1 auto; min-width: 0; min-height: var(--node);
+    display: flex; flex-direction: column; justify-content: center;
+    padding-right: 24px;
+  }
+  .flow-v .conn {
+    left: calc(var(--node) / 2 - var(--conn-w) / 2);
+    top: calc(var(--node) + var(--cgap));
+    height: calc(100% - var(--node) - var(--cgap) * 2);
+    width: var(--conn-w);
+    transform-origin: center top;
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="logo"></div>
+    <div id="content">
+      <div id="head"></div>
+      <div id="flow"></div>
+    </div>
+    <div id="footer"></div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+
+  // ---- deterministic animation clock -------------------------------------
+  function queryT() {
+    var match = /[?&]t=([^&]*)/.exec(String(window.location.search || ""));
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+
+  // A damped ease-out for the node pop: exactly one small overshoot inside
+  // the span, then still. damp(0) === 1 and damp(1) === 0 exactly, so the
+  // scale lands on 1 with no step at the clamp boundary. Deliberately not a
+  // spring - a second bounce would read as playful, which this beat is not.
+  var DAMP_K = Math.exp(-3.6) * Math.cos(5.6);
+  function damp(x) {
+    if (x <= 0) { return 1; }
+    if (x >= 1) { return 0; }
+    return Math.exp(-3.6 * x) * Math.cos(5.6 * x) - x * DAMP_K;
+  }
+
+  function el(tag, cls) {
+    var node = document.createElement(tag);
+    if (cls) { node.className = cls; }
+    return node;
+  }
+  function text(tag, cls, value) {
+    var node = el(tag, cls);
+    // textContent, never innerHTML: the payload is authored content and must
+    // not be able to inject markup.
+    node.textContent = String(value === undefined || value === null ? "" : value);
+    return node;
+  }
+  function list(value) {
+    return Object.prototype.toString.call(value) === "[object Array]" ? value : [];
+  }
+  function anim(node, kind, start, span, from) {
+    node.setAttribute("data-anim", kind);
+    node.setAttribute("data-start", String(start));
+    node.setAttribute("data-span", String(span <= 0 ? 0.0001 : span));
+    if (from !== undefined) { node.setAttribute("data-from", String(from)); }
+    return node;
+  }
+
+  // ---- surface ------------------------------------------------------------
+  var surface = String(D.surface || "light");
+  if (surface !== "light" && surface !== "tint") { surface = "light"; }
+  document.documentElement.setAttribute("data-surface", surface);
+
+  // ---- steps, orientation, geometry --------------------------------------
+  var MAX_STEPS = 8;
+  var MAX_HORIZONTAL = 5;
+
+  var steps = list(D.steps).map(function (item) {
+    if (item && typeof item === "object") {
+      return { label: item.label, body: item.body, icon: item.icon, iconSvg: item.iconSvg };
+    }
+    return { label: item, body: "", icon: null, iconSvg: null };
+  });
+
+  if (steps.length > MAX_STEPS) {
+    console.warn("process-flow: " + steps.length + " steps supplied; only the first " +
+                 MAX_STEPS + " fit the canvas legibly - dropping the rest.");
+    steps = steps.slice(0, MAX_STEPS);
+  }
+
+  var orientation = String(D.orientation || "horizontal");
+  if (orientation !== "horizontal" && orientation !== "vertical") {
+    console.warn("process-flow: unknown orientation " + JSON.stringify(D.orientation) +
+                 " - falling back to horizontal.");
+    orientation = "horizontal";
+  }
+  if (orientation === "horizontal" && steps.length > MAX_HORIZONTAL) {
+    console.warn("process-flow: " + steps.length + " steps do not read horizontally " +
+                 "(max " + MAX_HORIZONTAL + ") - falling back to vertical.");
+    orientation = "vertical";
+  }
+
+  var n = steps.length;
+
+  // [node diameter, connector gap, label px, body px] by orientation and count.
+  // Every gap clears the emphasis ring (|--ring-off| + 3px) by at least 4px,
+  // so a connector never collides with it.
+  var GEOM_H = {
+    1: [176, 32, 38, 26], 2: [168, 30, 36, 25], 3: [160, 28, 34, 24],
+    4: [148, 26, 31, 23], 5: [136, 24, 29, 22]
+  };
+  var GEOM_V = {
+    1: [120, 20, 38, 26], 2: [108, 18, 36, 26], 3: [100, 16, 34, 25],
+    4: [92, 15, 32, 24],  5: [84, 14, 30, 23],  6: [78, 13, 29, 22],
+    7: [72, 13, 27, 21],  8: [62, 12, 25, 20]
+  };
+  var geom = (orientation === "horizontal" ? GEOM_H : GEOM_V)[n] ||
+             (orientation === "horizontal" ? GEOM_H[5] : GEOM_V[8]);
+
+  var stage = document.getElementById("stage");
+  stage.style.setProperty("--node", geom[0] + "px");
+  stage.style.setProperty("--cgap", geom[1] + "px");
+  stage.style.setProperty("--conn-w", "6px");
+  stage.style.setProperty("--label-size", geom[2] + "px");
+  stage.style.setProperty("--body-size", geom[3] + "px");
+
+  var numbered = D.numbered !== false;
+
+  var emphasis = -1;
+  if (D.emphasis !== undefined && D.emphasis !== null) {
+    var raw = Number(D.emphasis);
+    if (isFinite(raw) && Math.floor(raw) === raw && raw >= 0 && raw < n) {
+      emphasis = raw;
+    } else {
+      console.warn("process-flow: emphasis " + JSON.stringify(D.emphasis) +
+                   " is not a 0-based index into " + n + " step(s) - ignoring.");
+    }
+  }
+
+  // ---- timing -------------------------------------------------------------
+  var unit = 0.8 / Math.max(1, n);
+  var NODE_SPAN = unit * 0.56;
+  var CONN_LEAD = unit * 0.56;   // connector leaves as its node settles ...
+  var CONN_SPAN = unit * 0.38;   // ... and lands before the next node starts
+  var BODY_LAG = 0.05;
+  var BODY_SPAN = 0.18;
+  var EMPH_MULT = 1.45;          // the emphasised node settles fractionally later
+
+  // ---- icons: data only, never a fetch ------------------------------------
+  var iconMap = (D.icons && typeof D.icons === "object") ? D.icons : {};
+  var MASKS_OK = (function () {
+    if (typeof window.CSS !== "object" || !window.CSS || !window.CSS.supports) { return false; }
+    return window.CSS.supports("mask-image", "url(#a)") ||
+           window.CSS.supports("-webkit-mask-image", "url(#a)");
+  }());
+
+  function iconSvgFor(step) {
+    var raw = step.iconSvg || (step.icon ? iconMap[String(step.icon)] : null);
+    if (typeof raw !== "string") { return null; }
+    var trimmed = raw.replace(/^\s+/, "");
+    if (trimmed.slice(0, 4).toLowerCase() !== "<svg") { return null; }
+    if (/<\s*script/i.test(trimmed)) { return null; }
+    return trimmed;
+  }
+
+  function glyphFor(step, index) {
+    var svg = iconSvgFor(step);
+    if (svg && MASKS_OK) {
+      // Percent-encoded into a mask, so the authored markup is only ever an
+      // isolated image - it never enters this document.
+      var uri = 'url("data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '")';
+      var g = el("span", "glyph");
+      g.style.setProperty("-webkit-mask-image", uri);
+      g.style.setProperty("mask-image", uri);
+      return g;
+    }
+    if (step.icon && !svg) {
+      console.warn("process-flow: no inline SVG supplied for icon " +
+                   JSON.stringify(step.icon) + " (the builder does not inline " +
+                   "grammar/icons/*.svg) - using the " +
+                   (numbered ? "step number" : "accent dot") + " instead.");
+    }
+    if (numbered) { return text("span", "num", index + 1); }
+    return el("span", "dot");
+  }
+
+  // ---- build --------------------------------------------------------------
+  var content = document.getElementById("content");
+  var head = document.getElementById("head");
+  var flow = document.getElementById("flow");
+  var footer = document.getElementById("footer");
+  var logo = document.getElementById("logo");
+
+  if (D.logo === false) { logo.style.display = "none"; }
+  else { anim(logo, "fade", 0, 0.3); }
+
+  if (D.eyebrow) { head.appendChild(anim(text("div", "eyebrow", D.eyebrow), "rise", 0.02, 0.34)); }
+  if (D.title) { head.appendChild(anim(text("div", "title", D.title), "rise", 0.07, 0.36)); }
+  if (D.rule !== false) { head.appendChild(anim(el("div", "rule"), "grow-x", 0.14, 0.4)); }
+
+  flow.className = orientation === "horizontal" ? "flow-h" : "flow-v";
+  if (orientation === "vertical") { content.className = "split"; }
+
+  steps.forEach(function (step, i) {
+    var start = i * unit;
+    var isEmph = i === emphasis;
+
+    var row = el("div", "step");
+
+    var wrap = el("div", "node-wrap");
+    var node = el("div", "node" + (isEmph ? " is-emph" : ""));
+    if (isEmph) { node.appendChild(anim(el("div", "ring"), "fade", start + NODE_SPAN * 0.5, NODE_SPAN)); }
+    node.appendChild(glyphFor(step, i));
+    anim(node, "pop", start, isEmph ? NODE_SPAN * EMPH_MULT : NODE_SPAN, isEmph ? 0.8 : 0.85);
+    wrap.appendChild(node);
+    row.appendChild(wrap);
+
+    // The connector leaves step i only once step i has settled, and lands a
+    // clear 0.06*unit before step i+1 begins. Ordering is the whole point.
+    if (i < n - 1) {
+      var conn = el("div", "conn");
+      anim(conn, orientation === "horizontal" ? "grow-x" : "grow-y",
+           start + CONN_LEAD, CONN_SPAN);
+      row.appendChild(conn);
+    }
+
+    var txt = el("div", "txt");
+    if (step.label) {
+      txt.appendChild(anim(text("div", "label", step.label), "rise", start, NODE_SPAN));
+    }
+    if (step.body) {
+      txt.appendChild(anim(text("div", "body", step.body), "rise", start + BODY_LAG, BODY_SPAN));
+    }
+    row.appendChild(txt);
+
+    flow.appendChild(row);
+  });
+
+  if (D.footer) {
+    footer.textContent = String(D.footer);
+    anim(footer, "fade", 0.55, 0.4);
+  } else {
+    footer.style.display = "none";
+  }
+
+  // ---- fit ----------------------------------------------------------------
+  //
+  // Only the CONTAINER is measured. A text block's own scrollHeight is never a
+  // usable signal here: Poppins' ascenders and descenders ink-overflow a tight
+  // line-height, so scrollHeight exceeds clientHeight on every heading whether
+  // or not anything is actually too big.
+  function baseSize(node) {
+    var recorded = node.getAttribute("data-base-size");
+    if (recorded === null) {
+      recorded = String(parseFloat(window.getComputedStyle(node).fontSize) || 0);
+      node.setAttribute("data-base-size", recorded);
+    }
+    return parseFloat(recorded);
+  }
+
+  function overflows() {
+    return content.scrollHeight > content.clientHeight + 6 ||
+           stage.scrollHeight > stage.clientHeight + 6;
+  }
+
+  function fit(node, floorPx) {
+    if (!node) { return; }
+    var size = baseSize(node);
+    node.style.fontSize = size + "px";
+    var guard = 0;
+    while (size > floorPx && guard < 60) {
+      if (!overflows() && node.scrollWidth <= node.clientWidth + 2) { break; }
+      size -= 2;
+      node.style.fontSize = size + "px";
+      guard += 1;
+    }
+  }
+
+  function fitGroup(nodes, floorPx) {
+    if (!nodes.length) { return; }
+    var size = baseSize(nodes[0]);
+    var i, guard = 0;
+    for (i = 0; i < nodes.length; i += 1) { nodes[i].style.fontSize = size + "px"; }
+    while (size > floorPx && guard < 60) {
+      if (!overflows()) { break; }
+      size -= 1;
+      for (i = 0; i < nodes.length; i += 1) { nodes[i].style.fontSize = size + "px"; }
+      guard += 1;
+    }
+  }
+
+  function toArray(nodeList) {
+    var out = [], i;
+    for (i = 0; i < nodeList.length; i += 1) { out.push(nodeList[i]); }
+    return out;
+  }
+
+  function fitAll() {
+    fit(stage.querySelector(".title"), 36);
+    fitGroup(toArray(stage.querySelectorAll(".body")), 15);
+    fitGroup(toArray(stage.querySelectorAll(".label")), 18);
+  }
+
+  // ---- apply the frame ----------------------------------------------------
+  function applyFrame() {
+    var nodes = stage.querySelectorAll("[data-anim]");
+    for (var i = 0; i < nodes.length; i += 1) {
+      var node = nodes[i];
+      var start = parseFloat(node.getAttribute("data-start")) || 0;
+      var span = parseFloat(node.getAttribute("data-span")) || 0.3;
+      var x = clamp((T - start) / span);
+      var p = easeOut(x);
+      var kind = node.getAttribute("data-anim");
+
+      if (kind === "grow-x") {
+        node.style.opacity = "1";
+        node.style.transform = "scaleX(" + p.toFixed(4) + ")";
+      } else if (kind === "grow-y") {
+        node.style.opacity = "1";
+        node.style.transform = "scaleY(" + p.toFixed(4) + ")";
+      } else if (kind === "pop") {
+        var from = parseFloat(node.getAttribute("data-from"));
+        if (!isFinite(from)) { from = 0.85; }
+        node.style.opacity = p.toFixed(4);
+        node.style.transform = "scale(" + (1 + (from - 1) * damp(x)).toFixed(4) + ")";
+      } else if (kind === "fade") {
+        node.style.opacity = p.toFixed(4);
+      } else {
+        node.style.opacity = p.toFixed(4);
+        node.style.transform = "translateY(" + ((1 - p) * 26).toFixed(2) + "px)";
+      }
+    }
+  }
+
+  function render() { fitAll(); applyFrame(); }
+
+  render();
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>

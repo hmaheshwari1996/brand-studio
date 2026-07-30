@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "brands": [
+    {
+      "id": "channelplay",
+      "name": "Channelplay",
+      "aliases": ["channel play", "cp", "channelplay technologies"],
+      "kind": "house",
+      "updated": "2026-07-30",
+      "path": "brands/channelplay"
+    }
+  ]
+}

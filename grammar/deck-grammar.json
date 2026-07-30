@@ -1,0 +1,337 @@
+{
+  "$comment": "Brand-agnostic deck geometry. Extracted from Channelplay Deck Template 3.pptx (28 slides) and generalised. Units are INCHES on a 13.333x7.5in canvas. Contains NO colour and NO font family - those come from the brand profile. This file is reused unchanged for every brand.",
+  "version": "1.0.0",
+  "source": "Channelplay Deck Template  3.pptx",
+  "extracted": "2026-07-30",
+
+  "canvas": { "w": 13.333, "h": 7.5, "ratio": "16:9", "emuPerInch": 914400 },
+
+  "grid": {
+    "gutterLeft": 0.869,
+    "gutterRight": 0.869,
+    "contentLeft": 0.869,
+    "contentRight": 12.464,
+    "contentWidth": 11.595,
+    "bleedLeft": 0.41,
+    "bleedWidth": 12.513,
+    "columns": 12,
+    "columnGap": 0.28,
+    "columnWidth": 0.7325,
+    "$columnFormula": "x(n) = contentLeft + n*(columnWidth+columnGap); width(span) = span*columnWidth + (span-1)*columnGap"
+  },
+
+  "spacingScale": [0.042, 0.083, 0.125, 0.167, 0.25, 0.333, 0.5, 0.667, 0.833, 1.0],
+  "$spacingNote": "Inches, equivalent to the 4px base unit at 96dpi: 4,8,12,16,24,32,48,64,80,96px.",
+
+  "radius": { "sm": 0.042, "md": 0.083, "lg": 0.125, "xl": 0.208, "panel": 0.28 },
+
+  "chrome": {
+    "$note": "Applied to every content archetype. Cover and section-break opt out via 'chrome': false.",
+    "headerRule":  { "x": 0.0,   "y": 0.961, "w": 13.333, "h": 0.0,   "kind": "line", "role": "divider" },
+    "logo":        { "x": 0.869, "y": 0.300, "w": 1.397,  "h": 0.288, "kind": "image", "role": "logo", "anchor": "top-left" },
+    "eyebrow":     { "x": 8.900, "y": 0.359, "w": 3.564,  "h": 0.303, "kind": "text", "role": "eyebrow", "align": "right" },
+    "title":       { "x": 0.869, "y": 1.215, "w": 10.342, "h": 0.640, "kind": "text", "role": "title" },
+    "deck":        { "x": 0.869, "y": 1.780, "w": 11.110, "h": 0.780, "kind": "text", "role": "subtitle", "optional": true },
+    "footerBand":  { "x": 0.0,   "y": 7.257, "w": 13.333, "h": 0.243, "kind": "rect", "role": "accent" },
+    "pageNumber":  { "x": 12.10, "y": 6.95,  "w": 0.60,   "h": 0.25,  "kind": "text", "role": "caption", "align": "right", "optional": true },
+    "contentTop": 2.100,
+    "contentTopNoDeck": 2.100,
+    "contentTopWithDeck": 2.700,
+    "contentBottom": 6.950
+  },
+
+  "archetypes": [
+    {
+      "id": "cover",
+      "name": "Cover",
+      "use": "Slide 1 only. Deck title and client name.",
+      "chrome": false,
+      "regions": {
+        "panel":    { "x": 0.24, "y": 0.31, "w": 12.82, "h": 6.86, "kind": "rect", "radius": "panel", "role": "hero" },
+        "logo":     { "x": 1.07, "y": 1.92, "w": 1.910, "h": 0.394, "kind": "image", "role": "logo", "onDark": true },
+        "rule":     { "x": 1.04, "y": 2.95, "w": 7.17,  "h": 0.0,   "kind": "line", "role": "divider", "onDark": true },
+        "title":    { "x": 0.86, "y": 3.44, "w": 10.93, "h": 1.92,  "kind": "text", "role": "cover", "onDark": true },
+        "subtitle": { "x": 0.86, "y": 5.45, "w": 8.00,  "h": 0.60,  "kind": "text", "role": "subtitle", "onDark": true, "optional": true },
+        "meta":     { "x": 0.86, "y": 6.20, "w": 6.00,  "h": 0.40,  "kind": "text", "role": "caption", "onDark": true, "optional": true }
+      },
+      "capacity": { "title": 70, "subtitle": 110, "meta": 60 }
+    },
+    {
+      "id": "agenda",
+      "name": "Agenda / Navigation",
+      "use": "Chapter map after the cover. 4-8 chapters in two columns.",
+      "chrome": true,
+      "regions": {
+        "visual":  { "x": -0.01, "y": 0.00, "w": 3.94, "h": 7.50, "kind": "image", "role": "sidePanel", "optional": true },
+        "listA":   { "x": 4.58,  "y": 2.90, "w": 3.82, "h": 3.40, "kind": "numberedList", "role": "list", "itemHeight": 1.00, "maxItems": 4 },
+        "listB":   { "x": 8.79,  "y": 2.90, "w": 3.82, "h": 3.40, "kind": "numberedList", "role": "list", "itemHeight": 1.00, "maxItems": 4 }
+      },
+      "itemSpec": {
+        "badge": { "w": 0.31, "h": 0.31, "kind": "circle", "role": "badge" },
+        "label": { "dx": 0.61, "w": 3.21, "h": 0.34, "kind": "text", "role": "label" }
+      },
+      "capacity": { "label": 44, "totalItems": 8 }
+    },
+    {
+      "id": "index",
+      "name": "Index",
+      "use": "Single-column numbered contents with a vertical rule.",
+      "chrome": true,
+      "regions": {
+        "rule":  { "x": 2.58, "y": 0.961, "w": 0.0,  "h": 6.54, "kind": "line", "role": "divider" },
+        "label": { "x": 0.00, "y": 3.24, "w": 2.40, "h": 1.72, "kind": "text", "role": "section", "align": "right" },
+        "list":  { "x": 3.27, "y": 2.20, "w": 4.00, "h": 4.20, "kind": "numberedList", "role": "list", "itemHeight": 0.835, "maxItems": 6 }
+      },
+      "itemSpec": {
+        "badge": { "w": 0.31, "h": 0.31, "kind": "circle", "role": "badge" },
+        "label": { "dx": 0.61, "w": 3.21, "h": 0.34, "kind": "text", "role": "label" }
+      },
+      "capacity": { "label": 44, "totalItems": 6 }
+    },
+    {
+      "id": "section-break",
+      "name": "Section separator",
+      "use": "Divides chapters. Full-bleed panel with a large section title.",
+      "chrome": false,
+      "regions": {
+        "panel":    { "x": 0.87, "y": 1.83, "w": 11.60, "h": 5.25, "kind": "rect", "radius": "panel", "role": "hero" },
+        "logo":     { "x": 1.54, "y": 1.08, "w": 1.910, "h": 0.394, "kind": "image", "role": "logo" },
+        "title":    { "x": 1.40, "y": 2.49, "w": 5.44,  "h": 2.52, "kind": "text", "role": "section", "onDark": true },
+        "kicker":   { "x": 1.40, "y": 5.31, "w": 5.10,  "h": 0.98, "kind": "text", "role": "body", "onDark": true, "optional": true },
+        "art":      { "x": 7.37, "y": 1.11, "w": 5.91,  "h": 6.42, "kind": "image", "role": "art", "optional": true }
+      },
+      "capacity": { "title": 60, "kicker": 180 }
+    },
+    {
+      "id": "title-body",
+      "name": "Title and body",
+      "use": "Plain narrative slide. One idea, one block of prose.",
+      "chrome": true,
+      "regions": {
+        "body": { "x": 0.869, "y": 2.10, "w": 11.595, "h": 4.85, "kind": "text", "role": "body" }
+      },
+      "capacity": { "body": 900 }
+    },
+    {
+      "id": "text-visual",
+      "name": "Text left, visual right",
+      "use": "Narrative paired with a chart, table, image or diagram.",
+      "chrome": true,
+      "regions": {
+        "body":   { "x": 0.869, "y": 2.10, "w": 3.23,  "h": 4.85, "kind": "text",   "role": "body" },
+        "visual": { "x": 4.480, "y": 2.10, "w": 7.984, "h": 4.85, "kind": "visual", "role": "visual" }
+      },
+      "capacity": { "body": 620 }
+    },
+    {
+      "id": "visual-text",
+      "name": "Visual left, text right",
+      "use": "Mirror of text-visual. Alternate between them to avoid a monotonous deck.",
+      "chrome": true,
+      "regions": {
+        "visual": { "x": 0.869, "y": 2.10, "w": 6.43, "h": 4.85, "kind": "visual", "role": "visual" },
+        "body":   { "x": 7.520, "y": 2.10, "w": 4.944, "h": 4.85, "kind": "text",  "role": "body" }
+      },
+      "capacity": { "body": 780 }
+    },
+    {
+      "id": "icon-grid",
+      "name": "Icon grid",
+      "use": "2x2 or 3x2 capability/benefit grid. Icon, subtitle, one-line body per cell.",
+      "chrome": true,
+      "regions": {
+        "intro": { "x": 0.869, "y": 2.10, "w": 2.99, "h": 4.32, "kind": "text", "role": "body", "optional": true },
+        "grid":  { "x": 4.460, "y": 2.10, "w": 8.004, "h": 4.85, "kind": "grid", "role": "grid",
+                   "cols": 2, "rows": 2, "colGap": 0.55, "rowGap": 0.60 }
+      },
+      "cellSpec": {
+        "icon":     { "w": 0.36, "h": 0.36, "kind": "image", "role": "icon" },
+        "halo":     { "w": 0.45, "h": 0.45, "kind": "circle", "role": "badge", "behind": true },
+        "subtitle": { "dx": 0.64, "dy": 0.02, "w": 2.70, "h": 0.50, "kind": "text", "role": "cardTitle" },
+        "body":     { "dx": 0.64, "dy": 0.46, "w": 2.98, "h": 0.72, "kind": "text", "role": "bodySmall" }
+      },
+      "capacity": { "intro": 520, "subtitle": 60, "body": 130, "cells": 6 }
+    },
+    {
+      "id": "icon-rows",
+      "name": "Icon rows",
+      "use": "Stacked list of 3-4 points, each with an icon and a divider between rows.",
+      "chrome": true,
+      "regions": {
+        "intro": { "x": 0.869, "y": 1.85, "w": 6.97, "h": 0.68, "kind": "text", "role": "subtitle", "optional": true },
+        "rows":  { "x": 0.869, "y": 2.70, "w": 6.00, "h": 4.25, "kind": "rowList", "role": "list", "rowHeight": 1.53, "maxRows": 4 },
+        "visual":{ "x": 7.520, "y": 2.10, "w": 4.944, "h": 4.85, "kind": "visual", "role": "visual", "optional": true }
+      },
+      "rowSpec": {
+        "icon":     { "w": 0.36, "h": 0.36, "kind": "image", "role": "icon" },
+        "halo":     { "w": 0.45, "h": 0.45, "kind": "circle", "role": "badge", "behind": true },
+        "subtitle": { "dx": 0.63, "dy": 0.02, "w": 4.53, "h": 0.30, "kind": "text", "role": "cardTitle" },
+        "body":     { "dx": 0.63, "dy": 0.36, "w": 5.29, "h": 0.72, "kind": "text", "role": "bodySmall" },
+        "divider":  { "dx": 0.63, "dy": 1.28, "w": 5.25, "h": 0.0,  "kind": "line", "role": "divider" }
+      },
+      "capacity": { "intro": 190, "subtitle": 70, "body": 140, "rows": 4 }
+    },
+    {
+      "id": "columns",
+      "name": "Parallel columns",
+      "use": "3 or 4 equal columns comparing options, phases or offerings.",
+      "chrome": true,
+      "regions": {
+        "intro":   { "x": 0.869, "y": 1.85, "w": 11.595, "h": 0.68, "kind": "text", "role": "subtitle", "optional": true },
+        "columns": { "x": 0.869, "y": 3.10, "w": 11.595, "h": 3.85, "kind": "columnSet", "role": "columns",
+                     "count": 4, "gap": 0.41 }
+      },
+      "columnSpec": {
+        "subtitle": { "h": 0.42, "kind": "text", "role": "cardTitle" },
+        "body":     { "dy": 0.48, "h": 2.85, "kind": "text", "role": "bodySmall" },
+        "accent":   { "h": 0.03, "kind": "rect", "role": "accent", "optional": true }
+      },
+      "capacity": { "intro": 190, "subtitle": 44, "body": 320, "columns": 4 }
+    },
+    {
+      "id": "steps",
+      "name": "Numbered steps",
+      "use": "Sequential process, 3-5 steps as numbered cards.",
+      "chrome": true,
+      "regions": {
+        "canvas": { "x": 0.869, "y": 2.30, "w": 11.595, "h": 4.65, "kind": "stepSet", "role": "steps",
+                    "count": 4, "cols": 2, "rows": 2, "colGap": 0.42, "rowGap": 0.50 }
+      },
+      "stepSpec": {
+        "icon":   { "w": 0.41, "h": 0.41, "kind": "image", "role": "icon" },
+        "number": { "dy": 0.55, "h": 0.30, "kind": "text", "role": "cardTitle" },
+        "body":   { "dy": 0.88, "h": 1.08, "kind": "text", "role": "bodySmall" }
+      },
+      "capacity": { "number": 46, "body": 190, "steps": 5 }
+    },
+    {
+      "id": "process-band",
+      "name": "Horizontal process band",
+      "use": "Linear flow of 4-6 stages across one band. Good for value chains.",
+      "chrome": true,
+      "$note": "The band sits at y=2.70 (contentTopWithDeck) rather than the template's 2.03. The source slide carried no subtitle; at 2.03 the band occludes the chrome deck line, which spans 1.78-2.56.",
+      "regions": {
+        "intro":  { "x": 0.869, "y": 1.85, "w": 11.595, "h": 0.68, "kind": "text", "role": "subtitle", "optional": true },
+        "band":   { "x": 0.410, "y": 2.70, "w": 12.513, "h": 2.38, "kind": "rect", "radius": "lg", "role": "surface" },
+        "stages": { "x": 0.869, "y": 2.97, "w": 11.595, "h": 3.90, "kind": "stageSet", "role": "stages",
+                    "count": 5, "gap": 0.30 }
+      },
+      "stageSpec": {
+        "icon":  { "w": 0.50, "h": 0.50, "kind": "image", "role": "icon" },
+        "label": { "dy": 0.62, "h": 0.40, "kind": "text", "role": "cardTitle" },
+        "body":  { "dy": 2.10, "h": 0.91, "kind": "text", "role": "caption" }
+      },
+      "capacity": { "label": 24, "body": 90, "stages": 6 }
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "use": "Structured comparison. Max 7 columns, max 10 body rows.",
+      "chrome": true,
+      "regions": {
+        "intro": { "x": 0.869, "y": 1.78, "w": 11.110, "h": 0.78, "kind": "text",  "role": "subtitle", "optional": true },
+        "table": { "x": 0.869, "y": 2.71, "w": 11.340, "h": 4.03, "kind": "table", "role": "table" }
+      },
+      "tableSpec": {
+        "headerHeight": 0.42,
+        "rowHeight": 0.34,
+        "cellPadX": 0.12,
+        "cellPadY": 0.06,
+        "maxCols": 7,
+        "maxRows": 10
+      },
+      "capacity": { "intro": 190, "cell": 60 }
+    },
+    {
+      "id": "stats",
+      "name": "Stat row",
+      "use": "3-5 headline metrics with captions. The proof slide.",
+      "chrome": true,
+      "regions": {
+        "intro": { "x": 0.869, "y": 1.85, "w": 11.595, "h": 0.68, "kind": "text", "role": "subtitle", "optional": true },
+        "stats": { "x": 0.869, "y": 3.00, "w": 11.595, "h": 2.60, "kind": "statSet", "role": "stats",
+                   "count": 4, "gap": 0.42 }
+      },
+      "statSpec": {
+        "value":   { "h": 0.72, "kind": "text", "role": "statNumber" },
+        "label":   { "dy": 0.80, "h": 0.34, "kind": "text", "role": "cardTitle" },
+        "caption": { "dy": 1.18, "h": 0.60, "kind": "text", "role": "caption" },
+        "rule":    { "dy": 1.90, "h": 0.0,  "kind": "line", "role": "divider", "optional": true }
+      },
+      "capacity": { "value": 10, "label": 32, "caption": 90, "stats": 5 }
+    },
+    {
+      "id": "quote",
+      "name": "Pull quote",
+      "use": "Client testimonial or a single decisive statement.",
+      "chrome": true,
+      "regions": {
+        "quote":     { "x": 1.60, "y": 2.60, "w": 10.13, "h": 2.60, "kind": "text", "role": "section" },
+        "attrib":    { "x": 1.60, "y": 5.45, "w": 7.00,  "h": 0.60, "kind": "text", "role": "label" },
+        "attribSub": { "x": 1.60, "y": 5.95, "w": 7.00,  "h": 0.40, "kind": "text", "role": "caption", "optional": true }
+      },
+      "capacity": { "quote": 220, "attrib": 50, "attribSub": 60 }
+    },
+    {
+      "id": "photo-trio",
+      "name": "Photo trio",
+      "use": "Three people or three scenes with name/title captions.",
+      "chrome": true,
+      "regions": {
+        "body":   { "x": 0.869, "y": 2.10, "w": 3.23, "h": 4.60, "kind": "text", "role": "body", "optional": true },
+        "photos": { "x": 4.780, "y": 2.11, "w": 7.684, "h": 4.01, "kind": "photoSet", "role": "photos",
+                    "count": 3, "gap": 0.39 }
+      },
+      "photoSpec": {
+        "image":   { "h": 4.01, "kind": "image", "role": "photo", "radius": "lg" },
+        "caption": { "dy": 4.15, "h": 0.66, "kind": "text", "role": "caption" }
+      },
+      "capacity": { "body": 620, "caption": 60, "photos": 3 }
+    },
+    {
+      "id": "full-bleed",
+      "name": "Full-bleed image",
+      "use": "Visual punctuation. Image edge to edge with an optional overlay title.",
+      "chrome": false,
+      "regions": {
+        "image":   { "x": 0.0, "y": 0.0, "w": 13.333, "h": 7.50, "kind": "image", "role": "photo" },
+        "scrim":   { "x": 0.0, "y": 4.20, "w": 13.333, "h": 3.30, "kind": "rect", "role": "scrim", "optional": true },
+        "logo":    { "x": 0.869, "y": 0.30, "w": 1.397, "h": 0.288, "kind": "image", "role": "logo", "onPhoto": true },
+        "title":   { "x": 0.869, "y": 5.30, "w": 9.00, "h": 0.90, "kind": "text", "role": "title", "onDark": true, "optional": true },
+        "caption": { "x": 0.869, "y": 6.25, "w": 9.00, "h": 0.50, "kind": "text", "role": "body", "onDark": true, "optional": true }
+      },
+      "capacity": { "title": 70, "caption": 140 }
+    },
+    {
+      "id": "closing",
+      "name": "Closing",
+      "use": "Final slide. Thank you plus one concrete next step and contact.",
+      "chrome": false,
+      "regions": {
+        "panel":  { "x": 0.24, "y": 0.31, "w": 12.82, "h": 6.86, "kind": "rect", "radius": "panel", "role": "hero" },
+        "logo":   { "x": 1.07, "y": 1.92, "w": 1.910, "h": 0.394, "kind": "image", "role": "logo", "onDark": true },
+        "rule":   { "x": 1.04, "y": 2.95, "w": 7.17, "h": 0.0, "kind": "line", "role": "divider", "onDark": true },
+        "title":  { "x": 0.86, "y": 3.44, "w": 10.93, "h": 1.20, "kind": "text", "role": "cover", "onDark": true },
+        "cta":    { "x": 0.86, "y": 4.80, "w": 8.00, "h": 0.60, "kind": "text", "role": "subtitle", "onDark": true },
+        "contact":{ "x": 0.86, "y": 5.60, "w": 8.00, "h": 1.00, "kind": "text", "role": "body", "onDark": true, "optional": true }
+      },
+      "capacity": { "title": 40, "cta": 90, "contact": 140 }
+    }
+  ],
+
+  "deckRules": {
+    "$note": "Structural rules the validator enforces regardless of brand.",
+    "mustOpenWith": "cover",
+    "mustCloseWith": ["closing", "full-bleed"],
+    "sectionBreakEveryNSlidesMax": 8,
+    "maxConsecutiveSameArchetype": 2,
+    "minSlides": 3,
+    "maxBulletsPerSlide": 6,
+    "maxWordsPerBullet": 18,
+    "maxTitleChars": 70,
+    "requireEyebrowOnContent": true,
+    "requireLogoOnCoverAndClosing": true,
+    "overflowTolerancePct": 2.0,
+    "overlapToleranceIn": 0.02
+  }
+}

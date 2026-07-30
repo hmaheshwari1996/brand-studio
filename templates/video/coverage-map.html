@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="en" data-surface="dark">
+<head>
+<meta charset="utf-8">
+<title>brand-studio coverage map</title>
+<!--
+  coverage-map — the SCALE beat of a brand story.
+
+  Points populate across a territory to show reach: "4,200 stores across 19
+  states". Self-contained by contract: every colour arrives as a CSS custom
+  property in the brand-vars block that build_video.py substitutes into the
+  marker below, and the brand face is registered there from local .ttf files
+  over file:// URLs. There is no network reference of any kind — no tiles, no
+  remote geodata, no CDN.
+
+  The two substitution markers are each spelled out exactly once, at their one
+  real site. write_scene_html replaces *every* occurrence, so naming a marker
+  again in prose would inject a second copy of the whole brand style block
+  into this comment.
+
+  There are no CSS animations or transitions. The frame's position in the
+  animation comes from the ?t=<0..1> query parameter, read synchronously at
+  parse time, so the same t always produces the same pixels. All scatter comes
+  from a seeded mulberry32 PRNG; Math.random() is never called.
+
+  ---------------------------------------------------------------------------
+  DATA CONTRACT  (visual.data for "template": "coverage-map")
+  ---------------------------------------------------------------------------
+  {
+    "regions": [                     // optional named clusters, each with its
+                                     // own count and position. Up to 8.
+      {"name": "North", "count": 1200, "x": 0.42, "y": 0.22},
+      {"name": "West",  "count": 900,  "x": 0.28, "y": 0.55}
+    ],
+    "points":  320,                  // dots to render. With regions, they are
+                                     // split between regions in proportion to
+                                     // each region's count. Default 320.
+    "seed":    7,                    // PRNG seed. The same seed always yields
+                                     // the identical scatter.
+    "outline": "india",              // "india" | "grid" | "none". Default "grid".
+    "headline": "4,200 stores",
+    "subhead":  "across 19 states",
+    "eyebrow":  "Outcome",
+    "surface":  "dark",              // "dark" | "brand" | "light". Default "dark".
+    "legend":   [{"label": "Covered daily", "tone": "accent"}]   // optional,
+                                     // tone: "accent" | "accent-2" | "muted"
+  }
+
+  Every field is optional. Unknown outline / surface values fall back to the
+  defaults above.
+
+  region.x / region.y are normalised 0..1 inside the PLOT RECT, whose origin is
+  top-left. The plot rect is the square the silhouette occupies in "india" mode
+  (sitting left of centre in the field, so outward-pushed region labels have
+  room), and the whole inset map field in "grid" / "none" mode.
+
+  ---------------------------------------------------------------------------
+  THE "india" OUTLINE IS A STYLISED MOTIF, NOT A MAP
+  ---------------------------------------------------------------------------
+  The India silhouette below is a hand-simplified low-poly polygon embedded
+  inline — 51 vertices standing in for a coastline of thousands. It
+  exists to be recognisable at a glance in a brand film, at speed, behind
+  moving dots. It is deliberately generalised and it takes no position on any
+  border, territorial claim or disputed boundary.
+
+  Do not use it anywhere geographic accuracy matters — no logistics view, no
+  reporting surface, no coverage claim a customer could measure against it, no
+  document with legal or regulatory weight. Those need real, licensed geodata.
+  This template will never fetch any, by design.
+
+  ---------------------------------------------------------------------------
+  ANIMATION TIMELINE (all derived from t; fully settled and static by t = 1)
+  ---------------------------------------------------------------------------
+    0.00 - 0.20   outline / graticule draws and fades in
+    0.00 - 0.28   logo fades in
+    0.05 - 0.27   eyebrow rises
+    0.18 - 0.78   dots populate. Each dot owns a PRNG-drawn threshold, so the
+                  fill reads organic rather than sweeping in a straight line.
+                  Each dot scales up from 0 with an ease-out plus a short
+                  overshoot, a brighter "pop" fill and an expanding halo ring
+                  that all settle to the resting colour. Every one of those is
+                  a pure function of that dot's local progress — no transition.
+                  With regions, region k's window is staggered after region k-1.
+    per region    the name fades in at 55% through its window; its count then
+                  counts up to the final value, thousands-separated.
+    0.56 - 0.72   legend
+    0.80 - 0.93   headline
+    0.86 - 0.98   subhead
+
+  PERFORMANCE: the rendered dot count is capped at 600 whatever the data says,
+  and the clamp is reported with console.warn. A headless Chrome screenshot of
+  thousands of nodes is slow and this file is re-rendered once per video frame.
+  Dots whose threshold has not been reached are not put in the DOM at all, so
+  early frames are cheaper still.
+-->
+{{BRAND_VARS}}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: var(--canvas-w); height: var(--canvas-h);
+    overflow: hidden;
+    background: var(--surface-dark);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ---- surfaces: every value resolves to a brand role token -------------
+     Accent is decorative here (dots, rules, swatches). The one place an
+     accent-family colour becomes text is the eyebrow, via --acc-text, which
+     resolves to --accent-text (mint 700) on light exactly as the brand rule
+     requires, and to --accent on the dark and brand surfaces where the README
+     sanctions it. No template ever hardcodes a hex. */
+  html[data-surface="dark"] {
+    --bg: var(--surface-dark);      --fg: var(--ink-on-dark);
+    --muted: var(--ink-on-dark);    --acc-text: var(--accent);
+    --dot: var(--accent);           --dot-2: var(--accent-2);
+    --pop: var(--ink-on-dark);      --map-line: var(--rule);
+    --map-line-op: .26;             --map-fill-op: .07;
+    --muted-op: .74;
+    --logo-url: var(--logo-reversed); --logo-aspect: var(--logo-reversed-aspect, 4.85);
+  }
+  html[data-surface="brand"] {
+    --bg: var(--surface-brand);     --fg: var(--ink-on-brand);
+    --muted: var(--ink-on-brand);   --acc-text: var(--accent);
+    --dot: var(--accent);           --dot-2: var(--accent-2);
+    --pop: var(--ink-on-brand);     --map-line: var(--rule);
+    --map-line-op: .30;             --map-fill-op: .09;
+    --muted-op: .76;
+    --logo-url: var(--logo-reversed); --logo-aspect: var(--logo-reversed-aspect, 4.85);
+  }
+  html[data-surface="light"] {
+    --bg: var(--surface-light);     --fg: var(--ink-on-light);
+    --muted: var(--ink-soft);       --acc-text: var(--accent-text);
+    --dot: var(--accent-2);         --dot-2: var(--accent-text);
+    --pop: var(--ink);              --map-line: var(--rule);
+    --map-line-op: 1;               --map-fill-op: .45;
+    --muted-op: 1;
+    --logo-url: var(--logo-primary); --logo-aspect: var(--logo-primary-aspect, 4.85);
+  }
+
+  #stage {
+    position: relative;
+    width: var(--canvas-w); height: var(--canvas-h);
+    padding: var(--safe-y) var(--safe-x);
+    display: flex; flex-direction: column;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-regular), var(--font-fallback);
+    overflow: hidden;
+  }
+
+  #logo {
+    flex: none; height: 58px;
+    width: calc(58px * var(--logo-aspect));
+    background-image: var(--logo-url);
+    background-size: contain; background-repeat: no-repeat;
+    background-position: left center;
+  }
+
+  #content {
+    flex: 1 1 auto; min-height: 0;
+    display: flex; align-items: center; gap: 64px;
+    padding: 34px 0 6px 0;
+  }
+
+  #side {
+    flex: 0 0 620px; min-width: 0; align-self: center;
+  }
+
+  #eyebrow {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--acc-text);
+  }
+  #headline {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 96px; line-height: 1.02; letter-spacing: -.025em;
+    margin-top: 26px;
+  }
+  #subhead {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 36px; line-height: 1.35; margin-top: 20px;
+    color: var(--muted); opacity: var(--muted-op);
+  }
+  #legend { margin-top: 44px; display: flex; flex-direction: column; gap: 16px; }
+  .leg {
+    display: flex; align-items: center; gap: 16px;
+    font-family: var(--font-regular), var(--font-fallback);
+    font-size: 24px; line-height: 1.3; color: var(--muted);
+  }
+  .leg .sw { flex: none; width: 16px; height: 16px; border-radius: 50%; }
+  .leg .sw.accent   { background: var(--dot); }
+  .leg .sw.accent-2 { background: var(--dot-2); }
+  .leg .sw.muted    { background: var(--map-line); }
+
+  #mapwrap {
+    flex: 1 1 auto; min-width: 0; align-self: stretch;
+    position: relative; overflow: hidden;
+  }
+  /* Backdrop lattice for "grid". Painted as a repeating background, so it
+     costs zero DOM nodes however dense it is. In "india" mode it is clipped
+     to the silhouette path. */
+  #field {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle,
+      var(--map-line) 1.6px, transparent 1.7px);
+    background-size: 46px 46px; background-position: center center;
+  }
+  #map { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #map .grat { stroke: var(--map-line); stroke-width: 1.4; fill: none; }
+  #map .outline-fill { fill: var(--map-line); stroke: none; }
+  #map .outline-line {
+    fill: none; stroke: var(--map-line); stroke-width: 2.4;
+    stroke-linejoin: round; stroke-linecap: round;
+  }
+  #map .dot   { fill: var(--dot); }
+  #map .flash { fill: var(--pop); }
+  #map .halo  { fill: none; stroke: var(--pop); stroke-width: 1.6; }
+
+  #labels { position: absolute; inset: 0; pointer-events: none; }
+  /* The halo is the surface colour, not a box: it lifts the label off the dots
+     without putting a panel on the frame. --bg is a role token, never a hex. */
+  .rlabel {
+    position: absolute; text-align: center; white-space: nowrap;
+    text-shadow: 0 0 16px var(--bg), 0 0 8px var(--bg), 0 0 3px var(--bg);
+  }
+  .rlabel .n {
+    font-family: var(--font-medium), var(--font-fallback);
+    font-size: 24px; line-height: 1.2; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--muted); opacity: var(--muted-op);
+  }
+  .rlabel .c {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-size: 44px; line-height: 1.1; letter-spacing: -.02em;
+    margin-top: 4px; color: var(--fg);
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="logo"></div>
+    <div id="content">
+      <div id="side">
+        <div id="eyebrow"></div>
+        <div id="headline"></div>
+        <div id="subhead"></div>
+        <div id="legend"></div>
+      </div>
+      <div id="mapwrap">
+        <div id="field"></div>
+        <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div id="labels"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+window.__SCENE__ = {{SCENE_DATA}};
+(function () {
+  "use strict";
+
+  var D = window.__SCENE__ || {};
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  // Hard ceiling on rendered dots. One screenshot per video frame; thousands of
+  // nodes per frame is the difference between a 40s build and a 6-minute one.
+  var MAX_DOTS = 600;
+
+  // ---- deterministic animation clock -------------------------------------
+  function queryT() {
+    var match = /[?&]t=([^&]*)/.exec(String(window.location.search || ""));
+    var value = match ? parseFloat(decodeURIComponent(match[1])) : NaN;
+    if (!isFinite(value)) { return 1; }
+    return Math.max(0, Math.min(1, value));
+  }
+  var T = queryT();
+
+  function clamp01(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+  function phase(start, span) { return easeOut(clamp01((T - start) / (span || 0.001))); }
+
+  // ---- seeded PRNG -------------------------------------------------------
+  // mulberry32: 32 bits of state, no dependence on engine internals, and the
+  // same sequence on every run. Math.random() must never appear in this file —
+  // it would make two renders of the same t differ, which breaks the build.
+  function mulberry32(a) {
+    var s = a | 0;
+    return function () {
+      s = (s + 0x6D2B79F5) | 0;
+      var x = Math.imul(s ^ (s >>> 15), 1 | s);
+      x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x;
+      return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  // Box-Muller, clamped so a cluster never throws a dot across the frame.
+  function gauss(rng) {
+    var u = rng();
+    if (u < 1e-9) { u = 1e-9; }
+    var g = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rng());
+    return g < -2.2 ? -2.2 : (g > 2.2 ? 2.2 : g);
+  }
+
+  // ---- helpers -----------------------------------------------------------
+  function list(v) {
+    return Object.prototype.toString.call(v) === "[object Array]" ? v : [];
+  }
+  function num(v, fallback) {
+    var n = typeof v === "number" ? v : parseFloat(v);
+    return isFinite(n) ? n : fallback;
+  }
+  // Manual 3-digit grouping. Intl / toLocaleString depends on the ICU data the
+  // Chrome build happens to carry, which is exactly the kind of thing that
+  // makes two machines render different pixels.
+  function grouped(value) {
+    var s = String(Math.max(0, Math.round(value)));
+    var out = "";
+    while (s.length > 3) {
+      out = "," + s.slice(s.length - 3) + out;
+      s = s.slice(0, s.length - 3);
+    }
+    return s + out;
+  }
+
+  // ---- stylised India silhouette -----------------------------------------
+  // Normalised 0..1 within a square, origin top-left, traced clockwise from the
+  // northern tip. 51 vertices standing in for a coastline of thousands: enough
+  // to carry the peninsula, the Saurashtra notch, the Bengal corridor and the
+  // north-eastern arm, and no more. A motif, not a map — see the header comment
+  // before reusing it anywhere.
+  var INDIA = [
+    [0.319, 0.034], [0.365, 0.064], [0.397, 0.119], [0.387, 0.169],
+    [0.423, 0.214], [0.452, 0.210], [0.532, 0.247], [0.548, 0.308],
+    [0.677, 0.342], [0.706, 0.315], [0.723, 0.329], [0.806, 0.312],
+    [0.855, 0.264], [0.945, 0.244], [0.981, 0.278], [0.942, 0.315],
+    [0.913, 0.336], [0.894, 0.383], [0.881, 0.427], [0.829, 0.492],
+    [0.781, 0.434], [0.761, 0.383], [0.697, 0.363], [0.684, 0.424],
+    [0.706, 0.502], [0.645, 0.508], [0.613, 0.549], [0.574, 0.590],
+    [0.494, 0.664], [0.429, 0.705], [0.429, 0.793], [0.416, 0.851],
+    [0.394, 0.922], [0.339, 0.963], [0.306, 0.915], [0.284, 0.844],
+    [0.248, 0.769], [0.219, 0.715], [0.194, 0.630], [0.187, 0.586],
+    [0.184, 0.525], [0.168, 0.502], [0.126, 0.532], [0.068, 0.481],
+    [0.045, 0.434], [0.097, 0.414], [0.103, 0.339], [0.171, 0.288],
+    [0.223, 0.214], [0.245, 0.136], [0.258, 0.085]
+  ];
+
+  function inPolygon(px, py, poly) {
+    var hit = false;
+    for (var i = 0, j = poly.length - 1; i < poly.length; j = i, i += 1) {
+      var xi = poly[i][0], yi = poly[i][1];
+      var xj = poly[j][0], yj = poly[j][1];
+      if ((yi > py) !== (yj > py) &&
+          px < (xj - xi) * (py - yi) / (yj - yi || 1e-12) + xi) {
+        hit = !hit;
+      }
+    }
+    return hit;
+  }
+
+  // ---- resolved scene ----------------------------------------------------
+  var SURFACES = ["dark", "brand", "light"];
+  var surface = String(D.surface || "dark");
+  if (SURFACES.indexOf(surface) === -1) { surface = "dark"; }
+  document.documentElement.setAttribute("data-surface", surface);
+
+  var OUTLINES = ["india", "grid", "none"];
+  var outline = String(D.outline || "grid");
+  if (OUTLINES.indexOf(outline) === -1) { outline = "grid"; }
+
+  var seed = Math.floor(num(D.seed, 7)) | 0;
+
+  var regions = list(D.regions).slice(0, 8).map(function (r, i) {
+    r = (r && typeof r === "object") ? r : {};
+    return {
+      name: r.name === undefined || r.name === null ? "" : String(r.name),
+      count: Math.max(0, num(r.count, 0)),
+      x: clamp01(num(r.x, 0.5)),
+      y: clamp01(num(r.y, 0.5)),
+      index: i
+    };
+  });
+
+  var wanted = Math.round(num(D.points, 320));
+  if (!isFinite(wanted) || wanted < 1) { wanted = 320; }
+  var total = wanted;
+  if (total > MAX_DOTS) {
+    console.warn("[coverage-map] dot count clamped from " + wanted + " to " +
+                 MAX_DOTS + " for render performance; the scatter is " +
+                 "representative, not one dot per record");
+    total = MAX_DOTS;
+  }
+  if (total < 12) { total = 12; }
+
+  // Split the budget across regions by count (largest remainder), floor of 5.
+  function share(n) {
+    if (!regions.length) { return []; }
+    var weights = regions.map(function (r) { return r.count > 0 ? r.count : 1; });
+    var sum = weights.reduce(function (a, b) { return a + b; }, 0);
+    var floors = [], rem = [], used = 0, i;
+    for (i = 0; i < weights.length; i += 1) {
+      var exact = n * weights[i] / sum;
+      var f = Math.max(5, Math.floor(exact));
+      floors.push(f);
+      rem.push(exact - Math.floor(exact));
+      used += f;
+    }
+    var left = n - used;
+    var order = floors.map(function (_, k) { return k; }).sort(function (a, b) {
+      return rem[b] - rem[a] || a - b;   // ties by index: stable and deterministic
+    });
+    i = 0;
+    while (left > 0 && order.length) {
+      floors[order[i % order.length]] += 1;
+      left -= 1; i += 1;
+    }
+    while (left < 0) {
+      for (i = order.length - 1; i >= 0 && left < 0; i -= 1) {
+        if (floors[order[i]] > 5) { floors[order[i]] -= 1; left += 1; }
+      }
+      break;   // never spin: a floor of 5 each may simply exceed the budget
+    }
+    return floors;
+  }
+
+  // ---- populate windows --------------------------------------------------
+  var POP_START = 0.18, POP_SPAN = 0.60;
+  var DOT_SPAN = 0.075;                       // per-dot scale-in + pop duration
+
+  function regionWindow(k) {
+    var n = regions.length;
+    if (n < 2) { return { start: POP_START, span: POP_SPAN }; }
+    var stagger = Math.min(0.09, 0.30 / (n - 1));
+    return { start: POP_START + k * stagger, span: POP_SPAN - (n - 1) * stagger };
+  }
+
+  // ---- elements ----------------------------------------------------------
+  var stage = document.getElementById("stage");
+  var logo = document.getElementById("logo");
+  var side = document.getElementById("side");
+  var eyebrow = document.getElementById("eyebrow");
+  var headline = document.getElementById("headline");
+  var subhead = document.getElementById("subhead");
+  var legend = document.getElementById("legend");
+  var mapwrap = document.getElementById("mapwrap");
+  var field = document.getElementById("field");
+  var map = document.getElementById("map");
+  var labels = document.getElementById("labels");
+
+  if (D.eyebrow) { eyebrow.textContent = String(D.eyebrow); }
+  else { eyebrow.style.display = "none"; }
+
+  if (D.headline) { headline.textContent = String(D.headline); }
+  else { headline.style.display = "none"; }
+
+  if (D.subhead) { subhead.textContent = String(D.subhead); }
+  else { subhead.style.display = "none"; }
+
+  var legendRows = list(D.legend).slice(0, 4);
+  if (legendRows.length) {
+    legendRows.forEach(function (item) {
+      item = (item && typeof item === "object") ? item : { label: String(item) };
+      var row = document.createElement("div");
+      row.className = "leg";
+      var sw = document.createElement("span");
+      var tone = String(item.tone || "accent");
+      if (["accent", "accent-2", "muted"].indexOf(tone) === -1) { tone = "accent"; }
+      sw.className = "sw " + tone;
+      row.appendChild(sw);
+      var lb = document.createElement("span");
+      lb.textContent = String(item.label === undefined ? "" : item.label);
+      row.appendChild(lb);
+      legend.appendChild(row);
+    });
+  } else {
+    legend.style.display = "none";
+  }
+
+  if (!D.eyebrow && !D.headline && !D.subhead && !legendRows.length) {
+    side.style.display = "none";
+  }
+
+  // ---- fit: shrink the headline until it sits inside its column ----------
+  // Only the container is measured. A block's own scrollHeight is useless as a
+  // signal here: Poppins ink-overflows a tight line-height on every heading.
+  function baseSize(node) {
+    var recorded = node.getAttribute("data-base-size");
+    if (recorded === null) {
+      recorded = String(parseFloat(window.getComputedStyle(node).fontSize) || 0);
+      node.setAttribute("data-base-size", recorded);
+    }
+    return parseFloat(recorded);
+  }
+
+  function fit(node, floor) {
+    if (!node || node.style.display === "none") { return; }
+    var size = baseSize(node);
+    node.style.fontSize = size + "px";
+    var guard = 0;
+    while (size > floor && guard < 60) {
+      if (node.scrollWidth <= node.clientWidth + 2 &&
+          side.scrollHeight <= mapwrap.clientHeight + 6) { break; }
+      size -= 2;
+      node.style.fontSize = size + "px";
+      guard += 1;
+    }
+  }
+
+  // ---- geometry ----------------------------------------------------------
+  function plotRect() {
+    var w = mapwrap.clientWidth || 1;
+    var h = mapwrap.clientHeight || 1;
+    if (outline === "india") {
+      // The silhouette keeps its 1:1 aspect; the plot rect is that square, so
+      // region x/y address the shape rather than the container. It sits left of
+      // centre in the field, which leaves the outward-pushed region labels room
+      // to breathe on the right without leaving the safe area.
+      var side_ = Math.max(40, Math.min(w, h) - 24);
+      return { x: (w - side_) * 0.32, y: (h - side_) / 2, w: side_, h: side_, W: w, H: h };
+    }
+    var ix = Math.min(40, w * 0.05), iy = Math.min(30, h * 0.05);
+    return { x: ix, y: iy, w: Math.max(40, w - ix * 2), h: Math.max(40, h - iy * 2),
+             W: w, H: h };
+  }
+
+  function svgEl(name, attrs) {
+    var node = document.createElementNS(SVGNS, name);
+    for (var key in attrs) {
+      if (Object.prototype.hasOwnProperty.call(attrs, key)) {
+        node.setAttribute(key, String(attrs[key]));
+      }
+    }
+    return node;
+  }
+
+  function indiaPath(rect) {
+    var d = "";
+    for (var i = 0; i < INDIA.length; i += 1) {
+      d += (i === 0 ? "M" : "L") +
+           (rect.x + INDIA[i][0] * rect.w).toFixed(2) + " " +
+           (rect.y + INDIA[i][1] * rect.h).toFixed(2) + " ";
+    }
+    return d + "Z";
+  }
+
+  // ---- dot generation ----------------------------------------------------
+  // Free scatter uses a jittered lattice rather than uniform noise: the eye
+  // reads clumps and voids in pure uniform sampling as an error, and a lattice
+  // with per-cell jitter fills a territory the way coverage actually looks.
+  function latticePoints(rng, n, accept) {
+    var out = [], factor = 1.0, attempt;
+    for (attempt = 0; attempt < 6 && out.length < n; attempt += 1) {
+      out = [];
+      var target = Math.ceil(n * factor);
+      var cols = Math.max(1, Math.round(Math.sqrt(target)));
+      var rows = Math.max(1, Math.ceil(target / cols));
+      for (var r = 0; r < rows; r += 1) {
+        for (var c = 0; c < cols; c += 1) {
+          var jx = (c + 0.18 + 0.64 * rng()) / cols;
+          var jy = (r + 0.18 + 0.64 * rng()) / rows;
+          if (accept(jx, jy)) { out.push([jx, jy]); }
+        }
+      }
+      factor *= 1.7;
+    }
+    return out;
+  }
+
+  // The lattice always overshoots — it grows until enough cells survive the
+  // polygon test, and the last row is partial. Taking the first n in lattice
+  // order would therefore keep only the top of the territory and leave the
+  // peninsula bare, so the surplus is shuffled off with the same seeded stream.
+  function shuffleTake(rng, arr, n) {
+    var a = arr.slice(), i, j, tmp;
+    for (i = a.length - 1; i > 0; i -= 1) {
+      j = Math.floor(rng() * (i + 1));
+      tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a.slice(0, n);
+  }
+
+  function buildDots() {
+    var rng = mulberry32(seed);
+    var accept = outline === "india"
+      ? function (x, y) { return inPolygon(x, y, INDIA); }
+      : function () { return true; };
+    var dots = [];
+    var i, k;
+
+    if (regions.length) {
+      var counts = share(total);
+      for (k = 0; k < regions.length; k += 1) {
+        var reg = regions[k];
+        var win = regionWindow(k);
+        var quota = counts[k];
+        // Bigger regions spread wider, so the cluster reads as its own weight.
+        var weightShare = total > 0 ? quota / total : 0;
+        var sigma = 0.045 + 0.075 * Math.sqrt(weightShare);
+        reg.sigma = sigma;   // drawLabels clears the cluster by this much
+        for (i = 0; i < quota; i += 1) {
+          var px = reg.x, py = reg.y, ok = false, tries;
+          for (tries = 0; tries < 12; tries += 1) {
+            px = reg.x + gauss(rng) * sigma;
+            py = reg.y + gauss(rng) * sigma * 0.92;
+            if (px >= 0.01 && px <= 0.99 && py >= 0.01 && py <= 0.99 &&
+                accept(px, py)) { ok = true; break; }
+          }
+          if (!ok) { px = reg.x; py = reg.y; }
+          dots.push({
+            x: px, y: py,
+            th: win.start + rng() * win.span * 0.86,
+            region: k
+          });
+        }
+      }
+    } else {
+      var pts = shuffleTake(rng, latticePoints(rng, total, accept), total);
+      for (i = 0; i < pts.length; i += 1) {
+        dots.push({
+          x: pts[i][0], y: pts[i][1],
+          th: POP_START + rng() * POP_SPAN * 0.86,
+          region: -1
+        });
+      }
+    }
+    return dots;
+  }
+
+  var DOTS = buildDots();
+  var REGION_TOTALS = regions.map(function (r) { return r.count; });
+
+  function dotRadius(rect) {
+    var area = rect.w * rect.h * (outline === "india" ? 0.5 : 1);
+    var spacing = Math.sqrt(area / Math.max(1, DOTS.length));
+    return Math.max(3.4, Math.min(11, spacing * 0.2));
+  }
+
+  // ---- render ------------------------------------------------------------
+  function drawOutline(rect, p) {
+    if (outline === "none") {
+      field.style.display = "none";
+      return;
+    }
+    if (outline === "india") {
+      var d = indiaPath(rect);
+      var fillNode = svgEl("path", { "class": "outline-fill", d: d });
+      fillNode.style.fillOpacity = (p * parseFloat(
+        window.getComputedStyle(document.documentElement)
+              .getPropertyValue("--map-fill-op") || 0.08)).toFixed(4);
+      map.appendChild(fillNode);
+
+      // pathLength=1 makes the draw-on a plain 0..1 dash offset.
+      var lineNode = svgEl("path", {
+        "class": "outline-line", d: d, pathLength: 1,
+        "stroke-dasharray": 1, "stroke-dashoffset": (1 - p).toFixed(4)
+      });
+      lineNode.style.strokeOpacity = String(
+        window.getComputedStyle(document.documentElement)
+              .getPropertyValue("--map-line-op") || 0.26).trim();
+      map.appendChild(lineNode);
+
+      // The dot lattice, clipped to the silhouette. Zero extra DOM nodes.
+      if (window.CSS && CSS.supports && CSS.supports("clip-path", 'path("M0 0Z")')) {
+        field.style.clipPath = 'path("' + d + '")';
+        field.style.opacity = (p * 0.5).toFixed(4);
+      } else {
+        field.style.display = "none";
+      }
+      return;
+    }
+
+    // "grid": a graticule of hairlines over the backdrop lattice.
+    field.style.clipPath = "none";
+    field.style.opacity = (p * 0.62).toFixed(4);
+    var cols = 6, rows = 4, i, q;
+    for (i = 1; i < cols; i += 1) {
+      q = easeOut(clamp01((T - (0.02 + i * 0.012)) / 0.16));
+      var gx = rect.x + rect.w * i / cols;
+      var line = svgEl("line", {
+        "class": "grat", x1: gx.toFixed(2), y1: rect.y.toFixed(2),
+        x2: gx.toFixed(2), y2: (rect.y + rect.h).toFixed(2)
+      });
+      line.style.strokeOpacity = (q * 0.5).toFixed(4);
+      map.appendChild(line);
+    }
+    for (i = 1; i < rows; i += 1) {
+      q = easeOut(clamp01((T - (0.02 + i * 0.018)) / 0.16));
+      var gy = rect.y + rect.h * i / rows;
+      var hline = svgEl("line", {
+        "class": "grat", x1: rect.x.toFixed(2), y1: gy.toFixed(2),
+        x2: (rect.x + rect.w).toFixed(2), y2: gy.toFixed(2)
+      });
+      hline.style.strokeOpacity = (q * 0.5).toFixed(4);
+      map.appendChild(hline);
+    }
+    var frame = svgEl("rect", {
+      "class": "grat", x: rect.x.toFixed(2), y: rect.y.toFixed(2),
+      width: rect.w.toFixed(2), height: rect.h.toFixed(2), rx: 18
+    });
+    frame.style.strokeOpacity = (p * 0.9).toFixed(4);
+    map.appendChild(frame);
+  }
+
+  function drawDots(rect) {
+    var R = dotRadius(rect);
+    var group = svgEl("g", {});
+    for (var i = 0; i < DOTS.length; i += 1) {
+      var dot = DOTS[i];
+      if (T < dot.th) { continue; }              // not yet in the DOM at all
+      var p = clamp01((T - dot.th) / DOT_SPAN);
+      var grow = easeOut(p);
+      // The pop: a short overshoot in scale that returns to 1 by p = 1. A pure
+      // function of the dot's own progress — nothing here is a transition.
+      var over = 1 + 0.45 * Math.sin(Math.PI * p);
+      var r = R * grow * over;
+      var cx = rect.x + dot.x * rect.w;
+      var cy = rect.y + dot.y * rect.h;
+
+      var c = svgEl("circle", {
+        "class": "dot", cx: cx.toFixed(2), cy: cy.toFixed(2), r: r.toFixed(2)
+      });
+      group.appendChild(c);
+
+      if (p < 1) {
+        // Brighter fill laid over the resting colour, fading out as it settles.
+        var flash = svgEl("circle", {
+          "class": "flash", cx: cx.toFixed(2), cy: cy.toFixed(2), r: r.toFixed(2)
+        });
+        flash.style.fillOpacity = Math.pow(1 - p, 1.4).toFixed(4);
+        group.appendChild(flash);
+        // And a ring that expands away from it.
+        var halo = svgEl("circle", {
+          "class": "halo", cx: cx.toFixed(2), cy: cy.toFixed(2),
+          r: (R * (1 + 1.9 * grow)).toFixed(2)
+        });
+        halo.style.strokeOpacity = ((1 - p) * 0.32).toFixed(4);
+        group.appendChild(halo);
+      }
+    }
+    map.appendChild(group);
+  }
+
+  function drawLabels(rect) {
+    for (var k = 0; k < regions.length; k += 1) {
+      var reg = regions[k];
+      if (!reg.name && !REGION_TOTALS[k]) { continue; }
+      var win = regionWindow(k);
+      var labelStart = win.start + win.span * 0.55;
+      var appear = easeOut(clamp01((T - labelStart) / 0.10));
+      if (appear <= 0) { continue; }
+
+      var countEnd = win.start + win.span + 0.05;
+      var countP = easeOut(clamp01((T - labelStart) / Math.max(0.05, countEnd - labelStart)));
+
+      var box = document.createElement("div");
+      box.className = "rlabel";
+      if (reg.name) {
+        var n = document.createElement("div");
+        n.className = "n";
+        n.textContent = reg.name;
+        box.appendChild(n);
+      }
+      if (REGION_TOTALS[k]) {
+        var c = document.createElement("div");
+        c.className = "c";
+        c.textContent = grouped(REGION_TOTALS[k] * countP);
+        box.appendChild(c);
+      }
+      box.style.opacity = appear.toFixed(4);
+      labels.appendChild(box);
+
+      // Push the label out of its own cluster, along the vector from the centre
+      // of the plot to the region: North rides above, West sits out to the left,
+      // South below. A region dead in the middle has no direction, so it lifts.
+      // Then clamp inside the map box — nothing may leave the safe margin.
+      var cx = rect.x + reg.x * rect.w;
+      var cy = rect.y + reg.y * rect.h;
+      var w = box.offsetWidth, h = box.offsetHeight;
+      var dx = reg.x - 0.5, dy = reg.y - 0.5;
+      var mag = Math.sqrt(dx * dx + dy * dy);
+      if (mag < 0.06) { dx = 0; dy = -1; mag = 1; }
+      var clear = (reg.sigma || 0.06) * 2.3 * rect.w + 44;
+      var left = cx + (dx / mag) * clear - w / 2;
+      var top = cy + (dy / mag) * clear - h / 2 + (1 - appear) * 12;
+      if (left < 0) { left = 0; }
+      if (left + w > rect.W) { left = Math.max(0, rect.W - w); }
+      if (top < 0) { top = 0; }
+      if (top + h > rect.H) { top = Math.max(0, rect.H - h); }
+      box.style.left = left.toFixed(1) + "px";
+      box.style.top = top.toFixed(1) + "px";
+    }
+  }
+
+  function render() {
+    fit(headline, 44);
+    fit(subhead, 24);
+
+    while (map.firstChild) { map.removeChild(map.firstChild); }
+    while (labels.firstChild) { labels.removeChild(labels.firstChild); }
+    field.style.display = "";
+    field.style.clipPath = "none";
+
+    var rect = plotRect();
+    map.setAttribute("viewBox", "0 0 " + rect.W + " " + rect.H);
+
+    drawOutline(rect, phase(0.0, 0.20));
+    drawDots(rect);
+    drawLabels(rect);
+
+    logo.style.opacity = phase(0.0, 0.28).toFixed(4);
+
+    var pEye = phase(0.05, 0.22);
+    eyebrow.style.opacity = pEye.toFixed(4);
+    eyebrow.style.transform = "translateY(" + ((1 - pEye) * 20).toFixed(2) + "px)";
+
+    var pHead = phase(0.80, 0.13);
+    headline.style.opacity = pHead.toFixed(4);
+    headline.style.transform = "translateY(" + ((1 - pHead) * 30).toFixed(2) + "px)";
+
+    var pSub = phase(0.86, 0.12);
+    subhead.style.opacity = pSub.toFixed(4);
+    subhead.style.transform = "translateY(" + ((1 - pSub) * 22).toFixed(2) + "px)";
+
+    var pLeg = phase(0.56, 0.16);
+    legend.style.opacity = pLeg.toFixed(4);
+    legend.style.transform = "translateY(" + ((1 - pLeg) * 16).toFixed(2) + "px)";
+  }
+
+  // Twice: once now, once on load. Web fonts finish arriving between the two,
+  // and anything that was measured has to be re-measured against real metrics.
+  render();
+  window.addEventListener("load", render);
+}());
+</script>
+</body>
+</html>

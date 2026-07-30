@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CGI product</title>
+
+<!--
+  CGI PRODUCT SCENE
+  =================
+  Rendered by scripts/render_cgi.py through headless Chrome + SwiftShader (CPU WebGL 2).
+  Same substitution contract as templates/video/: the builder replaces the BRAND_VARS
+  marker with a <style> block carrying the whole brand, and the SCENE_DATA marker with a
+  JSON literal assigned to window.__SCENE__. Each marker appears exactly once in this
+  file and must never be written literally a second time -- substitution is a plain
+  str.replace, so a marker repeated in a comment would take a copy of the entire brand
+  style block with it. write_scene_html() raises if it finds a duplicate.
+
+  SCENE DATA CONTRACT (window.__SCENE__)
+  --------------------------------------
+    model        "path/to/product.glb" | null   absolute file:// path to a .glb / .gltf.
+                                                When set, the primitive is ignored.
+    primitive    "bottle" | "box" | "can" | "tube" | "sachet" | "phone" | "jar"
+                                                the parametric pack used when model is null.
+    productColor "#RRGGBB"                      pack body. Default: brand blue.
+    labelColor   "#RRGGBB" | null               label stock. Default: brand white.
+    capColor     "#RRGGBB" | null               cap / closure. Default: brand accent (mint).
+    label        {image: null|"file://...",     artwork wrapped round the body,
+                  text: "BRAND",                 or this text set in the brand face,
+                  wrap: true}                    true = full 360 band, false = front decal.
+    studio       "gradient" | "seamless" | "dark" | "pedestal" | "floating"
+    move         "turntable" | "dolly-in" | "orbit" | "hero-reveal" | "rise" | "static"
+    lighting     "studio" | "dramatic" | "soft" | "retail"
+    floor        true                           draw a floor plane at y=0
+    reflection   0.35                           0..1 strength of the floor reflection
+    shadow       true                           cast a real shadow-mapped contact shadow
+    headline     "..."                          optional 2D overlay, brand face, safe margin
+    sub          "..."                          optional second line under the headline
+    seed         7                              seeds the PRNG; identical seed = identical dust
+
+  URL CONTRACT
+  ------------
+    ?w=1920&h=1080          the size of ONE frame
+    ?t=0.35                 render a single frame at that point on the clock
+    ?t0=0&dt=0.0333&n=6&cols=3
+                            FRAME SHEET: render n frames starting at t0, stepping dt,
+                            laid out in a cols-wide grid on one page. render_cgi.py
+                            screenshots the whole grid once and slices it. Chrome startup
+                            dominates the cost of a frame, so this is the difference
+                            between ~15s and ~1s per frame.
+
+  DETERMINISM
+  -----------
+  No requestAnimationFrame, no animation loop, no CSS animation or transition, no
+  Math.random and no Date. The clock is read synchronously from the URL, the scene is
+  built once, and renderer.render() is called exactly once per cell. Any scatter comes
+  from the seeded PRNG below. The same t must always produce identical pixels; if it
+  does not, the finished film strobes.
+
+  Async work (web fonts, a label image, a .glb) cannot be waited for synchronously, so
+  every cell is drawn again once each async milestone lands. Redrawing is idempotent --
+  it is the same pure function of t -- so this stays deterministic. Chrome's
+  --virtual-time-budget holds the screenshot until that work has drained.
+-->
+
+{{BRAND_VARS}}
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    overflow: hidden;
+  }
+  /* The page is exactly the sheet: no chrome, no scrollbars, no offset, so the
+     slicer can cut on exact multiples of the frame size. */
+  #sheet {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .cell {
+    position: absolute;
+    overflow: hidden;
+  }
+  /* The 2D overlay. Drawn in HTML over the canvas rather than into it, so the brand
+     face renders with real text shaping rather than canvas fillText metrics. */
+  .overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: none;
+  }
+  .headline {
+    font-family: var(--font-semibold), var(--font-fallback);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.08;
+    margin: 0;
+  }
+  .sub {
+    font-family: var(--font-regular), var(--font-fallback);
+    font-weight: 400;
+    line-height: 1.35;
+    margin: 0;
+  }
+  /* A failed render must look failed. A silently blank frame is the one failure mode
+     that survives every downstream check, so errors are painted into the frame. */
+  .fault {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    padding: 24px 28px;
+    font: 500 20px/1.4 ui-monospace, Menlo, monospace;
+    color: #fff;
+    background: #B00020;
+    white-space: pre-wrap;
+    z-index: 9;
+  }
+</style>
+</head>
+
+<body>
+<canvas id="sheet"></canvas>
+<div id="cells"></div>
+
+<!-- three.js must load after <body> exists. In <head> the UMD build trips over a null
+     document.body while installing its canvas helpers. The UMD build is used because ES
+     modules do not load over file:// without relaxing Chrome's security flags, and a
+     scene has to render offline with no network of any kind. -->
+<script src="vendor/three.min.js"></script>
+<!-- Optional. render_cgi.py transpiles the vendored ESM GLTFLoader into this UMD file in
+     the work directory when the scene names a model. Absent, the tag 404s harmlessly and
+     the scene falls back to its primitive. -->
+<script src="vendor/gltfloader.umd.js"></script>
+
+<script>
+(function () {
+  "use strict";
+
+  var SCENE = {{SCENE_DATA}};
+  window.__SCENE__ = SCENE = (SCENE && typeof SCENE === "object") ? SCENE : {};
+
+  // ---------------------------------------------------------------- url + clock
+  var Q = new URLSearchParams(window.location.search);
+  function qnum(key, dflt) {
+    var raw = Q.get(key);
+    if (raw === null || raw === "") return dflt;
+    var v = parseFloat(raw);
+    return isFinite(v) ? v : dflt;
+  }
+  var W = Math.max(16, Math.round(qnum("w", 1920)));
+  var H = Math.max(16, Math.round(qnum("h", 1080)));
+  var N = Math.max(1, Math.round(qnum("n", 1)));
+  var COLS = Math.max(1, Math.round(qnum("cols", Math.ceil(Math.sqrt(N)))));
+  var ROWS = Math.ceil(N / COLS);
+  var T0 = Q.has("t") ? qnum("t", 0) : qnum("t0", 0);
+  var DT = qnum("dt", 0);
+
+  function clockAt(i) {
+    var t = T0 + DT * i;
+    return t < 0 ? 0 : (t > 1 ? 1 : t);
+  }
+
+  // ---------------------------------------------------------------- determinism
+  // mulberry32. Math.random() would make every render of the same t different, which
+  // reads as strobing in the finished film. Everything stochastic draws from here.
+  function makePRNG(seed) {
+    var a = (seed | 0) || 1;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // ---------------------------------------------------------------- easing
+  function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+  function easeOutCubic(t) { t = clamp01(t); return 1 - Math.pow(1 - t, 3); }
+  function easeOutQuint(t) { t = clamp01(t); return 1 - Math.pow(1 - t, 5); }
+  function easeInOut(t) {
+    t = clamp01(t);
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+  function mix(a, b, k) { return a + (b - a) * k; }
+  /** Progress of a sub-move that starts at `from` and finishes at `to` on the clock. */
+  function span(t, from, to) {
+    if (to <= from) return t >= to ? 1 : 0;
+    return clamp01((t - from) / (to - from));
+  }
+
+  // ---------------------------------------------------------------- brand palette
+  // Every colour comes out of the injected brand variables. Nothing here is a literal
+  // hex, so restyling for another brand is a matter of swapping the brand profile.
+  var ROOT_STYLE = window.getComputedStyle(document.documentElement);
+  function cssVar(name, dflt) {
+    var v = ROOT_STYLE.getPropertyValue(name);
+    v = (v || "").trim();
+    return v || dflt;
+  }
+  var HEX_RE = /#[0-9a-fA-F]{6}\b/g;
+  /** Pull the ordered, de-duplicated stops out of a CSS linear-gradient() value. */
+  function gradientStops(varName, fallback) {
+    var raw = cssVar(varName, "");
+    var found = raw.match(HEX_RE) || [];
+    var out = [];
+    for (var i = 0; i < found.length; i++) {
+      var h = found[i].toUpperCase();
+      if (out.indexOf(h) === -1) out.push(h);
+    }
+    if (out.length >= 2) return out;
+    return fallback;
+  }
+
+  var BRAND = {
+    brand:   cssVar("--surface-brand", "#0000FF"),
+    dark:    cssVar("--surface-dark", "#0F0A6C"),
+    light:   cssVar("--surface-light", "#FFFFFF"),
+    tint:    cssVar("--surface-tint", "#EBF6F9"),
+    accent:  cssVar("--accent", "#41E7AB"),
+    accent2: cssVar("--accent-2", "#29AFA7"),
+    ink:     cssVar("--ink", "#0F0A6C"),
+    inkSoft: cssVar("--ink-soft", "#0F0A6C"),
+    onDark:  cssVar("--ink-on-dark", "#FFFFFF"),
+    onLight: cssVar("--ink-on-light", "#0F0A6C"),
+    rule:    cssVar("--rule", "#EBF6F9"),
+    fontSemibold: cssVar("--font-semibold", "sans-serif"),
+    fontRegular:  cssVar("--font-regular", "sans-serif"),
+    fontFallback: cssVar("--font-fallback", "sans-serif"),
+    safePct: parseFloat(cssVar("--safe-pct", "5")) || 5
+  };
+  BRAND.gradPrimary = gradientStops("--grad-primary", [BRAND.dark, BRAND.brand]);
+  BRAND.gradAccent = gradientStops("--grad-accent", [BRAND.accent, BRAND.accent2]);
+
+  function colr(hex) { return new THREE.Color().setStyle(hex, THREE.SRGBColorSpace); }
+
+  // ---------------------------------------------------------------- scene inputs
+  function pick(list, value, dflt) {
+    var v = String(value || "").toLowerCase();
+    return list.indexOf(v) !== -1 ? v : dflt;
+  }
+  function hexOr(value, dflt) {
+    return (typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value.trim()))
+      ? value.trim() : dflt;
+  }
+
+  var CFG = {
+    model:      typeof SCENE.model === "string" && SCENE.model ? SCENE.model : null,
+    primitive:  pick(["bottle", "box", "can", "tube", "sachet", "phone", "jar"],
+                     SCENE.primitive, "bottle"),
+    studio:     pick(["gradient", "seamless", "dark", "pedestal", "floating"],
+                     SCENE.studio, "gradient"),
+    move:       pick(["turntable", "dolly-in", "orbit", "hero-reveal", "rise", "static"],
+                     SCENE.move, "turntable"),
+    lighting:   pick(["studio", "dramatic", "soft", "retail"], SCENE.lighting, "studio"),
+    product:    hexOr(SCENE.productColor, BRAND.brand),
+    labelCol:   hexOr(SCENE.labelColor, BRAND.light),
+    capCol:     hexOr(SCENE.capColor, BRAND.accent),
+    floor:      SCENE.floor !== false,
+    reflection: Math.max(0, Math.min(1, typeof SCENE.reflection === "number" ? SCENE.reflection : 0.35)),
+    shadow:     SCENE.shadow !== false,
+    headline:   typeof SCENE.headline === "string" ? SCENE.headline : "",
+    sub:        typeof SCENE.sub === "string" ? SCENE.sub : "",
+    seed:       (typeof SCENE.seed === "number" && isFinite(SCENE.seed)) ? (SCENE.seed | 0) : 7
+  };
+  //: The resting camera rig. Declared here rather than down with the camera moves
+  //: because the label has to be aimed at the camera's azimuth, and the label is
+  //: attached to the pack long before the first frame is framed.
+  var HERO = { dist: 5.6, height: 1.35, azimuth: -0.30, target: 1.02 };
+
+  var LBL = SCENE.label && typeof SCENE.label === "object" ? SCENE.label : {};
+  CFG.label = {
+    image: typeof LBL.image === "string" && LBL.image ? LBL.image : null,
+    text: typeof LBL.text === "string" ? LBL.text : "",
+    wrap: LBL.wrap !== false,
+    // How many times the lockup is laid down around a band. ONE by default: a real
+    // label wraps once round the pack, it does not tile. `true` is taken as 3.
+    repeat: LBL.repeat === true ? 3
+          : (typeof LBL.repeat === "number" && LBL.repeat >= 1)
+            ? Math.min(8, Math.round(LBL.repeat)) : 1
+  };
+  // "floating" has no ground to stand on, so it never gets a floor or a reflection.
+  if (CFG.studio === "floating") { CFG.floor = false; CFG.reflection = 0; }
+
+  var faults = [];
+  function fault(msg) {
+    faults.push(String(msg));
+    paintFaults();
+  }
+  function paintFaults() {
+    if (!faults.length) return;
+    var host = document.getElementById("cells");
+    if (!host) return;
+    var box = document.getElementById("faultbox");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "faultbox";
+      box.className = "fault";
+      host.appendChild(box);
+    }
+    box.textContent = "CGI scene fault:\n" + faults.join("\n");
+  }
+
+  // ---------------------------------------------------------------- page layout
+  var sheetCanvas = document.getElementById("sheet");
+  sheetCanvas.width = W * COLS;
+  sheetCanvas.height = H * ROWS;
+  sheetCanvas.style.width = (W * COLS) + "px";
+  sheetCanvas.style.height = (H * ROWS) + "px";
+  var sheetCtx = sheetCanvas.getContext("2d");
+
+  var cellHost = document.getElementById("cells");
+  var overlays = [];
+  for (var ci = 0; ci < N; ci++) {
+    var cell = document.createElement("div");
+    cell.className = "cell";
+    cell.style.width = W + "px";
+    cell.style.height = H + "px";
+    cell.style.left = ((ci % COLS) * W) + "px";
+    cell.style.top = (Math.floor(ci / COLS) * H) + "px";
+    cellHost.appendChild(cell);
+    overlays.push(buildOverlay(cell));
+  }
+
+  /** "#RRGGBB" -> "r, g, b", so a brand colour can carry an alpha in CSS. */
+  function rgbTriplet(hex) {
+    var m = /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/.exec((hex || "").trim());
+    if (!m) return "0, 0, 0";
+    return parseInt(m[1], 16) + ", " + parseInt(m[2], 16) + ", " + parseInt(m[3], 16);
+  }
+
+  function buildOverlay(cell) {
+    if (!CFG.headline && !CFG.sub) return null;
+    var safeX = W * BRAND.safePct / 100;
+    var safeY = H * BRAND.safePct / 100;
+    var wrap = document.createElement("div");
+    wrap.className = "overlay";
+    wrap.style.padding = safeY + "px " + safeX + "px";
+    // On a light backdrop the type must be brand ink; on a dark one, the reversed colour.
+    var onDark = (CFG.studio === "dark" || CFG.studio === "gradient");
+
+    // A scrim under reversed copy. The bottom of a gradient studio is the FLOOR, and a
+    // glossy floor lit "retail" comes back nearly white -- reversed type over it would
+    // fail the brand's contrast rule on exactly the frames that matter. The scrim makes
+    // the guarantee hold whatever the floor happens to be doing.
+    var scrim = null;
+    if (onDark) {
+      scrim = document.createElement("div");
+      scrim.style.cssText =
+        "position:absolute;left:0;right:0;bottom:0;height:52%;pointer-events:none;"
+        + "background:linear-gradient(to top, rgba(" + rgbTriplet(BRAND.dark)
+        + ",0.78) 0%, rgba(" + rgbTriplet(BRAND.dark) + ",0.42) 45%, rgba("
+        + rgbTriplet(BRAND.dark) + ",0) 100%);";
+      cell.appendChild(scrim);
+    }
+
+    var h = document.createElement("p");
+    h.className = "headline";
+    h.style.fontSize = Math.round(H * 0.072) + "px";
+    h.style.color = onDark ? BRAND.onDark : BRAND.ink;
+    h.textContent = CFG.headline;
+    var s = document.createElement("p");
+    s.className = "sub";
+    s.style.fontSize = Math.round(H * 0.030) + "px";
+    s.style.marginTop = Math.round(H * 0.018) + "px";
+    s.style.color = onDark ? BRAND.onDark : BRAND.inkSoft;
+    s.style.opacity = "0.82";
+    s.textContent = CFG.sub;
+    if (CFG.headline) wrap.appendChild(h);
+    if (CFG.sub) wrap.appendChild(s);
+    cell.appendChild(wrap);
+    return { headline: CFG.headline ? h : null, sub: CFG.sub ? s : null,
+             scrim: scrim, h: H };
+  }
+
+  function layoutOverlay(ov, t) {
+    if (!ov) return;
+    if (ov.scrim) ov.scrim.style.opacity = easeOutCubic(span(t, 0.0, 0.42)).toFixed(4);
+    // Copy rises and fades in over the first 45% of the clock and then holds, so the
+    // frame has settled long before t=1.
+    var k = easeOutCubic(span(t, 0.05, 0.5));
+    var lift = (1 - k) * ov.h * 0.045;
+    if (ov.headline) {
+      ov.headline.style.opacity = k.toFixed(4);
+      ov.headline.style.transform = "translateY(" + lift.toFixed(2) + "px)";
+    }
+    if (ov.sub) {
+      var k2 = easeOutCubic(span(t, 0.18, 0.65));
+      ov.sub.style.opacity = (k2 * 0.82).toFixed(4);
+      ov.sub.style.transform = "translateY(" + ((1 - k2) * ov.h * 0.035).toFixed(2) + "px)";
+    }
+  }
+
+  // ---------------------------------------------------------------- renderer
+  if (typeof THREE === "undefined") {
+    fault("three.js did not load. Expected vendor/three.min.js next to this page.");
+    return;
+  }
+
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  } catch (err) {
+    fault("could not create a WebGL context: " + err);
+    return;
+  }
+  renderer.setPixelRatio(1);
+  renderer.setSize(W, H, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
+  if (CFG.shadow) {
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  }
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(34, W / H, 0.05, 200);
+
+  // ---------------------------------------------------------------- environment
+  // A real IBL, built from the brand's own gradient. Without one every metal reads
+  // black and the clearcoat has nothing to reflect. PMREMGenerator.fromScene() bakes a
+  // small brand-tinted room into a prefiltered cubemap once, for all N cells.
+  function buildEnvironment() {
+    var room = new THREE.Scene();
+    var stops = CFG.studio === "dark" ? [BRAND.dark, BRAND.dark] : BRAND.gradPrimary;
+    var sky = new THREE.Mesh(
+      new THREE.SphereGeometry(12, 24, 16),
+      new THREE.MeshBasicMaterial({ side: THREE.BackSide, color: colr(stops[0]) })
+    );
+    room.add(sky);
+
+    // Big soft emitters standing in for studio softboxes. Their placement is what gives
+    // the pack its long vertical highlights.
+    function panel(w, h, d, x, y, z, hex, power) {
+      var m = new THREE.Mesh(
+        new THREE.BoxGeometry(w, h, d),
+        new THREE.MeshStandardMaterial({ color: colr(hex) })
+      );
+      m.material.emissive = colr(hex);
+      m.material.emissiveIntensity = power;
+      m.position.set(x, y, z);
+      room.add(m);
+      return m;
+    }
+    var keyHex = CFG.studio === "dark" ? BRAND.tint : BRAND.light;
+    panel(7, 9, 0.2, -5.5, 3.5, 2.0, keyHex, 3.2);      // key softbox, camera left
+    panel(6, 7, 0.2, 5.5, 3.0, 1.0, keyHex, 1.1);       // fill, camera right
+    panel(9, 0.2, 9, 0, 8.0, 0, keyHex, 1.6);           // overhead
+    panel(4, 5, 0.2, 0.5, 2.0, -6.5, BRAND.accent, 2.4); // accent kick from behind
+    panel(9, 0.2, 9, 0, -3.0, 0, stops[stops.length - 1], 0.9); // bounce off the floor
+
+    var pmrem = new THREE.PMREMGenerator(renderer);
+    pmrem.compileEquirectangularShader();
+    // A generous blur sigma. The room's emitters are hard-edged boxes, and at 0.04 a
+    // polished floor reflects them as a crisp bright rectangle that reads as an artifact
+    // rather than as a softbox.
+    var target = pmrem.fromScene(room, 0.11);
+    pmrem.dispose();
+    room.traverse(function (o) {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) o.material.dispose();
+    });
+    return target.texture;
+  }
+
+  var envMap = buildEnvironment();
+  scene.environment = envMap;
+
+  // ---------------------------------------------------------------- backdrop
+  /** A vertical two-stop ramp as a texture, for backdrops and reflection falloffs. */
+  function rampTexture(stops, softness) {
+    var c = document.createElement("canvas");
+    c.width = 8; c.height = 512;
+    var g = c.getContext("2d");
+    var grad = g.createLinearGradient(0, 0, 0, 512);
+    grad.addColorStop(0, stops[0]);
+    if (typeof softness === "number") grad.addColorStop(softness, stops[0]);
+    grad.addColorStop(1, stops[stops.length - 1]);
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 8, 512);
+    var tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+
+  /**
+   * The floor's alpha, opaque under the camera and falling to nothing at the far edge.
+   *
+   * A reflective floor butted against the cyclorama meets it along a hard line, and
+   * because the camera is off-axis that line crosses the frame at an angle and reads as
+   * a modelling mistake rather than a horizon. Fading the floor out before it gets
+   * there dissolves the join. PlaneGeometry puts v=1 at the far edge once the plane is
+   * laid flat, and CanvasTexture flips Y, so "far" is the TOP of this canvas.
+   */
+  function floorAlphaRamp() {
+    var c = document.createElement("canvas");
+    c.width = c.height = 512;
+    var g = c.getContext("2d");
+    // RADIAL, because the floor is a disc and the camera orbits: a linear fade would
+    // hold up from one direction and expose a hard edge from another.
+    var grad = g.createRadialGradient(256, 256, 0, 256, 256, 256);
+    grad.addColorStop(0.00, "#FFFFFF");   // under the pack: solid
+    grad.addColorStop(0.52, "#FFFFFF");
+    grad.addColorStop(1.00, "#000000");   // at the cove: gone
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 512, 512);
+    return new THREE.CanvasTexture(c);
+  }
+
+  //: Where the cyclorama leaves the floor and starts curving up. The floor plane stops
+  //: here too: an unbounded floor would drive straight through the curve and the two
+  //: surfaces would z-fight along a hard diagonal across the frame.
+  var CYC_FLOOR_R = 13.0;   // radius of the reflective floor; where the cove begins
+  var CYC_COVE_R = 7.0;     // radius of the concave cove joining floor to wall
+  var CYC_TOP = 26.0;       // how far the wall carries on above the cove
+  //: The gradient is normalised over the height the camera can actually SEE, not over
+  //: CYC_TOP. Spreading two stops across the full 26-unit wall puts the entire ramp
+  //: off-screen and leaves the visible band one flat colour.
+  var CYC_VIS = 12.0;
+
+  function buildBackdrop() {
+    var g = new THREE.Group();
+    var stops, softness;
+    if (CFG.studio === "dark") {
+      stops = ["#000000", BRAND.dark];
+      softness = 0.30;
+    } else if (CFG.studio === "seamless" || CFG.studio === "pedestal") {
+      stops = [BRAND.tint, BRAND.light];
+      softness = 0.12;
+    } else {
+      stops = [BRAND.gradPrimary[0], BRAND.gradPrimary[BRAND.gradPrimary.length - 1]];
+      softness = 0.20;
+    }
+    // A cyclorama, as a surface of REVOLUTION rather than a flat wall behind the pack.
+    // 'orbit' and 'turntable' swing the camera a long way round, and a flat backdrop
+    // runs out of edge: past about 45 degrees the shot looks straight past it into the
+    // void. Revolving it means no azimuth can find an edge. stops[0] is the top.
+    var ramp = rampTexture(stops, softness);
+
+    // A concave fillet from the floor edge (r=CYC_FLOOR_R, y=0) up to the wall
+    // (r=CYC_FLOOR_R+CYC_COVE_R, y=CYC_COVE_R), then straight up.
+    var SEG = 20, pts = [];
+    for (var i = 0; i <= SEG; i++) {
+      var phi = -Math.PI / 2 + (i / SEG) * (Math.PI / 2);
+      pts.push(new THREE.Vector2(CYC_FLOOR_R + CYC_COVE_R * Math.cos(phi),
+                                 CYC_COVE_R + CYC_COVE_R * Math.sin(phi)));
+    }
+    pts.push(new THREE.Vector2(CYC_FLOOR_R + CYC_COVE_R, CYC_TOP));
+
+    var geo = new THREE.LatheGeometry(pts, 128);
+    // LatheGeometry distributes v by point INDEX, which bunches the whole gradient into
+    // the cove where the points are dense. Rewrite v from each vertex's actual height.
+    var pos = geo.getAttribute("position");
+    var uv = geo.getAttribute("uv");
+    for (var k = 0; k < pos.count; k++) {
+      uv.setY(k, Math.min(1, pos.getY(k) / CYC_VIS));
+    }
+    uv.needsUpdate = true;
+
+    // Unlit, and seen from the inside. A backdrop that takes the key light picks up the
+    // product's shadow and a hot spot where the key lands, and stops reading as a sweep.
+    var cyc = new THREE.Mesh(
+      geo, new THREE.MeshBasicMaterial({ map: ramp, side: THREE.BackSide })
+    );
+    g.add(cyc);
+
+    scene.background = colr(stops[0]);
+    return { group: g, stops: stops };
+  }
+
+  var backdrop = null;
+  if (CFG.studio !== "floating") {
+    backdrop = buildBackdrop();
+    scene.add(backdrop.group);
+  } else {
+    scene.background = colr(BRAND.gradPrimary[0]);
+    var floatWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(60, 34),
+      new THREE.MeshBasicMaterial({
+        map: rampTexture([BRAND.gradPrimary[BRAND.gradPrimary.length - 1],
+                          BRAND.gradPrimary[0]], 0.0)
+      })
+    );
+    floatWall.position.set(0, 2, -12);
+    scene.add(floatWall);
+  }
+
+  // ---------------------------------------------------------------- lighting
+  // Three-point, with the rim always in the brand accent. Presets move the ratios, not
+  // the geometry, so a pack lit "dramatic" and "soft" is recognisably the same shot.
+  var LIGHT_PRESETS = {
+    studio:   { key: 3.4, fill: 0.9,  rim: 2.6, amb: 0.45, exposure: 1.00, softness: 3.0 },
+    dramatic: { key: 5.2, fill: 0.18, rim: 4.4, amb: 0.14, exposure: 0.86, softness: 1.4 },
+    soft:     { key: 2.1, fill: 1.9,  rim: 1.5, amb: 0.85, exposure: 1.10, softness: 6.0 },
+    retail:   { key: 3.0, fill: 2.2,  rim: 1.9, amb: 1.10, exposure: 1.18, softness: 4.5 }
+  };
+  var LP = LIGHT_PRESETS[CFG.lighting] || LIGHT_PRESETS.studio;
+  renderer.toneMappingExposure = LP.exposure;
+
+  var keyLight = new THREE.DirectionalLight(colr(BRAND.light), LP.key);
+  keyLight.position.set(-4.2, 6.4, 4.6);
+  if (CFG.shadow) {
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(1024, 1024);
+    keyLight.shadow.camera.near = 0.5;
+    keyLight.shadow.camera.far = 24;
+    keyLight.shadow.camera.left = -5;
+    keyLight.shadow.camera.right = 5;
+    keyLight.shadow.camera.top = 5;
+    keyLight.shadow.camera.bottom = -5;
+    keyLight.shadow.bias = -0.0012;
+    keyLight.shadow.normalBias = 0.02;
+    keyLight.shadow.radius = LP.softness;
+  }
+  scene.add(keyLight);
+
+  var fillLight = new THREE.DirectionalLight(colr(BRAND.tint), LP.fill);
+  fillLight.position.set(5.6, 2.4, 3.2);
+  scene.add(fillLight);
+
+  // The rim is the brand's signature in a CGI frame: it is what makes an otherwise
+  // generic pack shot read as this brand's pack shot.
+  var rimLight = new THREE.DirectionalLight(colr(BRAND.accent), LP.rim);
+  rimLight.position.set(2.6, 3.4, -5.4);
+  scene.add(rimLight);
+
+  var rimLight2 = new THREE.DirectionalLight(colr(BRAND.accent2), LP.rim * 0.5);
+  rimLight2.position.set(-3.4, 1.8, -4.6);
+  scene.add(rimLight2);
+
+  scene.add(new THREE.AmbientLight(colr(BRAND.tint), LP.amb));
+
+  // ---------------------------------------------------------------- label artwork
+  /**
+   * Render label.text into a canvas in the brand face, for wrapping round the body.
+   *
+   * `aspect` is the width/height of the label surface UNWRAPPED -- for a band that is
+   * its circumference over its height. The canvas has to match it. A fixed-aspect
+   * canvas stretched onto a band of a different aspect distorts the type horizontally
+   * (a 2:1 canvas on a bottle's 4.9:1 band widens every glyph by ~2.4x) and throws off
+   * every fit calculation made against it.
+   *
+   * `reps` is how many times the lockup is laid down around the surface. It is 1 by
+   * default because that is what a real label does: it wraps once. Repeating is opt-in
+   * via label.repeat, and when it is on the instances are evenly spaced so the tiling
+   * is seamless rather than leaving a clipped one straddling the seam.
+   */
+  function labelTextTexture(text, aspect, reps, maxFrac) {
+    reps = Math.max(1, Math.round(reps || 1));
+    maxFrac = maxFrac || 0.80;
+    var ch = 512;
+    var cw = Math.max(128, Math.min(4096, Math.round(ch * (aspect || 2))));
+    var c = document.createElement("canvas");
+    c.width = cw; c.height = ch;
+    var g = c.getContext("2d");
+    g.fillStyle = CFG.labelCol;
+    g.fillRect(0, 0, cw, ch);
+
+    // A hairline rule top and bottom, in the brand accent, so the band reads as
+    // designed artwork rather than as text floating on a coloured strip. These run the
+    // full width, so they stay continuous across the wrap seam.
+    g.fillStyle = BRAND.accent;
+    g.fillRect(0, Math.round(ch * 0.16), cw, Math.round(ch * 0.012));
+    g.fillRect(0, Math.round(ch * 0.83), cw, Math.round(ch * 0.012));
+
+    var family = BRAND.fontSemibold + ", " + BRAND.fontFallback;
+    // The label stock is usually light, so ink; if the stock is dark, reverse out.
+    g.fillStyle = isLightHex(CFG.labelCol) ? BRAND.ink : BRAND.light;
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+
+    var slot = cw / reps;
+    // Sized against the label's HEIGHT, so the type reads at the same scale whatever
+    // the pack's circumference happens to be, then stepped down to fit `maxFrac` of
+    // the canvas width.
+    var maxW = cw * maxFrac;
+    var size = Math.round(ch * 0.22);
+    g.font = "600 " + size + "px " + family;
+    var guard = 0;
+    while (g.measureText(text).width > maxW && size > 8 && guard++ < 400) {
+      size -= 2;
+      g.font = "600 " + size + "px " + family;
+    }
+    for (var r = 0; r < reps; r++) {
+      g.fillText(text, slot * (r + 0.5), ch * 0.5);
+    }
+    var tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    return tex;
+  }
+
+  function isLightHex(hex) {
+    var c = colr(hex);
+    // Rec.709 luma on the sRGB values, which is what "does dark type work here" needs.
+    var srgb = new THREE.Color().copy(c).convertLinearToSRGB();
+    return (0.2126 * srgb.r + 0.7152 * srgb.g + 0.0722 * srgb.b) > 0.55;
+  }
+
+  var labelImageTexture = null;
+  if (CFG.label.image) {
+    labelImageTexture = new THREE.TextureLoader().load(
+      CFG.label.image,
+      function () { scheduleRender(); },
+      undefined,
+      function () { fault("label image did not load: " + CFG.label.image); }
+    );
+    labelImageTexture.colorSpace = THREE.SRGBColorSpace;
+    labelImageTexture.anisotropy = 8;
+  }
+
+  //: The label surface's unwrapped aspect and repeat count. Both depend on the PACK, so
+  //: they are resolved in attachLabel() -- the first point at which the shape is known.
+  var labelAspect = 2.0;
+  var labelReps = 1;
+  var labelWrapped = false;
+  var labelMaxFrac = 0.80;
+
+  //: How much of a wrapped band's circumference the lockup may occupy. A camera sees at
+  //: most 180 degrees of a cylinder, and the last ~35 of those are so steeply
+  //: foreshortened that type on them cannot be read. Sizing the lockup against the FULL
+  //: circumference instead lets a narrow pack -- a can, a tube -- give it 190 degrees or
+  //: more, so it wraps past both silhouette edges and reads as clipped from every angle.
+  //: 110 degrees keeps it inside the readable face of any round pack.
+  var READABLE_ARC_FRAC = (110 / 360);
+
+  function makeLabelTexture() {
+    if (labelImageTexture) return labelImageTexture;
+    if (!CFG.label.text) return null;
+    return labelTextTexture(CFG.label.text, labelAspect, labelReps, labelMaxFrac);
+  }
+
+  // ---------------------------------------------------------------- materials
+  function bodyMaterial(hex, opts) {
+    opts = opts || {};
+    return new THREE.MeshPhysicalMaterial({
+      color: colr(hex),
+      metalness: opts.metalness !== undefined ? opts.metalness : 0.08,
+      roughness: opts.roughness !== undefined ? opts.roughness : 0.28,
+      clearcoat: opts.clearcoat !== undefined ? opts.clearcoat : 0.65,
+      clearcoatRoughness: opts.clearcoatRoughness !== undefined ? opts.clearcoatRoughness : 0.16,
+      envMapIntensity: 1.0
+    });
+  }
+  function capMaterial(hex) {
+    return new THREE.MeshStandardMaterial({
+      color: colr(hex), metalness: 0.18, roughness: 0.36, envMapIntensity: 0.9
+    });
+  }
+  function foilMaterial(hex) {
+    return new THREE.MeshStandardMaterial({
+      color: colr(hex), metalness: 0.85, roughness: 0.28, envMapIntensity: 1.2
+    });
+  }
+  function labelMaterial(tex) {
+    var m = new THREE.MeshStandardMaterial({
+      color: tex ? colr("#FFFFFF") : colr(CFG.labelCol),
+      roughness: 0.62, metalness: 0.0, envMapIntensity: 0.75
+    });
+    if (tex) m.map = tex;
+    return m;
+  }
+
+  // ---------------------------------------------------------------- primitives
+  // Each builder returns { group, labelY, labelR, labelH, flat } in its own natural
+  // units. The group is normalised afterwards, so proportion is all that matters here.
+  //   labelY  centre height of the label band
+  //   labelR  radius the band wraps at (round packs)
+  //   labelH  height of the band
+  //   flat    true for packs whose label is a front decal rather than a band
+  function lathe(profile, segments) {
+    var pts = [];
+    for (var i = 0; i < profile.length; i++) {
+      pts.push(new THREE.Vector2(profile[i][0], profile[i][1]));
+    }
+    var g = new THREE.LatheGeometry(pts, segments || 96);
+    g.computeVertexNormals();
+    return g;
+  }
+
+  /** A rounded slab, built by extruding a rounded rectangle. Cartons, phones, pouches. */
+  function roundedSlab(w, h, d, r) {
+    var shape = new THREE.Shape();
+    var x = -w / 2, y = -h / 2;
+    r = Math.min(r, w / 2 - 0.001, h / 2 - 0.001);
+    shape.moveTo(x + r, y);
+    shape.lineTo(x + w - r, y);
+    shape.quadraticCurveTo(x + w, y, x + w, y + r);
+    shape.lineTo(x + w, y + h - r);
+    shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    shape.lineTo(x + r, y + h);
+    shape.quadraticCurveTo(x, y + h, x, y + h - r);
+    shape.lineTo(x, y + r);
+    shape.quadraticCurveTo(x, y, x + r, y);
+    var bevel = Math.min(d * 0.14, 0.035);
+    var g = new THREE.ExtrudeGeometry(shape, {
+      depth: d - bevel * 2, bevelEnabled: true, bevelThickness: bevel,
+      bevelSize: bevel, bevelSegments: 3, curveSegments: 12
+    });
+    g.translate(0, 0, -(d - bevel * 2) / 2);
+    g.computeVertexNormals();
+    return g;
+  }
+
+  var PRIMITIVES = {
+    // A shouldered PET bottle: heel, straight body, curved shoulder, neck, closure.
+    bottle: function () {
+      var g = new THREE.Group();
+      var body = [
+        [0.00, 0.000], [0.28, 0.000], [0.34, 0.028], [0.355, 0.075],
+        [0.355, 0.62], [0.352, 0.72], [0.335, 0.80], [0.295, 0.875],
+        [0.225, 0.935], [0.155, 0.975], [0.125, 1.005], [0.122, 1.10],
+        [0.000, 1.10]
+      ];
+      var mBody = bodyMaterial(CFG.product, { roughness: 0.16, clearcoat: 0.9 });
+      var bottle = new THREE.Mesh(lathe(body), mBody);
+      g.add(bottle);
+      // A neck finish ring, which is what stops the neck reading as a plain tube.
+      var ring = new THREE.Mesh(
+        new THREE.TorusGeometry(0.128, 0.016, 10, 48),
+        bodyMaterial(CFG.product, { roughness: 0.3, clearcoat: 0.4 })
+      );
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 1.045;
+      g.add(ring);
+      // Ribbed screw cap.
+      var cap = new THREE.Mesh(
+        lathe([[0.00, 1.10], [0.142, 1.10], [0.148, 1.13], [0.148, 1.27],
+               [0.140, 1.30], [0.00, 1.30]], 64),
+        capMaterial(CFG.capCol)
+      );
+      g.add(cap);
+      return { group: g, labelY: 0.36, labelR: 0.357, labelH: 0.46, flat: false };
+    },
+
+    // A squat preserve jar with a wide lug lid.
+    jar: function () {
+      var g = new THREE.Group();
+      var body = [
+        [0.00, 0.00], [0.40, 0.00], [0.46, 0.05], [0.47, 0.10],
+        [0.47, 0.62], [0.455, 0.70], [0.40, 0.755], [0.34, 0.785],
+        [0.335, 0.82], [0.00, 0.82]
+      ];
+      g.add(new THREE.Mesh(lathe(body), bodyMaterial(CFG.product, {
+        roughness: 0.12, clearcoat: 0.95, metalness: 0.02
+      })));
+      var lid = new THREE.Mesh(
+        lathe([[0.00, 0.80], [0.352, 0.80], [0.358, 0.83], [0.358, 0.95],
+               [0.340, 0.985], [0.00, 0.99]], 72),
+        foilMaterial(CFG.capCol)
+      );
+      g.add(lid);
+      return { group: g, labelY: 0.34, labelR: 0.474, labelH: 0.40, flat: false };
+    },
+
+    // A beverage can with rolled rims top and bottom and a recessed end.
+    can: function () {
+      var g = new THREE.Group();
+      var body = [
+        [0.00, 0.02], [0.30, 0.02], [0.355, 0.055], [0.365, 0.10],
+        [0.365, 1.02], [0.352, 1.07], [0.315, 1.10], [0.300, 1.125],
+        [0.285, 1.13], [0.255, 1.10], [0.00, 1.10]
+      ];
+      g.add(new THREE.Mesh(lathe(body), foilMaterial(CFG.product)));
+      // The pull-tab end, slightly brighter so the top edge catches the rim light.
+      var lidTop = new THREE.Mesh(
+        new THREE.CircleGeometry(0.29, 48),
+        foilMaterial(CFG.capCol)
+      );
+      lidTop.rotation.x = -Math.PI / 2;
+      lidTop.position.y = 1.101;
+      g.add(lidTop);
+      return { group: g, labelY: 0.56, labelR: 0.367, labelH: 0.80, flat: false };
+    },
+
+    // A standing squeeze tube: crimped seal at the top, tapering to a flip cap base.
+    // A standing squeeze tube. The body has to be genuinely fat relative to its height
+    // -- a slim lathe with a tab on top reads as a capsule, not as a tube.
+    tube: function () {
+      var g = new THREE.Group();
+      // A lathe cannot pinch a circular section flat, so the body stops as a near-full
+      // cylinder and the crimp slab overlaps its top. That overlap is doing real work:
+      // tapering the lathe to a point instead leaves a dome with a tab hovering over
+      // it, which reads as a jar, not a tube.
+      // Roughly three times as tall as it is wide. Everything here is normalised to a
+      // standard HEIGHT, so the profile's proportion is the only thing controlling how
+      // fat the pack reads: too wide and a tube becomes a jar with a tab on it.
+      var body = [
+        [0.00, 0.085], [0.230, 0.085], [0.240, 0.120], [0.242, 1.05],
+        [0.238, 1.17], [0.224, 1.25], [0.206, 1.30], [0.00, 1.30]
+      ];
+      g.add(new THREE.Mesh(lathe(body), bodyMaterial(CFG.product, {
+        roughness: 0.34, clearcoat: 0.35
+      })));
+      // The crimp: a flattened seal across the top, as wide as the tube itself.
+      var crimp = new THREE.Mesh(
+        roundedSlab(0.474, 0.185, 0.086, 0.018),
+        bodyMaterial(CFG.product, { roughness: 0.4, clearcoat: 0.2 })
+      );
+      crimp.position.y = 1.362;
+      g.add(crimp);
+      // The tube stands on its cap, which is how a toothpaste-style tube is merchandised.
+      var cap = new THREE.Mesh(
+        lathe([[0.00, 0.00], [0.248, 0.00], [0.252, 0.048], [0.244, 0.085],
+               [0.236, 0.090], [0.00, 0.090]], 64),
+        capMaterial(CFG.capCol)
+      );
+      g.add(cap);
+      return { group: g, labelY: 0.62, labelR: 0.245, labelH: 0.66, flat: false };
+    },
+
+    // A folding carton, slightly proud bevels so the edges catch light.
+    box: function () {
+      var g = new THREE.Group();
+      var w = 0.62, h = 1.05, d = 0.34;
+      var m = bodyMaterial(CFG.product, { roughness: 0.52, clearcoat: 0.28,
+                                          clearcoatRoughness: 0.35 });
+      var carton = new THREE.Mesh(roundedSlab(w, h, d, 0.018), m);
+      carton.position.y = h / 2;
+      g.add(carton);
+      return { group: g, labelY: h * 0.52, labelR: d / 2 + 0.004, labelH: h * 0.88,
+               flat: true, faceW: w * 0.94, faceD: d };
+    },
+
+    // A stand-up pouch: tapered, with a serrated top seal.
+    sachet: function () {
+      var g = new THREE.Group();
+      var w = 0.66, h = 0.92, d = 0.20;
+      var m = foilMaterial(CFG.product);
+      m.roughness = 0.34;
+      var pouch = new THREE.Mesh(roundedSlab(w, h, d, 0.05), m);
+      pouch.position.y = h / 2 + 0.02;
+      pouch.scale.set(1, 1, 1);
+      g.add(pouch);
+      // The top seal, thinner than the body, plus a tear notch.
+      var seal = new THREE.Mesh(roundedSlab(w, 0.14, d * 0.30, 0.01), m);
+      seal.position.y = h + 0.055;
+      g.add(seal);
+      var notch = new THREE.Mesh(
+        new THREE.BoxGeometry(0.035, 0.05, d * 0.34),
+        capMaterial(CFG.capCol)
+      );
+      notch.position.set(w / 2 - 0.05, h + 0.055, 0);
+      g.add(notch);
+      // A gusseted base so it stands rather than floats.
+      var base = new THREE.Mesh(roundedSlab(w * 0.94, 0.10, d * 1.25, 0.04), m);
+      base.position.y = 0.05;
+      g.add(base);
+      return { group: g, labelY: h * 0.52, labelR: d / 2 + 0.004, labelH: h * 0.78,
+               flat: true, faceW: w * 0.90, faceD: d };
+    },
+
+    // A handset: rounded slab, inset screen, camera island.
+    phone: function () {
+      var g = new THREE.Group();
+      var w = 0.60, h = 1.24, d = 0.075;
+      var frame = new THREE.Mesh(
+        roundedSlab(w, h, d, 0.085),
+        new THREE.MeshStandardMaterial({
+          color: colr(CFG.product), metalness: 0.92, roughness: 0.24, envMapIntensity: 1.3
+        })
+      );
+      frame.position.y = h / 2;
+      g.add(frame);
+      // The screen: near-black, very smooth, so it mirrors the studio panels.
+      var screen = new THREE.Mesh(
+        roundedSlab(w - 0.05, h - 0.05, 0.006, 0.065),
+        new THREE.MeshPhysicalMaterial({
+          color: colr(BRAND.dark), metalness: 0.1, roughness: 0.045,
+          clearcoat: 1.0, clearcoatRoughness: 0.02, envMapIntensity: 1.6
+        })
+      );
+      screen.position.set(0, h / 2, d / 2 + 0.001);
+      g.add(screen);
+      var island = new THREE.Mesh(
+        roundedSlab(0.20, 0.20, 0.022, 0.05),
+        capMaterial(CFG.capCol)
+      );
+      island.position.set(-w / 2 + 0.16, h - 0.18, -d / 2 - 0.004);
+      g.add(island);
+      return { group: g, labelY: h * 0.5, labelR: d / 2 + 0.006, labelH: h * 0.42,
+               flat: true, faceW: w * 0.70, faceD: d };
+    }
+  };
+
+  // ---------------------------------------------------------------- label placement
+  /**
+   * Where the lockup ends up on a wrapped band.
+   *
+   * CylinderGeometry lays u=0 at theta=thetaStart, and with thetaStart=0 that is the
+   * +Z face -- so the texture's own seam sits square on the front of the pack, pointing
+   * at the camera. Nudging the artwork with offset.x moves the lockup onto the facing
+   * side and carries the seam round to the back with it.
+   *
+   *   sampled_u = geo_u + offset.x,  geo_u = theta / 2PI
+   *
+   * The first instance's centre is at canvas u = 0.5/reps, and the camera sees the
+   * surface at theta = HERO.azimuth, so putting one on the other gives the offset
+   * below. The seam then lands at theta = azimuth - PI: directly opposite the camera.
+   */
+  function faceOffset(reps) {
+    return (0.5 / Math.max(1, reps)) - (HERO.azimuth / (Math.PI * 2));
+  }
+
+  function attachLabel(spec) {
+    if (!labelImageTexture && !CFG.label.text) return;
+
+    var r = spec.labelR + 0.004;
+    var wrapped = !spec.flat && CFG.label.wrap;
+    var arc = Math.PI * 0.72;                 // the front-decal arc on a round pack
+
+    // The unwrapped width of the label surface, so the canvas can match its aspect.
+    var surfaceW = spec.flat ? (spec.faceW || 0.5)
+                 : wrapped ? (2 * Math.PI * r)
+                 : (arc * r);
+    labelAspect = surfaceW / Math.max(0.0001, spec.labelH);
+    // A real label wraps ONCE. Repeating is opt-in, and only means anything on a band:
+    // there is nowhere on a carton face for a second copy to go.
+    labelReps = wrapped ? Math.max(1, CFG.label.repeat) : 1;
+    labelWrapped = wrapped;
+    // On a flat face the lockup may use the whole face; on a band it is capped to the
+    // readable arc, and to its share of the band when repeating.
+    labelMaxFrac = wrapped ? Math.min(0.80 / labelReps, READABLE_ARC_FRAC) : 0.80;
+
+    var mat = labelMaterial(makeLabelTexture());
+    var mesh;
+    if (spec.flat) {
+      // Flat pack: a decal plane a hair proud of the front face.
+      mesh = new THREE.Mesh(new THREE.PlaneGeometry(spec.faceW || 0.5, spec.labelH), mat);
+      mesh.position.set(0, spec.labelY, r);
+    } else if (wrapped) {
+      // Round pack, wrapped: an open cylinder. CylinderGeometry's UVs already run
+      // 0..1 around the circumference and 0..1 up the height, which is the mapping a
+      // wrap-around label needs; only the seam has to be steered off the face.
+      mesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(r, r, spec.labelH, 96, 1, true), mat);
+      mat.side = THREE.DoubleSide;
+      mesh.position.y = spec.labelY;
+      if (mat.map) {
+        // RepeatWrapping, so sampling either side of the seam wraps round the band
+        // instead of smearing the edge pixel along it.
+        mat.map.wrapS = THREE.RepeatWrapping;
+        mat.map.offset.x = faceOffset(labelReps);
+        mat.map.needsUpdate = true;
+      }
+    } else {
+      // Round pack, front decal only: a 130-degree arc of a cylinder, so the artwork
+      // follows the curve of the body instead of hovering flat in front of it. The arc
+      // is built centred on +Z; rotating it by the hero azimuth turns it to the camera.
+      mesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(r, r, spec.labelH, 48, 1, true, -arc / 2, arc), mat);
+      mat.side = THREE.DoubleSide;
+      mesh.position.y = spec.labelY;
+      mesh.rotation.y = HERO.azimuth;
+    }
+    mesh.castShadow = CFG.shadow;
+    spec.group.add(mesh);
+  }
+
+  // ---------------------------------------------------------------- product assembly
+  var STANDARD_HEIGHT = 2.0;   // every pack is framed at the same height, model or not
+  var PLINTH_H = 0.42;         // height of the pedestal studio's plinth
+  //: The surface the pack actually stands on. Zero everywhere except the pedestal
+  //: studio, where the pack is lifted onto the plinth. Everything that has to agree
+  //: with the pack's footing -- the mirror plane, the contact patch, the camera's look
+  //: target -- is derived from this rather than assuming y=0.
+  var GROUND_Y = (CFG.studio === "pedestal") ? PLINTH_H : 0;
+
+  var productPivot = new THREE.Group();   // spins for the turntable
+  var productRoot = new THREE.Group();    // holds the normalised pack
+  productPivot.add(productRoot);
+  productPivot.position.y = GROUND_Y;
+  scene.add(productPivot);
+
+  var mirrorPivot = null;
+
+  /**
+   * Sit an arbitrary object on the floor at a known size. A client's .glb arrives at an
+   * arbitrary scale, in an arbitrary unit, centred on an arbitrary origin -- one export
+   * is 3cm tall and the next is 3000. Normalising here is what lets one camera rig frame
+   * every product without per-model tuning.
+   */
+  function normalise(obj) {
+    obj.updateMatrixWorld(true);
+    var box = new THREE.Box3().setFromObject(obj);
+    if (!isFinite(box.min.x) || box.isEmpty()) {
+      fault("product has no measurable geometry; nothing to frame");
+      return;
+    }
+    var size = box.getSize(new THREE.Vector3());
+    var tallest = Math.max(size.y, 0.0001);
+    var k = STANDARD_HEIGHT / tallest;
+    // If a pack is far wider than it is tall, height alone would push it out of frame.
+    var widest = Math.max(size.x, size.z);
+    if (widest * k > STANDARD_HEIGHT * 1.5) k = (STANDARD_HEIGHT * 1.5) / widest;
+    obj.scale.setScalar(k);
+    obj.updateMatrixWorld(true);
+    box.setFromObject(obj);
+    var centre = box.getCenter(new THREE.Vector3());
+    obj.position.x -= centre.x;
+    obj.position.z -= centre.z;
+    obj.position.y -= box.min.y;   // sit on the floor
+    obj.updateMatrixWorld(true);
+  }
+
+  function finishProduct() {
+    normalise(productRoot);
+    productRoot.traverse(function (o) {
+      if (o.isMesh) {
+        o.castShadow = CFG.shadow;
+        o.receiveShadow = false;
+      }
+    });
+    buildMirror();
+    scheduleRender();
+  }
+
+  /**
+   * The floor reflection. There is no ray tracer here, so the reflection is the honest
+   * old trick: a mirrored copy of the pack under the floor, seen through a part-
+   * transparent floor. Flipping Y reverses the winding, so the mirror materials go
+   * double-sided; the copy is dim and blurred by the floor anyway.
+   */
+  function buildMirror() {
+    if (!CFG.floor || CFG.reflection <= 0.02) return;
+    // A plinth is opaque, so a mirrored copy under its top face would never be seen --
+    // and mirroring in the floor instead would put a reflection where the plinth is.
+    if (CFG.studio === "pedestal") return;
+    if (mirrorPivot) { scene.remove(mirrorPivot); mirrorPivot = null; }
+    var clone = productRoot.clone(true);
+    clone.traverse(function (o) {
+      if (!o.isMesh) return;
+      o.castShadow = false;
+      o.receiveShadow = false;
+      var src = Array.isArray(o.material) ? o.material : [o.material];
+      var out = src.map(function (m) {
+        var c = m.clone();
+        c.side = THREE.DoubleSide;
+        c.transparent = true;
+        c.opacity = CFG.reflection;
+        c.depthWrite = false;
+        return c;
+      });
+      o.material = Array.isArray(o.material) ? out : out[0];
+      o.renderOrder = -1;
+    });
+    mirrorPivot = new THREE.Group();
+    mirrorPivot.scale.y = -1;
+    mirrorPivot.add(clone);
+    scene.add(mirrorPivot);
+  }
+
+  var productSpec = null;
+  if (CFG.model) {
+    if (typeof THREE.GLTFLoader !== "function") {
+      fault("a model was requested but the GLTFLoader shim is not present; "
+            + "falling back to the '" + CFG.primitive + "' primitive");
+      productSpec = PRIMITIVES[CFG.primitive]();
+      productRoot.add(productSpec.group);
+      attachLabel({ group: productSpec.group, labelY: productSpec.labelY,
+                    labelR: productSpec.labelR, labelH: productSpec.labelH,
+                    flat: productSpec.flat, faceW: productSpec.faceW });
+      finishProduct();
+    } else {
+      new THREE.GLTFLoader().load(
+        CFG.model,
+        function (gltf) {
+          productRoot.add(gltf.scene);
+          finishProduct();
+        },
+        undefined,
+        function (err) {
+          fault("model did not load (" + CFG.model + "): " + (err && err.message || err));
+          productSpec = PRIMITIVES[CFG.primitive]();
+          productRoot.add(productSpec.group);
+          finishProduct();
+        }
+      );
+    }
+  } else {
+    productSpec = PRIMITIVES[CFG.primitive]();
+    productRoot.add(productSpec.group);
+    attachLabel({ group: productSpec.group, labelY: productSpec.labelY,
+                  labelR: productSpec.labelR, labelH: productSpec.labelH,
+                  flat: productSpec.flat, faceW: productSpec.faceW });
+    finishProduct();
+  }
+
+  // ---------------------------------------------------------------- floor
+  if (CFG.floor) {
+    // Matched to the bottom of the cyclorama ramp, so the two surfaces differ only in
+    // their sheen rather than in their colour, and the join has nothing to catch on.
+    var floorHex = (CFG.studio === "dark") ? "#000000"
+                 : (CFG.studio === "seamless" || CFG.studio === "pedestal") ? BRAND.light
+                 : BRAND.gradPrimary[BRAND.gradPrimary.length - 1];
+    var floorMat = new THREE.MeshPhysicalMaterial({
+      color: colr(floorHex),
+      // A polished sweep: low roughness so the environment lays a sheen across it.
+      roughness: mix(0.42, 0.05, CFG.reflection),
+      metalness: mix(0.05, 0.35, CFG.reflection),
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.08,
+      envMapIntensity: 0.5,
+      // The mirrored product sits UNDER this plane, so the floor has to be partly
+      // transparent for the reflection to read at all.
+      transparent: true,
+      opacity: CFG.reflection > 0.02 ? (1 - CFG.reflection * 0.85) : 1,
+      alphaMap: floorAlphaRamp()
+    });
+    // A disc that stops exactly where the cove begins. An unbounded floor would drive
+    // through the cyclorama and z-fight along a hard line across the frame.
+    var floor = new THREE.Mesh(new THREE.CircleGeometry(CYC_FLOOR_R, 96), floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = CFG.shadow;
+    floor.renderOrder = 2;
+    scene.add(floor);
+
+    // A soft contact patch under the pack. The shadow map alone goes thin and grey at
+    // the point of contact; this is what actually glues the product to the floor.
+    var occ = document.createElement("canvas");
+    occ.width = occ.height = 256;
+    var og = occ.getContext("2d");
+    var rg = og.createRadialGradient(128, 128, 4, 128, 128, 126);
+    rg.addColorStop(0, "rgba(0,0,0,0.62)");
+    rg.addColorStop(0.45, "rgba(0,0,0,0.26)");
+    rg.addColorStop(1, "rgba(0,0,0,0)");
+    og.fillStyle = rg;
+    og.fillRect(0, 0, 256, 256);
+    var occTex = new THREE.CanvasTexture(occ);
+    var contact = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.6, 2.6),
+      new THREE.MeshBasicMaterial({ map: occTex, transparent: true, depthWrite: false })
+    );
+    contact.rotation.x = -Math.PI / 2;
+    contact.position.y = GROUND_Y + 0.002;   // on the plinth top when there is one
+    // Draw order: mirrored product (-1) under the part-transparent floor (2), with the
+    // contact patch (3) last so it darkens both.
+    contact.renderOrder = 3;
+    scene.add(contact);
+  }
+
+  // A plinth for the pedestal studio, sized so the pack sits centred on it. It stands
+  // ON the floor and the product is lifted onto it -- sinking it to keep the pack at
+  // y=0 buries the whole thing under the floor and the preset shows no plinth at all.
+  if (CFG.studio === "pedestal") {
+    var plinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.05, 1.15, PLINTH_H, 72),
+      new THREE.MeshStandardMaterial({
+        color: colr(BRAND.tint), roughness: 0.30, metalness: 0.12, envMapIntensity: 0.9
+      })
+    );
+    plinth.position.y = PLINTH_H / 2;
+    plinth.castShadow = CFG.shadow;
+    plinth.receiveShadow = CFG.shadow;
+    scene.add(plinth);
+  }
+
+  // ---------------------------------------------------------------- atmosphere
+  // Dust motes catching the rim light. Seeded, so the same t gives the same specks.
+  if (CFG.lighting === "dramatic" || CFG.studio === "dark") {
+    var rnd = makePRNG(CFG.seed);
+    var count = 220;
+    var pos = new Float32Array(count * 3);
+    for (var d = 0; d < count; d++) {
+      pos[d * 3] = (rnd() - 0.5) * 7.0;
+      pos[d * 3 + 1] = rnd() * 3.6 + 0.06;
+      pos[d * 3 + 2] = (rnd() - 0.5) * 4.5 - 0.6;
+    }
+    var dustGeo = new THREE.BufferGeometry();
+    dustGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({
+      color: colr(BRAND.accent), size: 0.016, transparent: true,
+      opacity: 0.55, depthWrite: false, sizeAttenuation: true
+    })));
+  }
+
+  // ---------------------------------------------------------------- camera moves
+  // Every move is a pure function of t, eases, and has settled by t=1 -- a move still
+  // travelling at the last frame reads as a cut when the shot ends.
+
+  function applyMove(t) {
+    var az = HERO.azimuth, dist = HERO.dist, hgt = HERO.height, look = HERO.target;
+    var spin = 0;
+    var e;
+
+    switch (CFG.move) {
+      case "turntable":
+        // The pack turns, the camera holds. Just under a full revolution, eased at both
+        // ends so it starts and stops on the pack's front face.
+        spin = easeInOut(t) * Math.PI * 1.85;
+        break;
+
+      case "dolly-in":
+        e = easeOutQuint(t);
+        dist = mix(HERO.dist * 1.85, HERO.dist * 0.92, e);
+        hgt = mix(HERO.height * 1.5, HERO.height, e);
+        az = mix(HERO.azimuth - 0.24, HERO.azimuth, e);
+        break;
+
+      case "orbit":
+        e = easeInOut(t);
+        az = mix(HERO.azimuth - 1.15, HERO.azimuth + 1.15, e);
+        hgt = HERO.height + Math.sin(e * Math.PI) * 0.42;
+        break;
+
+      case "hero-reveal":
+        // Low, close and off-axis, rising and pulling back into the hero framing --
+        // the standard "product arrives" beat.
+        e = easeOutQuint(t);
+        dist = mix(HERO.dist * 0.62, HERO.dist, e);
+        hgt = mix(-0.15, HERO.height, easeOutCubic(t));
+        az = mix(HERO.azimuth - 0.85, HERO.azimuth, e);
+        look = mix(0.5, HERO.target, e);
+        spin = (1 - e) * -0.55;
+        break;
+
+      case "rise":
+        e = easeOutCubic(t);
+        hgt = mix(-0.55, HERO.height, e);
+        look = mix(0.35, HERO.target, e);
+        dist = mix(HERO.dist * 1.12, HERO.dist, e);
+        break;
+
+      case "static":
+      default:
+        break;
+    }
+
+    productPivot.rotation.y = spin;
+    if (mirrorPivot) mirrorPivot.rotation.y = spin;
+
+    // Framing is relative to whatever the pack is standing on, so the pedestal studio
+    // does not simply push the product out of the top of frame.
+    camera.position.set(
+      Math.sin(az) * dist,
+      hgt + GROUND_Y,
+      Math.cos(az) * dist
+    );
+    camera.lookAt(0, look + GROUND_Y, 0);
+    camera.updateMatrixWorld();
+  }
+
+  // ---------------------------------------------------------------- the render
+  var renderPending = false;
+  function scheduleRender() {
+    // Coalesce: several async milestones can land together and there is no point
+    // drawing the sheet three times in one task.
+    if (renderPending) return;
+    renderPending = true;
+    Promise.resolve().then(function () {
+      renderPending = false;
+      renderSheet();
+    });
+  }
+
+  function renderSheet() {
+    for (var i = 0; i < N; i++) {
+      var t = clockAt(i);
+      applyMove(t);
+      layoutOverlay(overlays[i], t);
+      renderer.render(scene, camera);
+      // One WebGL context for the whole sheet, blitted cell by cell. N contexts would
+      // hit Chrome's per-page context limit at n>16 and pay SwiftShader's per-context
+      // setup N times over, which is the cost this whole mechanism exists to avoid.
+      sheetCtx.drawImage(renderer.domElement, (i % COLS) * W, Math.floor(i / COLS) * H);
+    }
+    document.body.setAttribute("data-cgi-ready", "1");
+  }
+
+  renderSheet();
+
+  // Web fonts land after first paint, so the label texture and the overlay must be
+  // drawn again with the real metrics. Same pure function of t -- still deterministic.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      if (CFG.label.text && !CFG.label.image) {
+        var tex = labelTextTexture(CFG.label.text, labelAspect, labelReps,
+                                   labelMaxFrac);
+        if (labelWrapped) {
+          tex.wrapS = THREE.RepeatWrapping;
+          tex.offset.x = faceOffset(labelReps);
+        }
+        productPivot.traverse(function (o) {
+          if (o.isMesh && o.material && o.material.map && o.material.map.isCanvasTexture) {
+            o.material.map = tex;
+            o.material.needsUpdate = true;
+          }
+        });
+        if (mirrorPivot) {
+          mirrorPivot.traverse(function (o) {
+            if (o.isMesh && o.material && o.material.map && o.material.map.isCanvasTexture) {
+              o.material.map = tex;
+              o.material.needsUpdate = true;
+            }
+          });
+        }
+      }
+      scheduleRender();
+    });
+  }
+  window.addEventListener("load", scheduleRender);
+  window.addEventListener("error", function (e) {
+    fault((e && e.message) || "unknown script error");
+  });
+})();
+</script>
+</body>
+</html>

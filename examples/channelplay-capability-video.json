@@ -1,0 +1,78 @@
+{
+  "$comment": "Acceptance-test video IR. deck-video pipeline, narrating a subset of the capability deck. Scene roles follow the brand storyline arc: hook, problem, approach, proof, outcome, call-to-action.",
+  "brand": "channelplay",
+  "kind": "deck-video",
+  "meta": {
+    "title": "Retail execution, measured",
+    "durationTargetSec": 95
+  },
+  "intro": true,
+  "outro": true,
+  "music": { "enabled": true, "file": null },
+  "scenes": [
+    {
+      "id": "s1",
+      "role": "hook",
+      "visual": { "kind": "slide", "slide": 1, "template": null, "src": null, "data": {} },
+      "vo": "A retail plan is agreed in a boardroom. It is executed by one person, standing in one store, on a Tuesday afternoon.",
+      "caption": "A retail plan is agreed in a boardroom. It is executed by one person, standing in one store, on a Tuesday afternoon.",
+      "holdSec": 8
+    },
+    {
+      "id": "s2",
+      "role": "problem",
+      "visual": { "kind": "slide", "slide": 4, "template": null, "src": null, "data": {} },
+      "vo": "Most programmes do not fail on strategy. They fail on three things. Field staff turn over before they are trained. Compliance is self-reported, so nobody can check it. And the report arrives a month after the sale was lost.",
+      "caption": "Most programmes do not fail on strategy. They fail on three things.",
+      "holdSec": 14
+    },
+    {
+      "id": "s3",
+      "role": "problem",
+      "visual": { "kind": "slide", "slide": 5, "template": null, "src": null, "data": {} },
+      "vo": "Across the programmes we have inherited, field attrition ran at sixty two percent. Self-reported compliance overstated the audited figure by three and a half times. And it took thirty one days for a field event to reach the brand.",
+      "caption": "Across the programmes we have inherited, attrition ran at sixty two percent.",
+      "holdSec": 15
+    },
+    {
+      "id": "s4",
+      "role": "approach",
+      "visual": { "kind": "slide", "slide": 7, "template": null, "src": null, "data": {} },
+      "vo": "So we treat the person in the store as the product. Four steps, from in-app learning through field shadowing and classroom sessions, to a certification that is re-earned every quarter.",
+      "caption": "We treat the person in the store as the product.",
+      "holdSec": 13
+    },
+    {
+      "id": "s5",
+      "role": "approach",
+      "visual": { "kind": "slide", "slide": 10, "template": null, "src": null, "data": {} },
+      "vo": "And every claim the programme makes is traceable. Captured in the field with a geo-stamp, verified automatically, scored against the planogram, and raised the same day it happens.",
+      "caption": "Every claim the programme makes is traceable.",
+      "holdSec": 13
+    },
+    {
+      "id": "s6",
+      "role": "proof",
+      "visual": { "kind": "slide", "slide": 13, "template": null, "src": null, "data": {} },
+      "vo": "The result is not that people got better. Self-reported compliance barely moved. Audited compliance rose from sixty one to ninety two percent, because the gap between the two stopped being invisible.",
+      "caption": "Audited compliance rose from sixty one to ninety two percent.",
+      "holdSec": 15
+    },
+    {
+      "id": "s7",
+      "role": "outcome",
+      "visual": { "kind": "slide", "slide": 15, "template": null, "src": null, "data": {} },
+      "vo": "That model runs today across four thousand two hundred general trade stores, six hundred and eighty modern trade doors, and two thousand nine hundred telecom outlets.",
+      "caption": "Live today across more than seven thousand stores.",
+      "holdSec": 12
+    },
+    {
+      "id": "s8",
+      "role": "call-to-action",
+      "visual": { "kind": "slide", "slide": 16, "template": null, "src": null, "data": {} },
+      "vo": "Pick one territory and one metric. We will run it for a quarter, against your current baseline.",
+      "caption": "Pick one territory and one metric.",
+      "holdSec": 9
+    }
+  ]
+}
