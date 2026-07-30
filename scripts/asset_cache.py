@@ -87,6 +87,9 @@ class AssetCache(object):
             os.makedirs(self.dir)
         self.manifest_path = os.path.join(self.dir, MANIFEST)
         self.manifest = self._load()
+        # Kinds this instance has explicitly removed. _save() must not merge
+        # them back from the on-disk copy, or a deletion silently undoes itself.
+        self._deleted = set()
 
     def _load(self):
         if not os.path.exists(self.manifest_path):
@@ -110,6 +113,11 @@ class AssetCache(object):
         that the next run cannot parse. So: re-read, merge entries we do not
         hold, write to a temp file in the same directory, then rename, which is
         atomic on POSIX.
+
+        Deletions are tracked separately in ``_deleted`` and excluded from that
+        merge. Without it the merge resurrects whatever invalidate() just
+        removed -- it is still on disk at merge time -- and the entry can never
+        be deleted at all.
         """
         merged = dict(self.manifest)
         assets = dict(merged.get("assets") or {})
@@ -117,8 +125,9 @@ class AssetCache(object):
             with open(self.manifest_path, encoding="utf-8") as fh:
                 on_disk = json.load(fh)
             for kind, entry in (on_disk.get("assets") or {}).items():
-                # Ours wins for kinds we just wrote; theirs survives otherwise.
-                if kind not in assets:
+                # Ours wins for kinds we just wrote; theirs survives otherwise --
+                # except anything we deliberately deleted, which stays deleted.
+                if kind not in assets and kind not in self._deleted:
                     assets[kind] = entry
         except (IOError, ValueError):
             pass
@@ -177,6 +186,7 @@ class AssetCache(object):
     def invalidate(self, kind):
         """Drop one cached asset. Returns True when something was removed."""
         entry = self.manifest["assets"].pop(kind, None)
+        self._deleted.add(kind)
         removed = False
         if entry:
             path = os.path.join(self.dir, entry.get("file", ""))
@@ -186,8 +196,10 @@ class AssetCache(object):
                     removed = True
                 except OSError:
                     pass
-            self._save()
-        return removed
+        # Always persist: the entry may exist only in the on-disk manifest
+        # (written by a concurrent run), and it must still be removable.
+        self._save()
+        return removed or entry is not None
 
     def invalidate_all(self):
         kinds = list(self.manifest["assets"].keys())
