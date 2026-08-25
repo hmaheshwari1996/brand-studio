@@ -38,6 +38,10 @@ EXIT_NONE = 4
 
 _HEADING_RE = re.compile(r"^(#{2,6})\s+(.*\S)\s*$")
 _DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+# Rule ids as they appear in rules.local.json and are cited in LEARNED.md.
+# Matched whole, then compared as a SET -- never as a substring, so
+# LOCAL.NO_SOLUTION cannot silently satisfy LOCAL.NO_SOLUTIONS.
+_RULE_ID_RE = re.compile(r"\bLOCAL\.[A-Za-z0-9_]+")
 
 
 class _Parser(argparse.ArgumentParser):
@@ -259,6 +263,69 @@ def video_summary(brand):
     }
 
 
+def learned_health(md_path, rules):
+    # type: (str, object) -> list
+    """Cross-tier consistency, using only invariants the files themselves state.
+
+    rules.local.json declares it in its own header: *every rule here must also
+    have a dated entry in LEARNED.md explaining who asked for it and why*.
+    Nothing enforced that, so a tier-2 rule could outlive the reason for it and
+    the next review re-litigates a decision that was already made.
+
+    Only SILENT failures are reported. A learned rule that contradicts
+    brand.json -- a forbid_color on a palette colour, say -- fails loudly on the
+    very next build and needs no check here.
+
+    Both directions are reported, because both are silent:
+      * a rule with no ledger entry -- the reason for it is lost, and the next
+        review re-litigates a decision that was already made.
+      * a ledger-cited rule absent from rules.local.json -- a correction the
+        ledger says is enforced, which nothing enforces. Deliberately retiring a
+        rule looks identical from the text, so the wording names both readings
+        rather than asserting a fault.
+
+    Display only. The caller's exit code is decided by match quality and this
+    must never alter it.
+    """
+    notes = []
+    ids = set()
+    if isinstance(rules, list):
+        for rule in rules:
+            if isinstance(rule, dict) and rule.get("id"):
+                ids.add(str(rule["id"]).strip().upper())
+
+    if not md_path or not os.path.isfile(md_path):
+        if ids:
+            notes.append("%d local rule(s) but no ledger file on disk" % len(ids))
+        return notes
+
+    try:
+        with open(md_path, "r") as fh:
+            text = fh.read()
+    except (IOError, OSError):
+        return notes
+
+    cited = set(m.group(0).upper() for m in _RULE_ID_RE.finditer(text))
+    orphans = sorted(i for i in ids if i not in cited)
+    if orphans:
+        notes.append("no ledger entry for %s" % ", ".join(orphans))
+
+    absent = sorted(c for c in cited if c not in ids)
+    if absent:
+        notes.append("ledger cites %s, absent from rules.local.json (retired, or never added?)"
+                     % ", ".join(absent))
+
+    undated = 0
+    for raw in text.splitlines():
+        m = _HEADING_RE.match(raw)
+        if m and not _first_date(m.group(2)):
+            undated += 1
+    if undated:
+        notes.append("%d undated ## entr%s; newest-first sorting falls back to file order"
+                     % (undated, "y" if undated == 1 else "ies"))
+    return notes
+
+
 def learned_summary(brand):
     # type: (dict) -> dict
     learned = brand.get("learnedRules") or {}
@@ -277,6 +344,7 @@ def learned_summary(brand):
         "file": md_path,
         "fileExists": bool(md_path) and os.path.isfile(md_path),
         "recent": read_learned_entries(md_path, 3),
+        "health": learned_health(md_path, rules if isinstance(rules, list) else []),
     }
 
 
@@ -488,6 +556,8 @@ def render_human(summary, match, score, candidates):
     else:
         L.append(_row("recent", "no LEARNED.md entries yet"
                                 if ln["fileExists"] else "no LEARNED.md on disk"))
+    for i, note in enumerate(ln.get("health") or []):
+        L.append("  %-12s %s" % ("DRIFT" if i == 0 else "", note))
 
     others = [c for c in (candidates or []) if c.get("id") != summary["id"]]
     if match != "exact" and others:

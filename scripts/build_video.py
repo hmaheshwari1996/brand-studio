@@ -3938,6 +3938,10 @@ def timeline_payload(ir, brand, video, plan, elements, cues, cmd, measured, warn
         if element["kind"] == "scene":
             row["vo"] = element.get("vo") or ""
             row["caption"] = element.get("caption") or ""
+            # The template payload, so the sidecar carries the copy it rendered.
+            # Without it validate_video.py can see narration but not headlines,
+            # and a learned rule scoped to 'title' or 'eyebrow' checks nothing.
+            row["data"] = element.get("data") if isinstance(element.get("data"), dict) else {}
             row["voFile"] = element.get("voFile")
             row["voDurationSec"] = element.get("voDurationSec")
             row["voStartSec"] = element.get("voStart")

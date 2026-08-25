@@ -2214,6 +2214,20 @@ class DeckValidator(object):
             value = raw.get("value")
             values = value if isinstance(value, list) else [value]
 
+            unknown_formats = bl.rule_formats(raw)[1]
+            if unknown_formats:
+                self.add(vid, "info", "brand rules.local.json",
+                         found="unknown value(s) in `formats`: %s"
+                               % ", ".join(sorted(set(unknown_formats))),
+                         expected="values from: %s" % ", ".join(bl.RULE_FORMATS),
+                         rule=rule_text,
+                         fix="Fix the spelling in rules.local.json. Until then the "
+                             "rule stays active everywhere rather than being "
+                             "silently narrowed to nothing.",
+                         key=(vid, "badformat"))
+            if not bl.rule_applies(raw, "deck"):
+                continue
+
             try:
                 if kind == "forbid_text":
                     needles = [str(v) for v in values if v is not None]

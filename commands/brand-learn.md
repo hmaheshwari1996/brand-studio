@@ -77,6 +77,7 @@ one where both agree.
       "id": "LOCAL.NO_MINT_TEXT",
       "kind": "forbid_color",
       "scope": "title",
+      "formats": ["deck"],
       "value": "#41E7AB",
       "severity": "error",
       "rule": "Mint is decorative only; never a text colour.",
@@ -99,15 +100,30 @@ one where both agree.
 | `regex` | pattern | the pattern matches text in scope |
 
 - `scope`: `any`, `title`, `body`, `eyebrow`.
+- `formats`: **optional**, and the field to reach for whenever the correction was about one kind of
+  artifact. `deck` or `video` for the artifact kind, or a delivery format — `landscape`, `square`,
+  `vertical`. **A reel is `vertical`.** Omit it and the rule applies to everything, which is the
+  right default when the note is genuinely general. Get this wrong in the narrow direction and the
+  rule fires on work it was never meant to govern; a note that says "on reels" and a rule with no
+  `formats` is how a reel preference ends up warning on every deck title. A misspelled value is
+  reported and the rule stays active everywhere — a typo never silently disables a rule.
 - `severity`: `error`, `warn`, `info`. Use `error` only for something that must block a build —
   an error stops the session from ending until it is fixed.
 - `id` **must** start with `LOCAL.` so learned rules stay distinguishable from built-in ones.
 - Keep `rule` and `fix` populated. They are what the next agent reads when the rule fires.
 
-**Know the limit before you promise enforcement:** learned rules are evaluated by
-`validate_deck.py`. A correction about video pacing, loudness or captions cannot be expressed as a
-local rule — it belongs in `brand.json` under `video`, or in `LEARNED.md` as guidance. Say which one
-you did; do not claim a video correction is now enforced when it is not.
+**Know the limit before you promise enforcement.** Both validators read learned rules, but they do
+not read the same kinds:
+
+| | `validate_deck.py` | `validate_video.py` |
+|---|---|---|
+| `forbid_text`, `require_text`, `regex` | yes | yes — over narration, captions and on-screen template copy |
+| `forbid_color` | yes | no — reported as `info`; colour on film is covered by `VIDEO.OFF_PALETTE` from sampled frames |
+| `min_font_size`, `max_font_size`, `forbid_font_size` | yes | no — reported as `info`; a rendered film exposes no type sizes to inspect |
+
+A correction about pacing, loudness or caption timing is not a local rule at all — it belongs in
+`brand.json` under `video`, or in `LEARNED.md` as guidance. Say which one you did; do not claim a
+correction is enforced when it is not.
 
 Then prove the file still parses. A malformed local rules file makes `load_brand` raise and takes
 every downstream skill with it:

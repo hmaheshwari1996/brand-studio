@@ -903,6 +903,7 @@ def load_timeline(path, brand, raw=None):
             "duration": dur,
             "vo": str(raw_scene.get("vo") or ""),
             "caption": str(raw_scene.get("caption") or ""),
+            "copy": scene_copy(raw_scene),
         })
 
     # Fill in timings. Explicit starts win; otherwise lay the scenes out
@@ -1929,6 +1930,229 @@ def check_storyline(report, brand, timeline):
 # orchestration
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# checks - learned rules
+# ---------------------------------------------------------------------------
+
+# Keys inside a motion template's `data` block that carry copy a viewer reads.
+# An allowlist, deliberately, not a blanket walk of every string: `mode:
+# "wipe"`, `align: "left"` and icon names are data, and a forbid_text rule
+# matching one of those is a false positive -- which is how a rule teaches
+# people to ignore it.
+_COPY_KEYS = frozenset((
+    "lines", "title", "headline", "subhead", "eyebrow", "label", "body",
+    "caption", "name", "quote", "text", "value", "statement",
+))
+# Which of those read as the scene's headline and kicker, mirroring the deck
+# validator's title / eyebrow / body scopes so one rule vocabulary covers both.
+_TITLE_KEYS = frozenset(("lines", "title", "headline"))
+_EYEBROW_KEYS = frozenset(("eyebrow",))
+
+
+def _copy_pairs(node, out, key=""):
+    # type: (Any, List[Tuple[str, str]], str) -> None
+    """Collect (key, string) copy pairs from a template data block.
+
+    A list inherits its parent's key, so `lines: ["a", "b"]` yields two pairs
+    under 'lines' rather than none.
+    """
+    if isinstance(node, str):
+        text = node.strip()
+        if text and key in _COPY_KEYS:
+            out.append((key, text))
+    elif isinstance(node, list):
+        for item in node:
+            _copy_pairs(item, out, key)
+    elif isinstance(node, dict):
+        for raw_key, value in node.items():
+            name = str(raw_key)
+            if not name.startswith("$"):
+                _copy_pairs(value, out, name)
+
+
+def scene_copy(raw_scene):
+    # type: (Dict[str, Any]) -> List[Tuple[str, str]]
+    """On-screen copy for one scene, from either accepted input shape.
+
+    build_video.py's sidecar puts the template payload at row['data']; a Video
+    IR (FROZEN CONTRACT B) nests it under visual.data. load_timeline() accepts
+    both, so this must too.
+    """
+    data = raw_scene.get("data")
+    if not isinstance(data, dict):
+        visual = raw_scene.get("visual")
+        data = visual.get("data") if isinstance(visual, dict) else None
+    pairs = []  # type: List[Tuple[str, str]]
+    if isinstance(data, dict):
+        _copy_pairs(data, pairs)
+    return pairs
+
+
+def scoped_scene_text(scene, scope):
+    # type: (Dict[str, Any], str) -> List[str]
+    """Text in ``scope`` for one scene.
+
+    title   -> the headline the template renders large
+    eyebrow -> the kicker above it
+    body    -> narration, caption, and every other piece of on-screen copy
+    any     -> all of the above
+    """
+    pairs = scene.get("copy") or []
+    title = [t for k, t in pairs if k in _TITLE_KEYS]
+    eyebrow = [t for k, t in pairs if k in _EYEBROW_KEYS]
+    rest = [t for k, t in pairs
+            if k not in _TITLE_KEYS and k not in _EYEBROW_KEYS]
+    spoken = [str(t) for t in (scene.get("vo"), scene.get("caption"))
+              if str(t or "").strip()]
+
+    if scope == "title":
+        picked = title
+    elif scope == "eyebrow":
+        picked = eyebrow
+    elif scope == "body":
+        picked = spoken + rest
+    else:
+        picked = title + eyebrow + spoken + rest
+
+    # build_video.py defaults a scene's caption to its narration, so vo and
+    # caption are routinely the same string. That is one piece of copy, not
+    # two -- without this, every rule reports each scene twice.
+    seen = set()
+    out = []
+    for text in picked:
+        if text not in seen:
+            seen.add(text)
+            out.append(text)
+    return out
+
+
+def _scene_where(scene):
+    # type: (Dict[str, Any]) -> str
+    role = scene.get("role")
+    return "scene %s '%s'%s" % (scene.get("n") or "?", scene.get("id") or "?",
+                                " (%s)" % role if role else "")
+
+
+def check_learned_rules(report, brand, timeline, fmt=None):
+    # type: (B.Report, Dict[str, Any], Dict[str, Any], Optional[Dict[str, Any]]) -> None
+    """LOCAL.* rules from the brand's rules.local.json, over a film's copy.
+
+    validate_deck.py has enforced these since the three-tier learn protocol was
+    written; video did not. Any correction persisted at tier 2 for a reel or an
+    explainer was therefore inert -- written down, reported to the user as
+    enforced, and never checked.
+
+    The text kinds are checked here. forbid_color and the font-size kinds are
+    reported as info rather than skipped, because a rule that is silently
+    unenforceable is the exact failure this check exists to prevent.
+    """
+    learned = brand.get("learnedRules") or {}
+    rules = learned.get("rules") if isinstance(learned, dict) else None
+    if not isinstance(rules, list):
+        return
+    scenes = timeline.get("scenes") or []
+    format_name = str((fmt or {}).get("name") or "") or None
+
+    for raw in rules:
+        if not isinstance(raw, dict):
+            continue
+        vid = str(raw.get("id") or "LEARNED.RULE")
+        severity = str(raw.get("severity") or "warn").lower()
+        if severity not in B.SEVERITIES:
+            severity = "warn"
+        kind = str(raw.get("kind") or "")
+        scope = str(raw.get("scope") or "any")
+        rule_text = str(raw.get("rule") or "Learned rule %s." % vid)
+        fix_text = str(raw.get("fix") or "Apply the learned correction.")
+        value = raw.get("value")
+        values = value if isinstance(value, list) else [value]
+
+        unknown_formats = B.rule_formats(raw)[1]
+        if unknown_formats:
+            report.add(vid, severity="info", where="brand rules.local.json",
+                       found="unknown value(s) in `formats`: %s"
+                             % ", ".join(sorted(set(unknown_formats))),
+                       expected="values from: %s" % ", ".join(B.RULE_FORMATS),
+                       rule=rule_text,
+                       fix="Fix the spelling in rules.local.json. Until then the rule "
+                           "stays active everywhere rather than being silently "
+                           "narrowed to nothing.")
+        if not B.rule_applies(raw, "video", format_name):
+            continue
+
+        try:
+            if kind == "forbid_text":
+                needles = [str(v) for v in values if v is not None]
+                for scene in scenes:
+                    for text in scoped_scene_text(scene, scope):
+                        for hit in B.find_forbidden_phrases(text, needles):
+                            report.add(vid, severity=severity,
+                                       where=_scene_where(scene),
+                                       found="%r in %r" % (hit, text[:120]),
+                                       expected="copy without %r" % hit,
+                                       rule=rule_text, fix=fix_text)
+
+            elif kind == "require_text":
+                needles = [str(v) for v in values if v is not None]
+                haystack = "\n".join(
+                    t for sc in scenes for t in scoped_scene_text(sc, scope)).lower()
+                for needle in needles:
+                    if needle.strip() and needle.lower() not in haystack:
+                        report.add(vid, severity=severity,
+                                   where="film (scope=%s)" % scope,
+                                   found="%r never appears" % needle,
+                                   expected="%r somewhere in scope" % needle,
+                                   rule=rule_text, fix=fix_text)
+
+            elif kind == "regex":
+                for pattern in [str(v) for v in values if v is not None]:
+                    try:
+                        rx = re.compile(pattern, re.IGNORECASE)
+                    except re.error as exc:
+                        report.add(vid, severity="info",
+                                   where="brand rules.local.json",
+                                   found="invalid regex %r: %s" % (pattern, exc),
+                                   expected="a compilable Python regular expression",
+                                   rule=rule_text,
+                                   fix="Fix the pattern in rules.local.json.")
+                        continue
+                    for scene in scenes:
+                        for text in scoped_scene_text(scene, scope):
+                            hit = rx.search(text)
+                            if hit:
+                                report.add(vid, severity=severity,
+                                           where=_scene_where(scene),
+                                           found="matched %r at %r"
+                                                 % (pattern, hit.group(0)[:80]),
+                                           expected="copy that does not match %r" % pattern,
+                                           rule=rule_text, fix=fix_text)
+
+            elif kind in ("forbid_color", "max_font_size", "min_font_size",
+                          "forbid_font_size"):
+                report.add(vid, severity="info", where="brand rules.local.json",
+                           found="rule kind %r is not checkable on a rendered film" % kind,
+                           expected="a text kind: forbid_text, require_text or regex",
+                           rule=rule_text,
+                           fix="Colour on video is covered by VIDEO.OFF_PALETTE from "
+                               "sampled frames, and a film exposes no type sizes to "
+                               "inspect. Keep this rule for decks, or restate it as text.")
+
+            else:
+                report.add(vid, severity="info", where="brand rules.local.json",
+                           found="unsupported rule kind %r" % kind,
+                           expected="one of forbid_text, require_text, regex",
+                           rule=rule_text,
+                           fix="Rewrite the rule using a supported kind, or extend "
+                               "validate_video.py.")
+
+        except Exception as exc:  # one bad rule must never abort a validation run
+            report.add(vid, severity="info", where="brand rules.local.json",
+                       found="rule raised %s: %s" % (type(exc).__name__, exc),
+                       expected="a rule that evaluates cleanly",
+                       rule=rule_text,
+                       fix="Fix the rule in rules.local.json.")
+
+
 def resolve_brand_id(explicit, timeline_hint):
     # type: (Optional[str], Optional[str]) -> str
     """Explicit --brand wins, then the timeline's own brand key, then the default."""
@@ -1997,6 +2221,7 @@ def validate(video_path, brand_id=None, srt_path=None, timeline_path=None, frame
     check_audio(report, video_path, info, brand, timeline, duration)
     check_captions(report, video_path, info, brand, srt_path, timeline, duration, fmt)
     check_storyline(report, brand, timeline)
+    check_learned_rules(report, brand, timeline, fmt)
     return report
 
 
