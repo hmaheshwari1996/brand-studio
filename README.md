@@ -46,12 +46,12 @@ is a terminal-only command; in the desktop or web app it answers *"/plugin isn't
 environment."*
 
 ```
-/plugin marketplace add harshit-channelplay/brand-studio
+/plugin marketplace add hmaheshwari1996/brand-studio
 /plugin install brand-studio
 ```
 
 > **Two names, and they are not the same.** You *add* the marketplace by its **repo path**
-> (`harshit-channelplay/brand-studio`). Once added you *refer* to it by the **name in its manifest**,
+> (`hmaheshwari1996/brand-studio`). Once added you *refer* to it by the **name in its manifest**,
 > which is `channelplay` — so updates are `/plugin marketplace update channelplay`. Typing
 > `channelplay/brand-studio` fails, because no such repo exists.
 
