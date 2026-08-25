@@ -14,6 +14,12 @@
   "  value     required. A single value, or a list of values that are all checked.",
   "  scope     'any' (default), 'title', 'body' or 'eyebrow'. 'body' means every text shape that",
   "            is neither a title nor an eyebrow.",
+  "  formats   optional. Which artifacts the rule applies to. Omit it and the rule applies",
+  "            everywhere -- the default, and what every rule written before this field",
+  "            existed does. Values: 'deck' or 'video' (the artifact kind), or a delivery",
+  "            format from brand.video.formats: 'landscape', 'square', 'vertical'. A reel is",
+  "            'vertical'. A misspelled value is REPORTED as an info violation and the rule",
+  "            stays active everywhere -- a typo must never silently disable a rule.",
   "  severity  'error' or 'warn'. 'info' is accepted but reserved for the validator's own",
   "            diagnostics. Use 'error' only for something that must block a build; an error is",
   "            a hard stop for every future deck in this brand, not a strong opinion.",
@@ -161,6 +167,20 @@
    "fix": "Rewrite the line without 'solutions' -- say what the team actually does.",
    "added": "2026-07-30",
    "source": "morning review 2026-07-30"
+  },
+  {
+   "id": "LOCAL.TITLE_MAX_7_WORDS",
+   "kind": "regex",
+   "scope": "title",
+   "formats": [
+    "vertical"
+   ],
+   "value": "^(?:\\S+\\s+){7,}\\S",
+   "severity": "warn",
+   "rule": "A headline runs to seven words at most. Eight is where a reel's opening stops landing in the first two seconds.",
+   "fix": "Cut it to seven words or fewer. Drop the qualifier before the claim, not the claim.",
+   "added": "2026-07-30",
+   "source": "morning review 2026-07-30; recorded in LEARNED.md but never added to this file -- restored 2026-08-25"
   }
  ]
 }

@@ -126,3 +126,58 @@ Entry format:
 - **Why:** morning review note on the 2026-07-30 packet, category *copy*: “never use the word solutions”
 - **Tier:** 2 — `rules.local.json` rule `LOCAL.NO_SOLUTIONS` (forbid_text, scope any, warn); 3 — `brand.json` `voice.forbiddenPhrases`. Video coverage: validate_video.py does not read learnedRules, so the tier 2 rule alone would be enforced on decks only.
 - **Ruled by:** brand owner, morning review 2026-07-30
+
+## 2026-08-25 — Learned rules are enforced on video, not decks only
+
+- **Scope:** both
+- **Changed:** `validate_video.py` now reads `learnedRules` and checks the text kinds
+  (`forbid_text`, `require_text`, `regex`) across `title`, `eyebrow`, `body` and `any`, using the
+  same rule vocabulary as the deck validator. `forbid_color` and the font-size kinds are reported as
+  `info` on video rather than skipped — colour is already covered by `VIDEO.OFF_PALETTE` from sampled
+  frames, and a film exposes no type sizes to inspect. `build_video.py` now writes each scene's
+  template `data` into the timeline sidecar, without which a rule scoped to `title` or `eyebrow`
+  would have inspected nothing on a rendered film.
+- **Why:** the 2026-07-30 `LOCAL.NO_SOLUTIONS` entry recorded this gap in its own Tier line and
+  nothing acted on it. Every tier 2 correction made for a reel or an explainer was inert: written
+  down, reported to the user as enforced, and never checked. That is the precise failure the
+  three-tier protocol exists to prevent.
+- **Tier:** plugin code, not a brand tier — `scripts/validate_video.py`, `scripts/build_video.py`.
+- **Ruled by:** brand owner, session 2026-08-25
+
+## 2026-08-25 — A learned rule can name the formats it applies to
+
+- **Scope:** both
+- **Changed:** `rules.local.json` rules accept an optional `formats` list — `deck` or `video` for the
+  artifact kind, or a delivery format from `brand.video.formats` (`landscape`, `square`, `vertical`).
+  Omitted means the rule applies everywhere, so every rule written before the field is unaffected. A
+  misspelled value is reported as `info` and the rule stays active everywhere: a typo must never
+  silently disable a rule. `LOCAL.TITLE_MAX_7_WORDS` is now `"formats": ["vertical"]`.
+- **Why:** the rule was recorded on 2026-07-30 with **Scope: reel**, but the schema had no way to
+  express that, so switching video enforcement on applied a reel rule to deck titles. It warned on
+  two slide titles that read perfectly well at eight and nine words. The ledger had already scoped
+  the rule correctly; the schema simply could not carry it.
+- **Tier:** 2 — `rules.local.json` (`LOCAL.TITLE_MAX_7_WORDS`), plus the shared
+  `brandlib.rule_applies()` both validators consult.
+- **Ruled by:** brand owner, session 2026-08-25
+
+## 2026-08-25 — The forbid_text coverage mirror is retired
+
+- **Scope:** both
+- **Changed:** `review.py` no longer copies a `forbid_text` ban into `brand.json`
+  `voice.forbiddenPhrases` when the note is about a film. The `--no-mirror` flag and the
+  `mirror_forbidden_phrase()` function are gone. Existing entries in `voice.forbiddenPhrases` —
+  including `solutions`, mirrored on 2026-07-30 — are **left exactly as they are**: they record a
+  ruling that was actually made, and retiring the mechanism is not a reason to rewrite the record.
+- **Why:** three reasons, only the first of which is redundancy. (a) The mirror existed solely
+  because `validate_video.py` could not read `learnedRules`, which it now can. (b) It reported a
+  voice ban under `CONTENT.PLACEHOLDER`, an id that means template scaffolding leaked into a client
+  artifact — so the report said something untrue about what went wrong. (c) It quietly promoted a
+  `warn` rule to an `error` and wrote a tier 3 brand fact from a tier 2 decision, neither of which
+  anyone ruled on. A ban that should block a build is a rule with `"severity": "error"`, which video
+  now honours.
+- **Known consequence:** `solutions` is still banned at both tiers, so a film using it reports twice
+  — `LOCAL.NO_SOLUTIONS` at warn and `CONTENT.PLACEHOLDER` at error. One legacy phrase, and no new
+  ones can appear now the mirror is gone; deduplicating for a single historical case was judged not
+  worth the code.
+- **Tier:** plugin code — `scripts/review.py`.
+- **Ruled by:** brand owner, session 2026-08-25

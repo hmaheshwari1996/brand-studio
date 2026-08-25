@@ -30,12 +30,17 @@ THE THREE TIERS (identical to the plugin's learn protocol)
     2  brands/<id>/rules.local.json  when the note is mechanically checkable
     3  brands/<id>/brand.json      when the note is a durable brand FACT
 
-A KNOWN LIMIT, STATED HONESTLY: tier 2 rules are evaluated by validate_deck.py.
-validate_video.py does not read learnedRules -- it reads voice.forbiddenPhrases.
-So when a forbid_text note applies to a video, apply() also mirrors the phrase
-into brand.json voice.forbiddenPhrases, and says so. Without that mirror a
-"never say X" note would be silently unenforced on exactly the artifact the note
-was about.
+Both validators read tier 2 rules, but not the same kinds. The text kinds --
+forbid_text, require_text, regex -- are enforced on decks and on film. The colour
+and font-size kinds are deck-only; validate_video.py reports them as info,
+because colour on film is checked against sampled frames and a rendered film
+exposes no type sizes.
+
+A proposed rule carries the `formats` it applies to, inferred from what the note
+says and, failing that, from the artifact it was filed against. A note about a
+reel therefore does not silently govern decks. Spanning several kinds, or naming
+none, leaves `formats` off so the rule applies everywhere -- broad and loud beats
+narrow and silently disabled.
 
 Exit codes: 0 fine, 1 could not run (no packet, bad JSON, missing brand),
 2 a rebuild produced an artifact that fails validation.
@@ -463,12 +468,51 @@ def _scope_from(text):
     return "any"
 
 
+def _formats_from(text, kinds=None):
+    """Which artifacts a note is about -> a rules.local.json `formats` list.
+
+    Two sources, in order of trust:
+
+    1. What the note SAYS. "on reels", "in the deck" is the author scoping the
+       correction out loud, and it wins.
+    2. What the note is ATTACHED TO. A note filed against tonight's reel is a
+       reel note even when the sentence never says so, and this is the reliable
+       signal -- it comes from the packet, not from prose.
+
+    Returns [] when the note spans more than one kind, or names none. Empty
+    means "applies everywhere", which is the correct default: a rule that is
+    wrongly narrowed is silently disabled, and that is the worse failure.
+    """
+    t = (text or "").lower()
+    if re.search(r"\breels?\b|\bstor(?:y|ies)\b|\bshorts?\b|\bvertical\b|\b9:16\b", t):
+        return ["vertical"]
+    if re.search(r"\bsquares?\b|\b1:1\b|\bin-?feed\b", t):
+        return ["square"]
+    if re.search(r"\blandscapes?\b|\b16:9\b|\bin-?room\b", t):
+        return ["landscape"]
+    if re.search(r"\bdecks?\b|\bslides?\b|\bpresentations?\b|\bpptx?\b", t):
+        return ["deck"]
+    if re.search(r"\bvideos?\b|\bfilms?\b|\bexplainers?\b", t):
+        return ["video"]
+
+    mapped = set()
+    for kind in (kinds or []):
+        name = str(kind).strip().lower()
+        if name == "reel":
+            mapped.add("vertical")
+        elif name == "deck":
+            mapped.add("deck")
+        elif name == "video":
+            mapped.add("video")
+    return sorted(mapped) if len(mapped) == 1 else []
+
+
 def _slug(term):
     s = re.sub(r"[^A-Za-z0-9]+", "_", _u(term)).strip("_").upper()
     return (s or "RULE")[:32]
 
 
-def detect_rule(text, date):
+def _detect_rule(text, date):
     """Propose a rules.local.json rule for ``text``, or None.
 
     Only the seven kinds validate_deck.py implements are ever produced:
@@ -479,7 +523,6 @@ def detect_rule(text, date):
     t = _u(text or "")
     low = t.lower()
     scope = _scope_from(t)
-
     # --- word-count limits -> regex --------------------------------------
     m = re.search(r"\b(under|below|less than|fewer than|shorter than|"
                   r"at most|no more than|max(?:imum)?(?: of)?|keep(?: it)? to|"
@@ -621,6 +664,23 @@ def detect_rule(text, date):
             }
 
     return None
+
+
+def detect_rule(text, date, kinds=None):
+    """``_detect_rule`` plus the `formats` scoping the note implies.
+
+    Kept as a wrapper rather than threading `formats` through every proposal
+    inside _detect_rule: the matcher has seven return sites and each one would
+    have to remember to stamp the field. One place that cannot be forgotten
+    beats seven that can.
+    """
+    rule = _detect_rule(text, date)
+    if not rule:
+        return rule
+    formats = _formats_from(text, kinds)
+    if formats:
+        rule["formats"] = list(formats)
+    return rule
 
 
 def _resolve_placeholder(rule, brand):
@@ -942,7 +1002,7 @@ def cmd_note(args):
 
     brand = bl.load_brand(brand_id)
     fact = detect_brand_fact(text)
-    rule = _resolve_placeholder(detect_rule(text, date), brand)
+    rule = _resolve_placeholder(detect_rule(text, date, kinds), brand)
 
     doc = load_notes(brand_id, date)
     nid = "n%d" % (len(doc["notes"]) + 1)
@@ -1060,30 +1120,6 @@ def edit_brand_json(brand_id, path_key, value, why, date):
     prov["review-%s" % date] = "%s: %s was %r, now %r." % (why, path_key, prev, value)
     write_json(path, doc)
     return (path, prev)
-
-
-def mirror_forbidden_phrase(brand_id, phrase, date):
-    """validate_video.py does not read learnedRules; it reads this list."""
-    path = os.path.join(bl.brand_dir(brand_id), "brand.json")
-    doc = read_json(path)
-    if not isinstance(doc, dict):
-        return (False, "brand.json unreadable")
-    voice = doc.setdefault("voice", {})
-    phrases = voice.get("forbiddenPhrases")
-    if not isinstance(phrases, list):
-        phrases = []
-    if any(str(p).strip().lower() == phrase.strip().lower() for p in phrases):
-        return (False, "already in voice.forbiddenPhrases")
-    phrases.append(phrase)
-    voice["forbiddenPhrases"] = phrases
-    doc["updated"] = date
-    prov = doc.setdefault("provenance", {})
-    if isinstance(prov, dict):
-        prov["review-%s-voice" % date] = (
-            "morning review banned %r; mirrored into voice.forbiddenPhrases so "
-            "validate_video.py enforces it (it does not read learnedRules)." % phrase)
-    write_json(path, doc)
-    return (True, path)
 
 
 def edit_queue(brand_id, path_key, value):
@@ -1266,7 +1302,6 @@ def cmd_apply(args):
         return EXIT_OK
 
     brand = bl.load_brand(brand_id)
-    day_kinds = set(r["kind"] for r in rows)
     summary = []
     touched = set()
     all_edits = {"subs": [], "holdSec": None}
@@ -1292,26 +1327,22 @@ def cmd_apply(args):
             tier_label = "3"
         elif rule:
             added, where = add_local_rule(brand_id, rule)
-            tier_bits.append("2 — `rules.local.json` rule `%s` (%s, scope %s, %s)"
-                             % (rule["id"], rule["kind"], rule["scope"], rule["severity"]))
+            tier_bits.append("2 — `rules.local.json` rule `%s` (%s, scope %s, %s%s)"
+                             % (rule["id"], rule["kind"], rule["scope"], rule["severity"],
+                                ", formats %s" % ", ".join(rule["formats"])
+                                if rule.get("formats") else ""))
             changed_bits.append("added `%s`" % rule["id"] if added
                                 else "`%s` was already enforced" % rule["id"])
             tier_label = "2"
-            # Coverage mirror: learned rules are read by validate_deck.py only.
-            if rule["kind"] == "forbid_text" and (
-                    day_kinds & set(["reel", "video"])) and not args.no_mirror:
-                phrase = rule["value"]
-                phrase = phrase[0] if isinstance(phrase, list) else phrase
-                ok, where = mirror_forbidden_phrase(brand_id, str(phrase), date)
-                tier_bits.append(
-                    "3 — `brand.json` `voice.forbiddenPhrases`%s. Video coverage: "
-                    "validate_video.py does not read learnedRules, so the tier 2 rule "
-                    "alone would be enforced on decks only."
-                    % ("" if ok else " (already present)"))
-                changed_bits.append("mirrored %r into `voice.forbiddenPhrases`" % phrase
-                                    if ok else
-                                    "%r already in `voice.forbiddenPhrases`" % phrase)
-                tier_label = "2+3"
+            # The coverage mirror that used to sit here -- copying a forbid_text
+            # ban into brand.json voice.forbiddenPhrases -- was retired on
+            # 2026-08-25. It existed only because validate_video.py could not
+            # read learnedRules; it now can. Beyond being redundant it reported a
+            # voice ban under CONTENT.PLACEHOLDER, which means "template
+            # scaffolding leaked" and was simply the wrong thing to say, and it
+            # quietly promoted a warn rule to an error while writing a tier 3
+            # fact from a tier 2 decision. A ban that should block a build is a
+            # rule with "severity": "error", which video honours.
         else:
             tier_bits.append("1 — `LEARNED.md` only (judgement, not mechanically "
                              "checkable)")
@@ -1683,9 +1714,6 @@ def build_parser():
                    help="also regenerate the artifacts the notes actually touched")
     p.add_argument("--force", action="store_true",
                    help="re-apply notes already applied")
-    p.add_argument("--no-mirror", action="store_true",
-                   help="do not mirror a forbid_text ban into voice.forbiddenPhrases "
-                        "(the mirror is what makes it enforced on video)")
     p.set_defaults(func=cmd_apply)
 
     p = sub.add_parser("metrics", help="is the review burden actually falling?")

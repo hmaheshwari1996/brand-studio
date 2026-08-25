@@ -73,6 +73,10 @@ DEFAULT_GLYPH_WIDTH_EM = 0.520
 LEADING_FACTOR = 1.35
 
 SEVERITIES = ("error", "warn", "info")
+# Values a learned rule's optional `formats` field accepts. A CLOSED vocabulary:
+# 'deck' and 'video' name the artifact kind, the rest name a delivery format
+# from brand.video.formats. A reel is 'vertical'.
+RULE_FORMATS = ("deck", "video", "landscape", "square", "vertical")
 SEVERITY_ORDER = {"error": 0, "warn": 1, "info": 2}
 
 _HEX_RE = re.compile(r"^#?(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$")
@@ -833,6 +837,56 @@ def is_sentence_case(s):
     if eligible >= 2 and (float(capitalised) / float(eligible)) >= 0.75:
         return False
     return True
+
+
+def rule_formats(raw):
+    # type: (Optional[Dict[str, Any]]) -> Tuple[List[str], List[str]]
+    """(recognised, unrecognised) values from a learned rule's `formats` field.
+
+    Absent, empty or entirely unrecognised all mean "applies everywhere". That
+    is deliberate on both counts: every rule written before the field existed is
+    unscoped, and a typo must never narrow a rule to nothing. A rule silently
+    disabled by a misspelling is the failure this field exists to prevent, so
+    the unrecognised values are returned for the caller to REPORT while the rule
+    keeps running.
+    """
+    value = (raw or {}).get("formats")
+    if value is None:
+        return ([], [])
+    values = value if isinstance(value, (list, tuple)) else [value]
+    good = []  # type: List[str]
+    bad = []  # type: List[str]
+    for item in values:
+        name = str(item).strip().lower()
+        if not name:
+            continue
+        if name in RULE_FORMATS:
+            good.append(name)
+        else:
+            bad.append(name)
+    return (good, bad)
+
+
+def rule_applies(raw, kind, format_name=None):
+    # type: (Optional[Dict[str, Any]], str, Optional[str]) -> bool
+    """Does a learned rule apply to the artifact being validated?
+
+    kind         'deck' or 'video'
+    format_name  a video's resolved delivery format ('vertical', 'landscape'...)
+
+    An unscoped rule applies everywhere. A scoped rule applies when its list
+    names the artifact kind, or -- for a video -- the delivery format. So
+    ``"formats": ["vertical"]`` is the reel-only rule the ledger describes, and
+    ``["deck"]`` keeps a slide rule off every film.
+    """
+    good, _unknown = rule_formats(raw)
+    if not good:
+        return True
+    if str(kind or "").strip().lower() in good:
+        return True
+    if format_name and str(format_name).strip().lower() in good:
+        return True
+    return False
 
 
 def find_forbidden_phrases(text, phrases):
