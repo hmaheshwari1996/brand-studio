@@ -526,6 +526,27 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# 8. git hooks
+# ---------------------------------------------------------------------------
+# Wires .githooks/ so the pre-push version/tag guard actually runs. Only
+# meaningful in a git clone -- the runtime copy under ~/.claude/plugins/cache/
+# is an unpacked tarball, not a repo, so that case is reported and skipped.
+# Never FAIL: someone who only *runs* the plugin has no reason to care whether
+# the commit-side guard is wired.
+
+if [ ! -d "${PLUGIN_ROOT}/.githooks" ]; then
+    record "git hooks" "WARN" "no .githooks/ in ${PLUGIN_ROOT}"
+elif ! command -v git >/dev/null 2>&1; then
+    record "git hooks" "WARN" "git not on PATH"
+elif ! git -C "${PLUGIN_ROOT}" rev-parse --git-dir >/dev/null 2>&1; then
+    record "git hooks" "PASS" "not a git clone; nothing to wire"
+elif git -C "${PLUGIN_ROOT}" config core.hooksPath .githooks >/dev/null 2>&1; then
+    record "git hooks" "PASS" "core.hooksPath -> .githooks"
+else
+    record "git hooks" "WARN" "could not set core.hooksPath"
+fi
+
+# ---------------------------------------------------------------------------
 # result
 # ---------------------------------------------------------------------------
 
