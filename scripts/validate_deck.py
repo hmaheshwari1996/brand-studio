@@ -77,6 +77,7 @@ CONTAINMENT_RATIO = 0.98
 LOGO_ASPECT_TOL = 0.02
 
 _IMAGE_EXT_RE = re.compile(r"\.(png|jpe?g|gif|bmp|tiff?|emf|wmf|svg|webp)$", re.I)
+_LOGO_NAME_RE = re.compile(r"(?<![a-z0-9])(logo|lockup|wordmark)(?![a-z0-9])")
 _FILENAMEISH_RE = re.compile(r"^[\w\-. ]+\.(png|jpe?g|gif|bmp|tiff?|emf|wmf|svg|webp)$", re.I)
 
 #: The handful of DrawingML preset colours worth resolving.
@@ -1118,8 +1119,15 @@ class LogoRegistry(object):
         if sha1 and sha1 in self.by_sha1:
             return (self.by_sha1[sha1], "hash")
 
-        haystack = " ".join([filename, rec.name, _shape_descr(rec.el)]).lower()
-        if "logo" in haystack or "lockup" in haystack or "wordmark" in haystack:
+        # IDENTIFIERS ONLY — filename and shape name. The alt text used to be in
+        # here too, and alt text is a SENTENCE: any screenshot described as
+        # "... with the EasyFix logo" was classified as the logo and then failed
+        # LOGO.DISTORTED because the aspect measured was the phone mockup's, not
+        # the mark's. Seven product screenshots in one deck, and the more
+        # carefully the alt text was written the more likely it was to trip.
+        # Whole words, so "logout.png" is not a logo either.
+        haystack = " ".join([filename, rec.name]).lower()
+        if _LOGO_NAME_RE.search(haystack):
             return (self._nearest_aspect(native), "name")
 
         if native is not None:
@@ -1774,6 +1782,19 @@ class DeckValidator(object):
         """Colours painted behind a text shape, nearest enclosing surface first."""
         if rec.area <= 0:
             return [ctx.bg_hex]
+
+        # A shape that CARRIES its own text is its own nearest surface. The scan
+        # below only considers OTHER shapes (`other is rec` is skipped), so a
+        # filled autoshape with text inside — a button, a pill, a callout — was
+        # scored against the slide background instead of the fill the text
+        # actually sits on. White on a brand-red button reads 5.9:1 and passes;
+        # against the slide it read 1.08:1 and failed, which is how a deck with
+        # correct buttons collected ~100 contrast errors it did not deserve.
+        own = [c for c in (rec.fill.get("colors") or []) if c] \
+            if rec.fill.get("kind") in ("solid", "gradient") else []
+        if own:
+            return own
+
         best = None  # type: Optional[ShapeRec]
         for other in ctx.recs:
             if other is rec or other.z >= rec.z:
@@ -1784,7 +1805,15 @@ class DeckValidator(object):
             if not colors:
                 continue
             covered = bl.rect_overlap(other.rect, rec.rect)
-            if covered / rec.area >= CONTAINMENT_RATIO:
+            if covered / rec.area < CONTAINMENT_RATIO:
+                continue
+            # NEAREST, which is what the docstring promises: the qualifying
+            # shape with the highest z below this one. Without the comparison
+            # `best` simply ended up as the LAST candidate in list order, so a
+            # numeral on a coloured badge resolved to the white card behind the
+            # badge and reported white-on-white — text that is plainly legible
+            # on screen, scored against a surface it never touches.
+            if best is None or other.z > best.z:
                 best = other
         if best is not None:
             return [c for c in (best.fill.get("colors") or []) if c] or [ctx.bg_hex]
