@@ -42,6 +42,20 @@ Each `note` prints its category and the tier it will land in. Mis-filed? Pass `-
 copy|pacing|visual|structure|audio|caption|other`. Reported *tier 1, judgement* where you expected a
 rule? It carries no concrete value — ask for one ("under how many words?", "which phrase?").
 
+## 3b. Before applying a batch of validator findings
+
+The notes above are a person's. When a batch comes from the VALIDATOR instead, two rules from
+`/brand-check` apply here too, and they are what stop a long report turning into a long list of
+symptom fixes:
+
+- **Group before you act.** Aggregate by rule code plus the distinguishing values, sort by count, and
+  print the total beside the groups so a silently dropped class is visible. A group's size says where
+  the cause is: a big group is one shared emitter in the generator, a group of one is a call site.
+- **Decide which of three things is broken** — the artifact, the rule, or the checker — before
+  touching anything. Applying a finding's `fix:` line silently ratifies its classification, so
+  confirm the finding identified the object correctly first. Never reshape an object to satisfy a
+  rule that should not apply to it, and never pass a checker workaround to `/brand-learn`.
+
 ## 4. Apply, and rebuild only what the notes touched
 ```sh
 "$PY" "$ROOT/scripts/review.py" apply --rebuild

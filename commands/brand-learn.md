@@ -46,6 +46,16 @@ Pick exactly one destination for the machine-readable part. `LEARNED.md` is writ
 When it is genuinely both a fact and a checkable preference, tier 3 wins: change the fact, and let
 the built-in validators enforce it. A local rule that duplicates a brand fact double-reports.
 
+**NOT EVERY CORRECTION IS A BRAND FACT.** Before writing anything, ask what the correction is
+actually correcting. When a check fails, one of three things is broken — the artifact, the rule, or
+the CHECKER's implementation of the rule — and only the first two belong here. A workaround for a
+checker bug recorded as a brand rule freezes that bug into the profile, where nobody will ever
+connect the two again: the rule outlives the bug, and every future artifact is shaped by a defect
+that was fixed years earlier. Symptoms to stop on: the correction makes the artifact worse for its
+real audience (alt text, reading order, contrast, semantics), or it exists only to stop a specific
+validator complaining rather than because someone looked at the output and disliked it. Report the
+checker bug instead — name the file and the predicate — and record nothing.
+
 ## 3. Write it
 
 ### Tier 1 — always
