@@ -1,21 +1,21 @@
 {
-  "$comment": "This file makes the repository itself a Claude Code plugin marketplace, so a teammate installs with two commands and gets updates with git pull. Keep it beside plugin.json.",
+  "$comment": "This file makes the repository itself a Claude Code plugin marketplace, so a teammate installs with two commands and gets updates with git pull. Keep it beside plugin.json. The marketplace NAME (`channelplay`) is an install identifier, not an authorship claim — brand-studio is hmaheshwari1996's personal project. Renaming the key would break `brand-studio@channelplay` for everyone who has already installed it, so it stays.",
   "name": "channelplay",
   "owner": {
-    "name": "Channelplay"
+    "name": "hmaheshwari1996"
   },
   "metadata": {
-    "description": "Channelplay's internal tooling for brand-compliant decks, videos and product CGI.",
-    "version": "1.0.2"
+    "description": "A personal project: AI-assisted graphic design tooling that builds brand-compliant decks, videos and product CGI, and enforces each brand's guidelines automatically on every artifact.",
+    "version": "1.0.3"
   },
   "plugins": [
     {
       "name": "brand-studio",
       "source": "./",
       "description": "Build enterprise decks, videos, reels and product CGI for any brand, and enforce that brand's guidelines automatically on every artifact.",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "author": {
-        "name": "Channelplay"
+        "name": "hmaheshwari1996"
       },
       "keywords": [
         "pptx",
