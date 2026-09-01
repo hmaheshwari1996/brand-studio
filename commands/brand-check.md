@@ -68,6 +68,18 @@ Do not dump the validator output and stop. Go through it and produce:
 2. **Errors first, grouped by violation id**, each with: where it is, what was found, what was
    expected, and the concrete fix. Every violation already carries `rule` and `fix` fields — use
    them, but say them in your own words and name the actual slide or timestamp.
+
+   **Group BEFORE you quote anything.** On any report with more than a handful of errors, the first
+   action is to aggregate — by rule code plus the distinguishing values (shape name or role,
+   archetype, the found value itself) — sort by count, and show the user that table rather than the
+   raw list. Print the TOTAL beside the groups and check they sum to it: a grouped summary carries no
+   internal evidence of its own completeness, so a filter that quietly dropped a whole class looks
+   exactly like one that matched everything.
+
+   **A group's SIZE tells you where the cause lives.** In a generated artifact the violation count is
+   a function of how widely the defective code is reused, not of how many mistakes were made. A big
+   group means one shared helper or emitter — find it in the generator. A group of one means a call
+   site. Treating the count as a work estimate is what leads to fixing the same symptom fifty times.
 3. **Warnings**, condensed. Say which ones are worth fixing and which are noise for this artifact.
 4. **Info**, as a count only, unless something in it is genuinely interesting.
 
@@ -89,7 +101,35 @@ The id namespace tells you which part of the pipeline is at fault:
 `COLOR.SUPERSEDED` is special: it names an old template colour and the canonical replacement. The
 replacement is not a suggestion; it is what the design system says the colour became.
 
-## 4. Offer the next step, do not take it
+## 4. Before fixing: which of three things is broken?
+
+When a check fails, exactly one of three things is wrong — the ARTIFACT, the RULE, or the CHECKER's
+implementation of the rule. Remediation tooling only ever offers the first, so a correct diagnosis of
+the second or third still arrives at a suggested fix for the artifact. Decide which it is before you
+touch anything.
+
+**A finding makes two claims, and only one of them is printed as an instruction.** Every violation
+asserts *what this object is* and *what to do about it*. Applying the `fix:` line silently ratifies
+the classification. So before applying it, confirm the finding identified the object correctly —
+above all for rules that classify: this picture IS the logo, this text IS a title, this shape IS a
+card. The cheap test: find the predicate that fired in the checker's source. A rule that matched on a
+NAME or a heuristic is the one most likely to have matched the wrong object.
+
+Where the classification is wrong, the fix is to correct what the classifier reads — never to reshape
+the object so a rule that should not apply to it passes.
+
+Two hard rules:
+
+- **Never change an artifact in a way that makes it worse for its actual audience** — alt text,
+  reading order, contrast, semantics — in order to clear a rule. Rewriting an honest alt text to dodge
+  a name match degrades accessibility to satisfy a bug.
+- **Never let `/brand-learn` or `/brand-review` persist a checker workaround as a brand rule.** That
+  freezes the tool's bug into the brand profile, where nobody will ever connect the two again.
+
+If the checker is at fault, stop: tell the user, name the file and the predicate, leave the artifact
+alone, and move on to the real findings.
+
+## 5. Offer the next step, do not take it
 
 End with the smallest real fix, and ask before doing it. Typical shapes:
 
