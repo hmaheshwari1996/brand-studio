@@ -6,16 +6,52 @@
   },
   "metadata": {
     "description": "Channelplay's internal tooling for brand-compliant decks, videos and product CGI.",
-    "version": "1.0.1"
+    "version": "1.0.2"
   },
   "plugins": [
     {
       "name": "brand-studio",
       "source": "./",
       "description": "Build enterprise decks, videos, reels and product CGI for any brand, and enforce that brand's guidelines automatically on every artifact.",
-      "version": "1.0.1",
-      "author": { "name": "Channelplay" },
-      "keywords": ["pptx", "video", "reel", "cgi", "brand", "design-system", "validation"],
+      "version": "1.0.2",
+      "author": {
+        "name": "Channelplay"
+      },
+      "keywords": [
+        "pptx",
+        "video",
+        "reel",
+        "cgi",
+        "brand",
+        "design-system",
+        "validation"
+      ],
+      "category": "productivity"
+    },
+    {
+      "name": "claude-mem",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/thedotmack/claude-mem.git",
+        "path": "plugin"
+      },
+      "description": "Memory across sessions — remembers projects, files and context. REFERENCED, not vendored: it stays on its own release cadence and its author's licence, and a copy here would fork it silently.",
+      "author": {
+        "name": "thedotmack"
+      },
+      "category": "productivity"
+    },
+    {
+      "name": "claude-code-setup",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/claude-code-setup"
+      },
+      "description": "Anthropic's official plugin that reads a codebase and recommends the hooks, skills, subagents and MCP servers worth adding. REFERENCED, not vendored, for the same reason.",
+      "author": {
+        "name": "Anthropic"
+      },
       "category": "productivity"
     }
   ]
