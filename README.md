@@ -12,8 +12,12 @@ Two halves, and the second half is the point:
   It emits machine-readable violations and a non-zero exit code. A hook runs it automatically, so
   the loop closes whether or not anyone remembers to check.
 
-One agency, many client brands. The layout engine is shared; the brand tokens are per-brand. Adding
-a brand is a data change, not a code change.
+A personal project by [hmaheshwari1996](https://github.com/hmaheshwari1996) — built to make
+AI genuinely useful for graphic design work, rather than a source of things a designer then has to
+check by hand. Not a Channelplay product; Channelplay is one of the brands it ships a profile for.
+
+Many brands, one engine. The layout engine is shared; the brand tokens are per-brand. Adding a brand
+is a data change, not a code change.
 
 ---
 
