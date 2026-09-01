@@ -116,6 +116,44 @@ comes back clean, you are ready.
 
 ---
 
+## What else comes with it
+
+Installing brand-studio also brings **Task Observer**, and offers two more
+plugins alongside it. The split is deliberate.
+
+**Bundled — arrives enabled, no extra step**
+
+| | |
+|---|---|
+| `skills/task-observer` | Watches how you work and turns friction into durable skill improvements. Vendored unchanged from [rebelytics/one-skill-to-rule-them-all](https://github.com/rebelytics/one-skill-to-rule-them-all), by Eoghan Henn, under CC BY 4.0. See `skills/task-observer/ATTRIBUTION.md`. |
+
+It is bundled rather than referenced because it is a **skill**, not a plugin —
+there is no `.claude-plugin/` in its repository, so a marketplace entry cannot
+point at it. Do not edit the vendored copy: fixes belong upstream, and a local
+change diverges silently from a source still being maintained.
+
+Point it at a stable observation-log path in your `CLAUDE.md` before relying on
+it. A path resolved from the working directory dies with the first git worktree
+you delete.
+
+**Referenced — one command each, not installed for you**
+
+| | |
+|---|---|
+| `claude-mem` | Memory across sessions. [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) |
+| `claude-code-setup` | Anthropic's plugin that reads a codebase and recommends the hooks, skills, subagents and MCP servers worth adding. |
+
+```
+/plugin install claude-mem@channelplay
+/plugin install claude-code-setup@channelplay
+```
+
+These are **referenced, never copied**. Both are full plugins with their own
+release cadence, their own authors and their own licences; a vendored copy would
+fork them the day it was made and quietly stop receiving fixes. Referencing also
+means installing stays *your* decision — a marketplace entry is an offer, not an
+install.
+
 ## Use
 
 ### Skills
