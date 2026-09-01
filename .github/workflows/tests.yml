@@ -1,0 +1,21 @@
+# The repo had no CI at all, so scripts/test_validate_deck.py ran only when
+# somebody remembered to type it. A regression test nothing runs is not a
+# regression test — it is a file that says one exists.
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # The validator itself is pure stdlib — it parses the PPTX XML directly.
+      # python-pptx is needed only to BUILD the fixture deck the test validates.
+      - run: pip install --disable-pip-version-check python-pptx
+      - run: scripts/test.sh
