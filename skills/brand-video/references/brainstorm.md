@@ -28,7 +28,7 @@ do either. Push back once, concretely: offer two or three candidate "one things"
 have told you and ask which is closest. That conversation is worth more than any concept.
 
 Question #3 has one answer that is load-bearing and easy to miss: **format is not a per-film switch
-today.** `build_video.py` renders at `brand.video.resolution` (1920×1080 for Channelplay) and
+today.** `build_video.py` renders at `brand.video.resolution` (1920×1080 for Example Brand) and
 `VIDEO.RESOLUTION` is an **error**, not a warning. `brand.video.formats` describes the three delivery
 targets; it does not yet reconfigure the build. So if the answer to "where" is a reel, that is a
 brand-level change and a question for the brand owner — surface it at brainstorm, not at step 5 with
@@ -43,8 +43,8 @@ or the audience wants a walkthrough, `explainer` when the idea needs motion to l
 
 | Film | What it is for | Runtime | Delivery format | Pipeline | The trap |
 |---|---|---|---|---|---|
-| **Capability film** | First meeting, website, "what does Channelplay do" | 90–120s | landscape | `deck-video` | Becomes a service list. Nine capabilities, eight seconds each, no proof anywhere. Pick two capabilities and prove one. |
-| **New-business pitch film** | Opens one pitch, for one named prospect | 60–90s | landscape (in-room) | `explainer` | Built about Channelplay instead of about the prospect. A pitch film with no number from the prospect's own category is a capability film with the logo swapped. |
+| **Capability film** | First meeting, website, "what does Example Brand do" | 90–120s | landscape | `deck-video` | Becomes a service list. Nine capabilities, eight seconds each, no proof anywhere. Pick two capabilities and prove one. |
+| **New-business pitch film** | Opens one pitch, for one named prospect | 60–90s | landscape (in-room) | `explainer` | Built about Example Brand instead of about the prospect. A pitch film with no number from the prospect's own category is a capability film with the logo swapped. |
 | **Case film / client story** | The proof asset; one account, one result | 90–120s | landscape, square cutdown | `deck-video` — the QBR deck already exists | Client approval. Never build this before the client has agreed in writing which numbers can leave the building, anonymised or not. |
 | **Brand reel (social)** | LinkedIn and Instagram, top of funnel | 15–30s | vertical (reel), square (LinkedIn feed) | `explainer` | Cutting down a 90s film. See §6 — it is a different craft, not a shorter one. |
 | **Training / rollout film** | The field workforce learns one procedure | 45–90s | vertical | `explainer`, or `deck-video` off the training deck | Written for the client who paid, not the promoter who watches. And the `call-to-action` beat is a job instruction ("photograph the shelf before you leave"), never a contact line. |
@@ -53,7 +53,7 @@ or the audience wants a walkthrough, `explainer` when the idea needs motion to l
 | **Testimonial** | A client says it instead of us | 45–75s | landscape + vertical pull-quote cut | Neither — this is a production brief | This pipeline does not shoot people. If the film's value is a client's face and voice, say so and stop; what this pipeline can do is the surround — titles, data cards, the lower-third context. |
 | **Recruitment film** | Field supervisors, trainers, store staff | 60–90s | vertical primary, landscape secondary | `explainer` | Corporate voice. The audience is the person in the film's world; a film that sounds like the client deck reads as a different company than the one they would join. |
 
-**Runtime is a word budget.** At Channelplay's 165 wpm (2.75 words/sec), with a 3.0s intro, a 3.5s
+**Runtime is a word budget.** At the brand's 165 wpm (2.75 words/sec), with a 3.0s intro, a 3.5s
 outro and 0.4s crossfades between every element:
 
 | Target | Scenes | Narration |
@@ -77,7 +77,7 @@ The failure mode is three variations of one idea presented as three concepts. It
 first idea sets the frame and everything after it is a rewrite. The fix is mechanical: **generate from
 a different angle each time, and name the angle.**
 
-| Angle | The move | Channelplay one-liner |
+| Angle | The move | Example Brand one-liner |
 |---|---|---|
 | **Problem-first** | Open on the cost the client is already paying | "The display shipped to four thousand stores. In four of ten, it is still in the stockroom — that is the launch budget, on a floor." |
 | **Single person** | One promoter, one store, one day; the numbers arrive only at the end | "Follow one supervisor from the ten o'clock opening to the four o'clock report. The film is that shift." |
@@ -191,7 +191,7 @@ A reel is not a short film. It is a different craft that happens to share a bran
 - **No slow build.** The point lands in the first two seconds or the thumb moves. The hook is not
   setup for the point; the hook *is* the point, and the rest earns it retroactively.
 - **It is watched muted.** Captions carry the meaning, not the narration. Write the caption first and
-  the voiceover second — the reverse of every other film here. Channelplay's captions are a hard
+  the voiceover second — the reverse of every other film here. the brand's captions are a hard
   42 characters over 2 lines with a 1.2s floor, so a caption that needs three lines is two scenes.
 - **Vertical safe area.** In `formats.vertical` the **top 12% and bottom 20% are platform chrome**.
   Nothing legible goes there — captions sit above the lower band, not at the true bottom.
@@ -238,14 +238,14 @@ runtime target, the proof and where it came from, and the list of things that st
 - **No mood-board language.** "Cinematic", "bold and dynamic", "energy and authenticity". None of it
   is a decision and none of it can be built.
 - **No borrowed interest.** If the concept would work for a logistics firm or a bank with three words
-  changed, it is not a concept — it is a template with Channelplay's colours on it.
+  changed, it is not a concept — it is a template with the brand's colours on it.
 - **Nothing that needs footage or data that does not exist.** Not-pulled-yet is a task and it belongs
   in the concept's needs list. Cannot-exist is a dead concept — say so and generate another.
 - **No exclamation marks**, anywhere, including in the concept write-up. `VOICE.EXCLAMATION` is an
   error and the brand's voice forbids it upstream of the validator.
 - **No concept whose whole idea is a visual trick.** A clever transition is not a story. If the
   premise cannot be stated in one flat sentence without describing the animation, there is no premise.
-- **No salesy register.** Channelplay's voice is plain, operational, confident. A concept that needs
+- **No salesy register.** the brand's voice is plain, operational, confident. A concept that needs
   superlatives to sound good is a concept that has no proof.
 - **Never present a concept you would not defend.** Padding a list of two good ideas with a third to
   reach three is worse than presenting two, because the user may pick it.

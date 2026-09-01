@@ -39,7 +39,7 @@ Three things this catches that nothing downstream can:
 
 ## The arc, beat by beat
 
-`brand.video.storyline.arc` for Channelplay:
+`brand.video.storyline.arc` for Example Brand:
 
 ```
 hook → problem → approach → proof → outcome → call-to-action
@@ -52,7 +52,7 @@ two `approach` scenes is a healthy 8-scene film. What is not normal is skipping 
 
 The brand's own rules, verbatim from the profile, and they override anything below:
 
-> - Open on the client's problem, never on Channelplay's credentials.
+> - Open on the client's problem, never on the brand's credentials.
 > - One idea per scene. If a scene needs two sentences of setup, it is two scenes.
 > - Proof is specific and numeric wherever possible: stores, SKUs, states, headcount.
 > - Close with a single, concrete next step.
@@ -212,7 +212,7 @@ emphasis, make the claim specific instead — a number does the work an exclamat
 ### Never a forbidden phrase
 
 `brand.voice.forbiddenPhrases` exists because template scaffolding reaches clients more often than
-anyone admits. `CONTENT.PLACEHOLDER` is an **error**. For Channelplay the list includes `Lorem ipsum`,
+anyone admits. `CONTENT.PLACEHOLDER` is an **error**. For Example Brand the list includes `Lorem ipsum`,
 `Click here`, `Person Name`, `Chapter Name Goes Here` and `This is placeholder copy`, among others.
 
 ### One thought per sentence, one point per scene
@@ -268,7 +268,7 @@ Two more traps:
 seconds = words ÷ brand.video.voiceover.rateWpm × 60
 ```
 
-At Channelplay's **165 wpm** that is **2.75 words per second**:
+At the brand's **165 wpm** that is **2.75 words per second**:
 
 | Words | Narration | What it is |
 |---|---|---|
@@ -298,7 +298,7 @@ runtime = Σ max(holdSec, slideHoldSec.min, voSeconds + 0.4)
 
 ## The voice engine
 
-`brand.video.voiceover` for Channelplay:
+`brand.video.voiceover` for Example Brand:
 
 ```json
 {"enabled": true, "engine": "say", "voice": "Samantha", "rateWpm": 165, "targetLufs": -16.0}
@@ -492,7 +492,7 @@ is one idea and the point is another, and the viewer is being asked to hold the 
 the second, over a single unmoving image. Split it. Two 7-second scenes beat one 14-second scene every
 time, and they cost nothing extra to render.
 
-The brand sets the floor and the ceiling in `brand.video.slideHoldSec`. For Channelplay:
+The brand sets the floor and the ceiling in `brand.video.slideHoldSec`. For Example Brand:
 
 | | Seconds | Words at 165 wpm | What it is for |
 |---|---|---|---|
@@ -523,7 +523,7 @@ film is a slideshow and nothing lands.
 
 ### While authoring the IR
 
-- **Every scene declares a `role`, and the roles walk the brand's arc in order.** For Channelplay:
+- **Every scene declares a `role`, and the roles walk the brand's arc in order.** For Example Brand:
   `hook → problem → approach → proof → outcome → call-to-action`. A missing stage or an out-of-order
   first appearance is `STRUCTURE.STORYLINE` (warn); an unrecognised role is the same violation.
   Repeating a stage is fine — two `problem` scenes in a row is normal.

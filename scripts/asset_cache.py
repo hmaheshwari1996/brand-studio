@@ -18,13 +18,13 @@ they are shared with the team through the repo, so everyone's videos open with t
 byte-identical intro.
 
 Usage:
-    asset_cache.py --brand channelplay --list
-    asset_cache.py --brand channelplay --invalidate intro
-    asset_cache.py --brand channelplay --invalidate all --yes
+    asset_cache.py --brand example --list
+    asset_cache.py --brand example --invalidate intro
+    asset_cache.py --brand example --invalidate all --yes
 
 From Python:
     from asset_cache import AssetCache
-    cache = AssetCache("channelplay")
+    cache = AssetCache("example")
     path, reused = cache.get_or_create("intro", inputs, produce_fn, force=False)
 """
 

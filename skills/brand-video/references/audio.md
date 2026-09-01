@@ -105,7 +105,7 @@ spread, per-voice reverb send, high-shelf trim, pad detune spread and vibrato ra
 
 **The default comes from the brand, not from this file.** `make_music.py` reads
 `brand.video.music.mood` and `brand.video.music.avoid` and scores the presets against them. For
-Channelplay — mood `confident, understated, corporate-modern`, avoid `dramatic orchestral, lo-fi
+Example Brand — mood `confident, understated, corporate-modern`, avoid `dramatic orchestral, lo-fi
 hiphop, aggressive EDM` — that resolves to **confident**, and the sidecar records the reasoning in
 `moodReason`. Override with `--mood` when a specific beat wants something else.
 
@@ -144,7 +144,7 @@ The last bar is always the root chord, with a long release, so the bed resolves 
 ## Music: flags that matter
 
 ```sh
-"$PY" "$ROOT/scripts/make_music.py" --duration 42 --brand channelplay --out bed.wav --json
+"$PY" "$ROOT/scripts/make_music.py" --duration 42 --brand example --out bed.wav --json
 ```
 
 | Flag | Why |
@@ -159,7 +159,7 @@ The last bar is always the root chord, with a long release, so the bed resolves 
 | `--list-moods` | Prints every preset with its live parameters. |
 
 Fade in and out come from `brand.video.music.fadeInSec` / `fadeOutSec` (1.0 s and 2.0 s for
-Channelplay). **`build_video.py` applies its own fades on top** when it mixes the bed into a film, so
+Example Brand). **`build_video.py` applies its own fades on top** when it mixes the bed into a film, so
 a bed handed to the builder gets a slightly faster tail than the standalone file. That is harmless; do
 not compensate for it by disabling either fade.
 

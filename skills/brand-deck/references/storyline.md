@@ -1,6 +1,6 @@
 # Storyline patterns
 
-A deck is a written argument. This file holds the argument shapes that Channelplay's real work
+A deck is a written argument. This file holds the argument shapes that the brand's real work
 actually takes, so you start from a known-good sequence instead of from nothing.
 
 Use them as a starting point, not a template to fill. Every one of them gets adapted to the room.
@@ -57,7 +57,7 @@ If a slide's title is a noun phrase, either the slide has no claim or you have n
 **The decision:** award the pilot, or shortlist us for the next stage.
 **Length:** 14–18 slides. Longer loses the room; shorter reads as thin against incumbents.
 
-The governing rule for Channelplay pitches: **open on the client's problem, never on our
+The governing rule for Example Brand pitches: **open on the client's problem, never on our
 credentials.** Credentials are the proof that we can fix the problem, and proof only lands after the
 problem is agreed.
 
@@ -84,7 +84,7 @@ problem is agreed.
 **Compressing to 12:** drop 6, 10, 15. Never drop the problem chapter, never drop proof, never drop
 the close.
 
-**What kills this deck:** opening with "About Channelplay". Proof before problem. A commercial table
+**What kills this deck:** opening with "About Example Brand". Proof before problem. A commercial table
 with ranges instead of numbers. A close that says "we look forward to partnering with you".
 
 ---
@@ -187,7 +187,7 @@ attendance and calling it capability.
 
 ## Pattern 5 — Capability overview
 
-**Purpose:** the standing deck. Explains what Channelplay does, for a first meeting or a warm intro.
+**Purpose:** the standing deck. Explains what Example Brand does, for a first meeting or a warm intro.
 **Audience:** someone who does not yet have a brief.
 **The decision:** a next conversation about a specific problem of theirs.
 **Length:** 10–14 slides. It gets forwarded internally, so it must stand up without a presenter.

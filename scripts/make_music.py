@@ -41,7 +41,7 @@ ffmpeg ``loudnorm``.
 
 Usage:
     make_music.py --duration 30 --mood confident --out bed.wav --json
-    make_music.py --duration 45 --brand channelplay --out bed.wav --stems
+    make_music.py --duration 45 --brand example --out bed.wav --stems
     make_music.py --duration 20 --key D --mode dorian --bpm 72 --out bed.m4a
     make_music.py --list-moods
 

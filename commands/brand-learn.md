@@ -67,7 +67,7 @@ Append to `brands/<id>/LEARNED.md`. Append; never rewrite the file.
 
 - **Correction:** user rejected mint `#41E7AB` on a slide title over white.
 - **Why:** 1.6:1 contrast. Mint is decorative only; mint-family text uses `mint.700 #1B7A74`.
-- **Scope:** channelplay, all decks and videos, title and body text.
+- **Scope:** example, all decks and videos, title and body text.
 - **Persisted as:** `rules.local.json` rule `LOCAL.NO_MINT_TEXT`.
 ```
 

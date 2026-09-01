@@ -174,9 +174,9 @@ will not silently truncate your narration to enforce it.
 resolves, the bed is looped or trimmed to length, faded in and out with the brand's
 `fadeInSec`/`fadeOutSec`, normalised to `music.targetLufs`, and pushed under the narration by a
 sidechain compressor derived from `duckUnderVoiceDb`. Enabled with no file resolves to a
-narration-only mix plus a warning — the Channelplay default, since the profile ships no track.
+narration-only mix plus a warning — the Example Brand default, since the profile ships no track.
 
-**Master.** The mix is normalised to `brand.video.voiceover.targetLufs` (−16.0 LUFS for Channelplay)
+**Master.** The mix is normalised to `brand.video.voiceover.targetLufs` (−16.0 LUFS for Example Brand)
 and encoded as AAC 192k. The validator re-measures with `ebur128` and allows ±2 LU.
 
 ---
@@ -204,7 +204,7 @@ picture with `libass`, styled from the brand's caption font, size, colours, opac
 ## Shared: assembly and output
 
 Every element becomes one input to a single `ffmpeg` invocation. Consecutive elements are joined with
-`xfade` at `brand.video.transition.type` / `.durationSec` — for Channelplay a 0.4s crossfade. Each
+`xfade` at `brand.video.transition.type` / `.durationSec` — for Example Brand a 0.4s crossfade. Each
 transition **overlaps** its two neighbours, so:
 
 ```
@@ -232,7 +232,7 @@ FROZEN CONTRACT B. Unknown keys are ignored; the ones below are the whole surfac
 
 ```json
 {
-  "brand": "channelplay",
+  "brand": "example",
   "kind": "deck-video",
   "meta": {"title": "…", "durationTargetSec": 95},
   "intro": true,
@@ -254,7 +254,7 @@ FROZEN CONTRACT B. Unknown keys are ignored; the ones below are the whole surfac
 | `meta.outroEyebrow` | string | no | Kicker on the generated outro. |
 | `meta.cta` | string | no | Outro headline. Defaults to the last `call-to-action` scene's caption, then to `meta.title`. |
 | `meta.contact` | string | no | Outro contact line. |
-| `intro` | bool | yes | `true` prepends `brand.video.intro` (3.0s for Channelplay). |
+| `intro` | bool | yes | `true` prepends `brand.video.intro` (3.0s for Example Brand). |
 | `outro` | bool | yes | `true` appends `brand.video.outro` (3.5s). |
 | `music.enabled` | bool | yes | ANDed with `brand.video.music.enabled`. Either being false means no bed. |
 | `music.file` | string \| null | yes | Path to a track, or `null` to fall back to `brand.video.music.file`. |
@@ -291,13 +291,13 @@ Narrating a 16-slide capability deck in eight scenes. Complete and runnable.
 
 ```json
 {
-  "brand": "channelplay",
+  "brand": "example",
   "kind": "deck-video",
   "meta": {
     "title": "Retail execution, measured",
     "durationTargetSec": 95,
     "cta": "Pick one territory and one metric.",
-    "contact": "channelplay.in"
+    "contact": "example.com"
   },
   "intro": true,
   "outro": true,
@@ -386,7 +386,7 @@ A 45-second motion piece with no deck at all. Complete and runnable.
 
 ```json
 {
-  "brand": "channelplay",
+  "brand": "example",
   "kind": "explainer",
   "meta": {
     "title": "How a field claim becomes evidence",
@@ -667,8 +667,8 @@ styling one film.
 
     Check the first frame is not blank and does not already show the finished composition (both mean
     `t` is not being read), and that the last frame is the one you want held.
-10. **Test it on a second brand** if one exists. A template that only looks right for Channelplay is a
-    Channelplay asset in a shared directory.
+10. **Test it on a second brand** if one exists. A template that only looks right for Example Brand is a
+    Example Brand asset in a shared directory.
 11. **Document the data keys** — variant, theme, and every key it reads — in this file, next to the
     `scene.html` table. An undocumented template is a template nobody else can use.
 12. **Tell the plugin owner.** `templates/video/` is shared; a new template is a plugin change, and a
@@ -680,7 +680,7 @@ styling one film.
 ## Brand first — confirming the video kit
 
 Invoke **brand-kit** and get a confirmed brand id back. Never skip it, never guess, and never default
-to Channelplay because it owns the repo.
+to Example Brand because it owns the repo.
 
 Video needs more from the profile than a deck does, so confirm the **video kit** explicitly — it is
 group (f) of the brand-kit intake and it is mandatory even when the user only asked for a film:
@@ -785,7 +785,7 @@ scripts/asset_cache.py --brand <id> --invalidate intro
 
 **Music never competes with narration.** It is a floor under the film, not a layer over it. Everything
 comes from `brand.video.music` and the builder implements it — you do not hand-tune the mix. For
-Channelplay:
+Example Brand:
 
 | Setting | Value | What it does |
 |---|---|---|
@@ -796,12 +796,12 @@ Channelplay:
 | `avoid` | dramatic orchestral, lo-fi hiphop, aggressive EDM | What the brand will reject. |
 
 The finished master is measured against `brand.video.voiceover.targetLufs` (−16.0 LUFS for
-Channelplay), ±2 LU, and against a −1.0 dBTP true-peak ceiling. `AUDIO.LOUDNESS` and `AUDIO.CLIPPING`
+Example Brand), ±2 LU, and against a −1.0 dBTP true-peak ceiling. `AUDIO.LOUDNESS` and `AUDIO.CLIPPING`
 are warnings, because a platform will re-normalise anyway — but a film that arrives 5 LU hot is a film
 that sounds wrong next to everything else the client plays that day.
 
 - **`music.enabled: true` with `music.file: null` builds a narration-only mix and warns.** That is the
-  Channelplay default state — there is no track in the profile. Either supply one via `music.file` in
+  Example Brand default state — there is no track in the profile. Either supply one via `music.file` in
   the IR (or `brand.video.music.file`), or set `music.enabled: false` in the IR and say in the report
   that the film ships without a bed.
 - **Ask before sourcing a track.** Licensing is the user's decision, not yours. Never reach for a file

@@ -14,7 +14,7 @@ Two halves, and the second half is the point:
 
 A personal project by [hmaheshwari1996](https://github.com/hmaheshwari1996) — built to make
 AI genuinely useful for graphic design work, rather than a source of things a designer then has to
-check by hand. Not a Channelplay product; Channelplay is one of the brands it ships a profile for.
+check by hand. Not a Example Brand product; Example Brand is one of the brands it ships a profile for.
 
 Many brands, one engine. The layout engine is shared; the brand tokens are per-brand. Adding a brand
 is a data change, not a code change.
@@ -31,7 +31,7 @@ is a data change, not a code change.
 | `ffmpeg`, `ffprobe` | video render and inspection | `brew install ffmpeg` |
 | `soffice` (LibreOffice) | deck previews, slide frames for deck-videos | `brew install --cask libreoffice` |
 | Google Chrome / Chromium | headless rendering of icons and motion scenes | `brew install --cask google-chrome` |
-| Poppins TTFs | shipped in `brands/channelplay/assets/fonts/` | installed by `bootstrap.sh` |
+| Poppins TTFs | shipped in `brands/example/assets/fonts/` | installed by `bootstrap.sh` |
 
 No third-party Python beyond `python-pptx` and `pillow`. Everything runs from a dedicated virtualenv
 at `~/.cache/brand-studio/venv` so it cannot collide with a project's own environment.
@@ -56,16 +56,16 @@ environment."*
 
 > **Two names, and they are not the same.** You *add* the marketplace by its **repo path**
 > (`hmaheshwari1996/brand-studio`). Once added you *refer* to it by the **name in its manifest**,
-> which is `channelplay` — so updates are `/plugin marketplace update channelplay`. Typing
-> `channelplay/brand-studio` fails, because no such repo exists.
+> which is `example` — so updates are `/plugin marketplace update example`. Typing
+> `example/brand-studio` fails, because no such repo exists.
 
 and once, in a terminal:
 
 ```sh
-~/.claude/plugins/marketplaces/channelplay/scripts/bootstrap.sh
+~/.claude/plugins/marketplaces/example/scripts/bootstrap.sh
 ```
 
-To ship an update, commit and push. Teammates pick it up with `/plugin marketplace update channelplay`.
+To ship an update, commit and push. Teammates pick it up with `/plugin marketplace update example`.
 
 > **Why a shared remote beats passing a zip around.** This plugin learns: `LEARNED.md` and
 > `rules.local.json` accumulate every correction anyone gives it. With copies, each person's learning
@@ -148,8 +148,8 @@ you delete.
 | `claude-code-setup` | Anthropic's plugin that reads a codebase and recommends the hooks, skills, subagents and MCP servers worth adding. |
 
 ```
-/plugin install claude-mem@channelplay
-/plugin install claude-code-setup@channelplay
+/plugin install claude-mem@example
+/plugin install claude-code-setup@example
 ```
 
 These are **referenced, never copied**. Both are full plugins with their own
@@ -335,7 +335,7 @@ in the meantime.
 
 > **You:** the heading on slide 4 is mint. We never set text in mint.
 
-**Tier 1** — an entry appended to `brands/channelplay/LEARNED.md`:
+**Tier 1** — an entry appended to `brands/example/LEARNED.md`:
 
 ```markdown
 ## 2026-07-30 — Mint is not a heading colour
@@ -347,7 +347,7 @@ in the meantime.
 - **Ruled by:** user correction, session 2026-07-30.
 ```
 
-**Tier 2** — a rule appended to `brands/channelplay/rules.local.json`:
+**Tier 2** — a rule appended to `brands/example/rules.local.json`:
 
 ```json
 {
@@ -435,7 +435,7 @@ grammar/            deck-grammar.json, icons.json, 86 tintable SVG icons
 brands/
   _schema.json      JSON Schema for brand.json
   _registry.json    index; delete it and a directory scan takes over
-  channelplay/      the house brand
+  example/      the house brand
 templates/video/    intro.html, outro.html, scene.html — brand-agnostic motion templates
 examples/           worked Deck IR and Video IR
 ```
@@ -462,7 +462,7 @@ Everything is runnable by hand with `--help`. `PY=~/.cache/brand-studio/venv/bin
 Validator output is a frozen contract:
 
 ```json
-{ "target": "deck.pptx", "brand": "channelplay", "kind": "deck", "pass": false,
+{ "target": "deck.pptx", "brand": "example", "kind": "deck", "pass": false,
   "counts": { "error": 1, "warn": 3, "info": 0 },
   "violations": [ { "id": "COLOR.SUPERSEDED", "severity": "error", "where": "slide 4 / title",
                     "found": "#0000D5", "expected": "#0000FF",
@@ -483,10 +483,10 @@ Read this section before promising anything to a client.
 | Limitation | What it means in practice |
 |---|---|
 | **The validator checks rules, not taste.** | It cannot see that slide 7 argues the opposite of slide 4, that the chart does not support the claim in its title, or that the deck is boring. A clean report is a floor, not an endorsement. Look at the rendered slides. Watch the film. |
-| **Channelplay logos are raster only.** | 1982px wide PNGs, no SVG or EPS. Fine to 1920px and for on-screen decks; request vector from the brand owner before print or large format. |
+| **Example Brand logos are raster only.** | 1982px wide PNGs, no SVG or EPS. Fine to 1920px and for on-screen decks; request vector from the brand owner before print or large format. |
 | **`say` voiceover is a review voice.** | The macOS synthesiser fluffs Indian place names, retail jargon and unfamiliar acronyms. Good enough to agree pacing and script; not good enough to deliver. Budget a human or commercial TTS read, and label `say` cuts so nobody circulates one by accident. |
 | **Photographic frames trip the palette check.** | `VIDEO.OFF_PALETTE` samples pixels, and a photograph of a real store is full of colours no brand owns. Expect warnings on photo-heavy films, triage them rather than ignoring them, and say in the report that you did. The same applies to full-bleed photo slides in a deck. |
-| **No music ships with the plugin.** | `music.enabled` is true and `music.file` is null for Channelplay: the brand wants a bed and has none cleared. Films render voice-only until a licensed track is supplied. |
+| **No music ships with the plugin.** | `music.enabled` is true and `music.file` is null for Example Brand: the brand wants a bed and has none cleared. Films render voice-only until a licensed track is supplied. |
 | **No reference videos are recorded.** | `video.referenceVideos` is `[]` because nobody has been asked, not because none exist. This is the most common cause of "that isn't how our videos look". |
 | **Font rendering depends on the local machine.** | The deck names families like `Poppins SemiBold`. On a machine without them installed, PowerPoint substitutes, and metrics shift. `bootstrap.sh` installs the bundled faces; a recipient's machine is not covered. |
 | **Text fit is estimated, not measured.** | Overflow checks use per-family glyph-width averages, not a real text engine. A tolerance is applied, and a borderline block can pass here and still look tight in PowerPoint. |

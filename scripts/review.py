@@ -67,7 +67,7 @@ EXIT_OK = 0
 EXIT_INTERNAL = 1
 EXIT_VIOLATIONS = 2
 
-DEFAULT_BRAND = "channelplay"
+DEFAULT_BRAND = "example"
 
 CATEGORIES = ("copy", "pacing", "visual", "structure", "audio", "caption", "other")
 

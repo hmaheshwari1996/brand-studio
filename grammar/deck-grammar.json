@@ -1,7 +1,7 @@
 {
-  "$comment": "Brand-agnostic deck geometry. Extracted from Channelplay Deck Template 3.pptx (28 slides) and generalised. Units are INCHES on a 13.333x7.5in canvas. Contains NO colour and NO font family - those come from the brand profile. This file is reused unchanged for every brand.",
+  "$comment": "Brand-agnostic deck geometry. Extracted from Example Brand Deck Template 3.pptx (28 slides) and generalised. Units are INCHES on a 13.333x7.5in canvas. Contains NO colour and NO font family - those come from the brand profile. This file is reused unchanged for every brand.",
   "version": "1.0.0",
-  "source": "Channelplay Deck Template  3.pptx",
+  "source": "Example Brand Deck Template  3.pptx",
   "extracted": "2026-07-30",
 
   "canvas": { "w": 13.333, "h": 7.5, "ratio": "16:9", "emuPerInch": 914400 },

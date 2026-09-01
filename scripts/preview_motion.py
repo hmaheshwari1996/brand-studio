@@ -15,7 +15,7 @@ It also checks the two things that quietly break a template:
                up renders the same picture 180 times and reads as a still.
 
 Usage:
-    preview_motion.py --template counter --brand channelplay --data examples/motion/counter.json
+    preview_motion.py --template counter --brand example --data examples/motion/counter.json
     preview_motion.py --template kinetic-type --data-inline '{"lines":["One.","Two."]}'
     preview_motion.py --template chart-reveal --t 0,0.5,1 --check
 """
@@ -67,7 +67,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--template", required=True, help="template stem, e.g. counter")
-    ap.add_argument("--brand", default="channelplay", help="brand id (default channelplay)")
+    ap.add_argument("--brand", default="example", help="brand id (default example)")
     ap.add_argument("--data", help="path to a JSON file holding visual.data")
     ap.add_argument("--data-inline", help="visual.data as an inline JSON string")
     ap.add_argument("--t", default="0,0.25,0.5,0.75,1.0",

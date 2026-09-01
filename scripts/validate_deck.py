@@ -55,7 +55,7 @@ except ImportError as _exc:  # pragma: no cover - environment problem
 # ---------------------------------------------------------------------------
 
 KIND = "deck"
-DEFAULT_BRAND = "channelplay"
+DEFAULT_BRAND = "example"
 CUSTOM_PROP_NAME = "brand-studio.brand"
 
 _A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"

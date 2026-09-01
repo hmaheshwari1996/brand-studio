@@ -35,7 +35,7 @@ Cron has almost no `PATH`, so give it one — the pipeline needs ffmpeg, Chrome 
 ```
 
 One line per night lands in that log:
-`2026-07-31 channelplay: reel ok (14.5s), video ok (28.9s), 0 violations, 9m04s, intro+outro reused [ok]`
+`2026-07-31 example: reel ok (14.5s), video ok (28.9s), 0 violations, 9m04s, intro+outro reused [ok]`
 
 Claude Code's own scheduled-task tooling runs it just as well — ask for a scheduled task running the
 command above daily at 02:00 if you want the run in a session rather than a log file. On a laptop

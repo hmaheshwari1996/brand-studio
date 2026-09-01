@@ -8,7 +8,7 @@ Run it with the plugin venv:
 
 ```sh
 PY="$HOME/.cache/brand-studio/venv/bin/python"
-"$PY" scripts/texture_type.py --ref swatch.jpg --text "CHANNELPLAY" --analyze-only
+"$PY" scripts/texture_type.py --ref swatch.jpg --text "EXAMPLE BRAND" --analyze-only
 ```
 
 The slash command `/brand-texture` drives the whole conversation. This file is the reference behind it.
@@ -33,7 +33,7 @@ Consequences, all of them load-bearing:
 
 ### The skeleton stays the brand face — non-negotiable
 
-Channelplay's guidelines say **Poppins only, never substitute another face**. So the letterforms
+the brand's guidelines say **Poppins only, never substitute another face**. So the letterforms
 always come from `brand.type.weightToPptxFamily` (400 → Poppins, 500 → Poppins Medium, 600 → Poppins
 SemiBold), loaded from `brands/<id>/assets/fonts/`. Only the **fill** and the **edges** come from the
 photo.
@@ -91,7 +91,7 @@ be worse? If not, the texture is decoration and it should go.
 
 ```
 texture_type.py --ref <photo> [--text "WORDS"]
-                [--brand ID]            brand id or name          (default channelplay)
+                [--brand ID]            brand id or name          (default example)
                 [--weight 400|500|600]  skeleton weight           (default 600)
                 [--out FILE.png]        output PNG                (default <ref>-<text>-texture.png)
                 [--width 1920]          canvas width in px
@@ -117,7 +117,7 @@ Notes on the ones with teeth:
   line** when a single line would fall below display size (5.5% of the canvas width), because wrapping
   is what buys the glyph size back. `--size N` forces a size and wraps only if it must.
 - **`--letter-spacing`** defaults to the brand's `type.deckScalePt.cover.tracking` (−0.02 em for
-  Channelplay), which is legal because the brand only forbids negative tracking below 22pt.
+  Example Brand), which is legal because the brand only forbids negative tracking below 22pt.
 - **`--width`/`--height`** — auto height means the canvas is exactly the artwork. Fixed height centres
   the artwork and scales it down if it would not fit. Nothing is ever cropped: the layout measures
   each glyph's real ink box, so overshoots and descenders survive.
@@ -201,7 +201,7 @@ Every palette colour gets its nearest approved token *and* its nearest **identit
 (`color.brand.*` plus gradient stops), by CIE76 delta E. The verdict uses the identity distance,
 share-weighted: ≤10 on-palette, ≤25 adjacent, above that off-palette.
 
-The split matters. Channelplay's approved palette contains `semantic.danger #C4262E`, so a lipstick red
+The split matters. the brand's approved palette contains `semantic.danger #C4262E`, so a lipstick red
 lands 10 delta E from an approved token and looks compliant. It is not: semantic tokens signal
 success/warning/danger in UI, and borrowing one for display type reads as an error state. The tool
 flags that case separately (`semantic only`). Against the brand's actual identity colours the same red
@@ -224,7 +224,7 @@ ratio is easy to match:
 ```json
 {
   "archetype": "full-bleed",
-  "image": "/abs/path/assets/channelplay-lipstick.png",
+  "image": "/abs/path/assets/example-lipstick.png",
   "title": "The moment the brand shows up",
   "caption": "Treatment from a lipstick swatch, 2026 campaign."
 }
@@ -238,7 +238,7 @@ ratio is easy to match:
   "eyebrow": "Campaign",
   "title": "One word, in the campaign's own material",
   "body": "…",
-  "visual": { "kind": "image", "src": "/abs/path/assets/channelplay-lipstick.png" }
+  "visual": { "kind": "image", "src": "/abs/path/assets/example-lipstick.png" }
 }
 ```
 
@@ -268,7 +268,7 @@ speaker notes**, which live at the top level of the IR keyed by 1-based slide nu
 
 ```json
 "notes": {
-  "4": "Slide art reads: CHANNELPLAY. Treatment rendered from the campaign lipstick swatch."
+  "4": "Slide art reads: EXAMPLE BRAND. Treatment rendered from the campaign lipstick swatch."
 }
 ```
 
@@ -282,9 +282,9 @@ In the Video IR, a still is a scene whose visual is `kind: "image"`:
 {
   "id": "s7", "role": "close",
   "visual": {"kind": "image", "slide": null, "template": null,
-             "src": "assets/channelplay-lipstick.png", "data": {}},
-  "vo": "Channelplay.",
-  "caption": "Channelplay.",
+             "src": "assets/example-lipstick.png", "data": {}},
+  "vo": "Example Brand.",
+  "caption": "Example Brand.",
   "holdSec": 3
 }
 ```
@@ -298,7 +298,7 @@ alpha — usually black — not against the brand pad colour. So for `kind: "ima
 background**:
 
 ```sh
-"$PY" scripts/texture_type.py --ref swatch.jpg --text "CHANNELPLAY" \
+"$PY" scripts/texture_type.py --ref swatch.jpg --text "EXAMPLE BRAND" \
   --width 1920 --height 1080 --bg dark --out assets/end-card.png
 ```
 
@@ -310,12 +310,12 @@ use a motion template instead and pass the PNG as `visual.data.image`. The build
 {
   "id": "s7", "role": "close",
   "visual": {"kind": "motion", "template": "scene", "src": null,
-             "data": {"image": "assets/channelplay-lipstick.png"}},
+             "data": {"image": "assets/example-lipstick.png"}},
   "holdSec": 3
 }
 ```
 
-Render at the delivery resolution (1920 × 1080 for Channelplay's default format). Stills on scene
+Render at the delivery resolution (1920 × 1080 for the brand's default format). Stills on scene
 elements get the Ken Burns push-in, so leave a little slack around the ink if you do not want the
 edges to travel out of frame.
 
@@ -328,7 +328,7 @@ extracted palette, every statistic, the chosen style and why, the contrast and b
 the exact settings (including the derived random seed), and a `reproduce` line:
 
 ```json
-"reproduce": "texture_type.py --ref /abs/swatch.png --text 'FIELD FORCE' --brand channelplay --weight 600 --style grainy --width 1920 --align center --bg dark --letter-spacing -0.0200 --size 322 --out /abs/out.png"
+"reproduce": "texture_type.py --ref /abs/swatch.png --text 'FIELD FORCE' --brand example --weight 600 --style grainy --width 1920 --align center --bg dark --letter-spacing -0.0200 --size 322 --out /abs/out.png"
 ```
 
 Prefix it with the venv python and the script path and it rebuilds the artwork **byte for byte** — the

@@ -7,7 +7,7 @@ every brand breach it can prove. Nothing here is a judgement call: each check is
 measurement against the active brand profile (brands/<id>/brand.json), so the same
 file always produces the same report.
 
-    validate_video.py out/film.mp4 --brand channelplay
+    validate_video.py out/film.mp4 --brand example
     validate_video.py out/film.mp4 --srt out/film.srt --timeline out/film.timeline.json
     validate_video.py out/film.mp4 --format human --frames 24
     validate_video.py out/reel.mp4 --delivery-format vertical
@@ -71,7 +71,7 @@ except ImportError as _exc:  # pragma: no cover - environment guard
 # constants / tuning
 # ---------------------------------------------------------------------------
 
-DEFAULT_BRAND = "channelplay"
+DEFAULT_BRAND = "example"
 
 #: Width in pixels that sampled frames are downscaled to before pixel analysis.
 #: Small enough to stay fast in pure Python, large enough that a 5% safe-margin

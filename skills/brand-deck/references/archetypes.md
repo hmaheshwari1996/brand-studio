@@ -2,7 +2,7 @@
 
 This is the file to read while authoring. Everything here is derived from
 `grammar/deck-grammar.json` (geometry, archetype fields, capacities, structural rules) and
-`brands/<id>/brand.json` (type scale, palette, voice). Numbers shown are for the **Channelplay**
+`brands/<id>/brand.json` (type scale, palette, voice). Numbers shown are for the **Example Brand**
 type scale; another brand shifts the measured fits, the declared capacities stay the same.
 
 ---
@@ -11,12 +11,12 @@ type scale; another brand shifts the measured fits, the declared capacities stay
 
 ```json
 {
-  "brand": "channelplay",
+  "brand": "example",
   "meta": {
     "title": "Retail execution, measured",
     "client": "Acme Consumer Products",
     "date": "2026-07-30",
-    "author": "Channelplay",
+    "author": "Example Brand",
     "confidentiality": "Confidential"
   },
   "slides": [ /* one object per slide, in order */ ],
@@ -132,7 +132,7 @@ info line knowingly.
 
 Rules the validator enforces:
 
-- Series colours come from `brand.colorRules.chartSeries`, in order. Channelplay ships six:
+- Series colours come from `brand.colorRules.chartSeries`, in order. Example Brand ships six:
   `#0000FF`, `#41E7AB`, `#0194DD`, `#0F0A6C`, `#29AFA7`, `#2F80ED`. **A seventh series has no
   colour** — restructure the chart.
 - `brand.colorRules.chartGradientFillForbidden` is true. Flat fills only (`COLOR.CHART_GRADIENT`,
@@ -203,7 +203,7 @@ Each archetype below has a capacity table with four columns:
 
 - **Declared** — `capacity` in `grammar/deck-grammar.json`. The editorial contract.
 - **Fits** — what actually fits the box, measured with `brandlib.estimate_text_height()` at the
-  Channelplay type scale. This is the same estimator the validator uses for `LAYOUT.OVERFLOW`.
+  Example Brand type scale. This is the same estimator the validator uses for `LAYOUT.OVERFLOW`.
 - **Author to** — the smaller of the two, rounded down. Write to this and nothing fires.
 - **Role** — the type role, so you know the size and weight you are writing for.
 
@@ -248,7 +248,7 @@ A deck has one cover.
 | `meta` | `caption` 10.5pt | 60 | ~156 | **≤ 60** |
 
 > **The trap.** At 54pt the cover title box takes roughly one line — about 26 characters. The
-> declared 70 will overflow. "Retail execution, measured" is 26. "How Channelplay delivers
+> declared 70 will overflow. "Retail execution, measured" is 26. "How Example Brand delivers
 > world-class retail execution programmes" is 57 and will fail.
 
 ### Example
@@ -1131,7 +1131,7 @@ is a next step. "We look forward to partnering with you" is not. And no exclamat
   "archetype": "closing",
   "title": "Let us run a pilot",
   "cta": "Pick one territory and one metric. We will run it for a quarter against your baseline.",
-  "contact": "hello@channelplay.in · channelplay.in"
+  "contact": "hello@example.com · example.com"
 }
 ```
 
@@ -1139,7 +1139,7 @@ is a next step. "We look forward to partnering with you" is not. And no exclamat
 
 # Quick capacity reference
 
-Author-to values at the Channelplay type scale. Smaller of declared and measured.
+Author-to values at the Example Brand type scale. Smaller of declared and measured.
 
 | Archetype | Field limits (characters) | Item count |
 |---|---|---|
@@ -1164,7 +1164,7 @@ Author-to values at the Channelplay type scale. Smaller of declared and measured
 | `closing` | `title` 26 · `cta` 61 · `contact` 140 | — |
 
 A complete, validated 16-slide deck IR exercising 13 archetypes lives at
-`examples/channelplay-capability-deck.json`. Read it before authoring your first deck.
+`examples/example-capability-deck.json`. Read it before authoring your first deck.
 
 ---
 
@@ -1177,7 +1177,7 @@ Apply these while writing the IR, whichever archetypes you picked.
 - **Alternate.** `text-visual` and `visual-text` are mirrors of each other for exactly this reason.
   More than two of the same archetype in a row is `STRUCTURE.REPEATED_ARCHETYPE`.
 - **Respect capacity.** See below.
-- **Write in the brand's voice.** For Channelplay: sentence case everywhere except the eyebrow
+- **Write in the brand's voice.** For Example Brand: sentence case everywhere except the eyebrow
   (which the builder upper-cases), no exclamation marks, present tense, active voice, and never a
   phrase from `brand.voice.forbiddenPhrases`.
 - **Speaker notes carry the detail the slide must not.** A long qualifier belongs in `notes`, not in
@@ -1200,7 +1200,7 @@ Three responses are legitimate when copy does not fit:
 Three responses are not:
 
 - Dropping the type size. `TYPE.BELOW_MIN` is an error below `brand.type.minBodyPt` (10.5pt for
-  Channelplay), and everything above it that is off the scale is `TYPE.OFF_SCALE`.
+  Example Brand), and everything above it that is off the scale is `TYPE.OFF_SCALE`.
 - Widening or moving the box. Geometry is shared across every brand; changing it to fit one slide
   breaks the grid for everything else. **`grammar/deck-grammar.json` is never edited to suit
   content.**

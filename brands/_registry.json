@@ -2,12 +2,15 @@
   "version": 1,
   "brands": [
     {
-      "id": "channelplay",
-      "name": "Channelplay",
-      "aliases": ["channel play", "cp", "channelplay technologies"],
+      "id": "example",
+      "name": "Example Brand",
+      "aliases": [
+        "example",
+        "sample"
+      ],
       "kind": "house",
-      "updated": "2026-07-30",
-      "path": "brands/channelplay"
+      "updated": "2026-09-01",
+      "path": "brands/example"
     }
   ]
 }

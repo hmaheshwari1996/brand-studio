@@ -585,7 +585,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", required=True, help="path to the scene JSON")
-    ap.add_argument("--brand", default="channelplay", help="brand id (default channelplay)")
+    ap.add_argument("--brand", default="example", help="brand id (default example)")
     ap.add_argument("--out", required=True,
                     help="output: a directory (PNG sequence), a .mp4, or a .png")
     ap.add_argument("--frames", type=int, default=90, help="frames to render (default 90)")

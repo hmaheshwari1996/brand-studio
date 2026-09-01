@@ -13,12 +13,12 @@ reported (precision) and a case that must still be reported (recall). The recall
 half is the point. The precision half only proves the bug is gone.
 
   1. effective_background(): a shape carrying its own text is its own nearest
-     surface. White on a navy button must PASS; white on mint must still FAIL.
+     surface. White on a ink button must PASS; white on mint must still FAIL.
   2. LogoIndex.identify(): alt text is prose, not an identifier. A screenshot
      described as containing the logo must NOT be treated as the logo; the real
      logo, stretched, must still be caught.
 
-Self-contained: builds its own deck against the in-repo `channelplay` brand, so
+Self-contained: builds its own deck against the in-repo `example` brand, so
 it needs no client brand and no committed fixture.
 
     python scripts/test_validate_deck.py
@@ -35,10 +35,10 @@ import zlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-BRAND = "channelplay"
+BRAND = "example"
 
-NAVY = "0F0A6C"   # white on this passes AA comfortably
-MINT = "41E7AB"   # white on this is ~1.6:1 and must never pass
+INK  = "1B2430"   # white on this passes AA comfortably
+ACCENT = "7FE3C0" # white on this is ~1.6:1 and must never pass
 
 failures = []
 
@@ -94,10 +94,10 @@ def build_deck(path, tmp):
         return shp
 
     # (1) precision + recall for the own-fill rule
-    button(0.6, 0.6, NAVY, "On navy")     # must PASS
-    button(3.4, 0.6, MINT, "On mint")     # must still FAIL
+    button(0.6, 0.6, INK, "On ink")     # must PASS
+    button(3.4, 0.6, ACCENT, "On accent")     # must still FAIL
 
-    # (2) nearest-surface: a white card, a mint circle on top of it, and a
+    # (2) nearest-surface: a white card, a accent circle on top of it, and a
     #     white numeral on the circle. The nearest surface is the CIRCLE.
     card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
                                   Inches(0.6), Inches(2.0), Inches(3.0), Inches(1.4))
@@ -107,7 +107,7 @@ def build_deck(path, tmp):
     dot = slide.shapes.add_shape(MSO_SHAPE.OVAL,
                                  Inches(0.9), Inches(2.3), Inches(0.5), Inches(0.5))
     dot.fill.solid()
-    dot.fill.fore_color.rgb = RGBColor.from_string(MINT)
+    dot.fill.fore_color.rgb = RGBColor.from_string(ACCENT)
     dot.line.fill.background()
     box = slide.shapes.add_textbox(Inches(0.9), Inches(2.3), Inches(0.5), Inches(0.5))
     box.text_frame.text = "7"
@@ -120,11 +120,11 @@ def build_deck(path, tmp):
     pic = slide.shapes.add_picture(shot, Inches(6.4), Inches(2.0),
                                    Inches(1.2), Inches(2.64))
     pic._element._nvXxPr.cNvPr.set("descr",
-                                   "App screenshot showing the Channelplay logo at the top")
+                                   "App screenshot showing the Example Brand logo at the top")
 
     # (3) logo recall: the REAL mark, stretched well past tolerance
     real = os.path.join(ROOT, "brands", BRAND, "assets", "logos",
-                        "channelplay-logo-primary.png")
+                        "example-logo-primary.png")
     slide.shapes.add_picture(real, Inches(8.6), Inches(2.0), Inches(3.0), Inches(2.4))
 
     prs.save(path)
@@ -156,19 +156,19 @@ def main():
     # -- 1. own fill is the nearest surface --------------------------------
     # Asserted as "EVERY finding is on mint", not "no finding mentions navy".
     # The weaker form passes vacuously when the rule regresses: reverting the
-    # fix makes the navy button resolve to the slide instead, so it is reported
+    # fix makes the ink button resolve to the slide instead, so it is reported
     # as "#FFFFFF on #FFFFFF" and never mentions navy at all. Mutation-testing
     # this file is what exposed that — the check looked right and proved
     # nothing.
     check("every contrast finding resolves to the shape's own fill",
-          contrast and all(MINT in x["found"].upper() for x in contrast),
+          contrast and all(ACCENT in x["found"].upper() for x in contrast),
           "a finding resolved to some other surface: %s" % (found or "(none at all)"))
-    check("white on a mint button IS still reported",
-          any(MINT in x["found"].upper() for x in contrast),
-          "nothing flagged mint — the rule may be blind, not fixed: %s" % found)
+    check("white on a accent button IS still reported",
+          any(ACCENT in x["found"].upper() for x in contrast),
+          "nothing flagged the accent — the rule may be blind, not fixed: %s" % found)
 
     # -- 2. text stacked over two surfaces resolves to the near one --------
-    # A numeral on a mint circle on a white card. It must resolve to the
+    # A numeral on an accent circle on a white card. It must resolve to the
     # CIRCLE; "#FFFFFF on #FFFFFF" is the signature of reaching past it to the
     # card. NOTE this exercises the own-fill rule, not the z-ordering one:
     # rec.z is assigned in traversal order and ctx.recs is built in that same
@@ -188,7 +188,7 @@ def main():
           % " | ".join(x["found"] for x in logo))
     check("the REAL logo, stretched, is still caught",
           any(abs(_aspect(x) - 1.25) < 0.02 for x in logo),
-          "a 3.0x2.4in logo (aspect 1.25 vs 4.846) went unreported — recall lost: %s"
+          "a 3.0x2.4in logo (aspect 1.25 vs 4.0) went unreported — recall lost: %s"
           % (" | ".join(x["found"] for x in logo) or "no LOGO.DISTORTED at all"))
 
     if failures:

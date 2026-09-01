@@ -1,6 +1,6 @@
 # Task Observer — vendored, not authored here
 
-This skill is **not Channelplay's work**. It is bundled unchanged so that a
+This skill is **not the brand's work**. It is bundled unchanged so that a
 clone of brand-studio arrives with it already enabled, rather than leaving
 every new user to discover and install it separately.
 

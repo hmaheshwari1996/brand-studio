@@ -1,18 +1,18 @@
 {
-  "$comment": "Acceptance-test deck. Exercises 13 of the 18 archetypes with real Channelplay content. All copy is deliberately brand-compliant: sentence case, no exclamation marks, no placeholder phrases, no forbidden text.",
-  "brand": "channelplay",
+  "$comment": "Acceptance-test deck. Exercises 13 of the 18 archetypes with real Example Brand content. All copy is deliberately brand-compliant: sentence case, no exclamation marks, no placeholder phrases, no forbidden text.",
+  "brand": "example",
   "meta": {
     "title": "Retail execution, measured",
     "client": "Internal capability overview",
     "date": "2026-07-30",
-    "author": "Channelplay",
+    "author": "Example Brand",
     "confidentiality": "Confidential"
   },
   "slides": [
     {
       "archetype": "cover",
       "title": "Retail execution, measured",
-      "subtitle": "How Channelplay runs field programmes that hold up under audit",
+      "subtitle": "How Example Brand runs field programmes that hold up under audit",
       "meta": "Capability overview · July 2026"
     },
     {
@@ -167,7 +167,7 @@
       "archetype": "closing",
       "title": "Let us run a pilot",
       "cta": "Pick one territory and one metric. We will run it for a quarter against your current baseline.",
-      "contact": "hello@channelplay.in · channelplay.in"
+      "contact": "hello@example.com · example.com"
     }
   ],
   "notes": {

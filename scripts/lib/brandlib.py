@@ -1173,8 +1173,8 @@ def _self_test(verbose=True):
          "superseded blue is nearer to blue than to mint")
 
     # --- brand loading + palette ---
-    brand = load_brand("channelplay")
-    c.ok(brand["id"] == "channelplay", "load_brand returns the channelplay profile")
+    brand = load_brand("example")
+    c.ok(brand["id"] == "example", "load_brand returns the example profile")
     c.ok(isinstance(brand.get("learnedRules"), dict), "learnedRules key always present")
     idx = palette_index(brand)
     c.ok(idx.get("#0000FF") == "brand.blue", "palette_index keys canonical brand path")
@@ -1191,12 +1191,12 @@ def _self_test(verbose=True):
     c.ok(superseded_map(brand)["#0000D5"] == "#0000FF", "superseded map is normalised")
 
     # --- brand resolution ---
-    r = resolve_brand("channelplay")
-    c.ok(r["match"] == "exact" and r["brand"] == "channelplay", "resolve_brand exact id")
+    r = resolve_brand("example")
+    c.ok(r["match"] == "exact" and r["brand"] == "example", "resolve_brand exact id")
     r = resolve_brand("Channel Play")
-    c.ok(r["match"] == "exact" and r["brand"] == "channelplay", "resolve_brand alias")
+    c.ok(r["match"] == "exact" and r["brand"] == "example", "resolve_brand alias")
     r = resolve_brand("channelpaly")
-    c.ok(r["match"] == "fuzzy" and r["brand"] == "channelplay", "resolve_brand fuzzy typo")
+    c.ok(r["match"] == "fuzzy" and r["brand"] == "example", "resolve_brand fuzzy typo")
     r = resolve_brand("zzzzzzzzzz")
     c.ok(r["match"] == "none" and r["brand"] is None, "resolve_brand gives up cleanly")
     try:
@@ -1244,7 +1244,7 @@ def _self_test(verbose=True):
     one_line = estimate_text_height("Retail execution", 12, 3.23, "Poppins")
     c.close(one_line, 1.35 * 12 / 72.0, 1e-9, "a short string is exactly one line box")
     c.ok(estimate_text_height("", 12, 3.23, "Poppins") == 0.0, "empty text needs no height")
-    long_txt = ("Channelplay runs retail execution programmes across India with "
+    long_txt = ("Example Brand runs retail execution programmes across India with "
                 "trained field teams, daily reporting and measurable outcomes. ") * 3
     h12 = estimate_text_height(long_txt, 12, 3.23, "Poppins")
     h24 = estimate_text_height(long_txt, 24, 3.23, "Poppins")
@@ -1290,7 +1290,7 @@ def _self_test(verbose=True):
     c.ok(srt_timestamp(0.9999) == "00:00:01,000", "srt_timestamp rounds to the millisecond")
 
     # --- violations / report ---
-    rep = Report("deck.pptx", "channelplay", "deck")
+    rep = Report("deck.pptx", "example", "deck")
     c.ok(rep.exit_code() == 0 and rep.to_json()["pass"] is True, "empty report passes")
     c.ok(rep.counts() == {"error": 0, "warn": 0, "info": 0}, "empty counts are complete")
     rep.add(Violation("TYPE.SYNTHETIC_BOLD", "warn", where="slide 4 / title",

@@ -1,6 +1,6 @@
 {
   "$comment": "Acceptance-test video IR. deck-video pipeline, narrating a subset of the capability deck. Scene roles follow the brand storyline arc: hook, problem, approach, proof, outcome, call-to-action.",
-  "brand": "channelplay",
+  "brand": "example",
   "kind": "deck-video",
   "meta": {
     "title": "Retail execution, measured",

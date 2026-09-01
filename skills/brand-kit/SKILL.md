@@ -8,7 +8,7 @@ description: Resolve, confirm or create the brand profile that governs a deck or
 Decides **which brand profile is active** and guarantees the user agreed to it. Every deck and video
 here is built from one profile (`brands/<id>/brand.json`) and validated against it. This is the
 **mandatory first step of any deck or video task**: nothing runs until the brand is settled, and
-`brand-deck` / `brand-video` assume a confirmed brand id. Never assume Channelplay — it is the house
+`brand-deck` / `brand-video` assume a confirmed brand id. Never assume Example Brand — it is the house
 brand, not the default.
 
 ## Protocol
@@ -42,8 +42,8 @@ brand, not the default.
    ```
    Copy assets in, make every path relative to the brand dir, re-show the card, run the STEP 5
    sanity checks, confirm.
-6. **HANDOFF** — state the active profile in one line ("Active brand profile: **Channelplay**
-   (`channelplay`), confirmed."), then pass the **brand id only** to `brand-deck` / `brand-video`;
+6. **HANDOFF** — state the active profile in one line ("Active brand profile: **Example Brand**
+   (`example`), confirmed."), then pass the **brand id only** to `brand-deck` / `brand-video`;
    both re-load from disk.
 
 ## Read this when — on demand, never upfront

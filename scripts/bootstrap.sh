@@ -35,7 +35,7 @@ PLUGIN_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 CACHE_DIR="${HOME}/.cache/brand-studio"
 VENV_DIR="${CACHE_DIR}/venv"
 VENV_PY="${VENV_DIR}/bin/python"
-FONT_SRC="${PLUGIN_ROOT}/brands/channelplay/assets/fonts"
+FONT_SRC="${PLUGIN_ROOT}/brands/example/assets/fonts"
 # Where make_voice.py looks for Piper models. Kept identical on purpose.
 VOICES_DIR="${CACHE_DIR}/voices"
 PIPER_BASE="https://huggingface.co/rhasspy/piper-voices/resolve/main"

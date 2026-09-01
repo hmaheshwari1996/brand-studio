@@ -73,7 +73,7 @@ machine rather than from a table in a README.
 
 ## Measured performance
 
-1920×1080, Channelplay bottle scene with reflection and shadows, 8-core M-series Mac:
+1920×1080, Example Brand bottle scene with reflection and shadows, 8-core M-series Mac:
 
 | what | time |
 | --- | --- |

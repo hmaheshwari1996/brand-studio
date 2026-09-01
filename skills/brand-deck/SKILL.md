@@ -14,7 +14,7 @@ IR and the `.pptx`. Path map: `references/troubleshooting.md`.
 ## Workflow
 
 1. **BRAND FIRST.** Invoke **brand-kit** for a confirmed brand id; never guess, never default to
-   Channelplay — a client's deck may follow the client's guidelines.
+   Example Brand — a client's deck may follow the client's guidelines.
    `"$PY" "$ROOT/scripts/lib/brandlib.py" --brand <id>`
 2. **STORYLINE BEFORE SLIDES.** Settle audience, the single decision, the arc, the slide count.
    Present a numbered outline (purpose + archetype per slide) and get it approved; silence is not

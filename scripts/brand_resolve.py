@@ -15,9 +15,9 @@ Exit codes are the whole point of the interface:
     1   internal failure or bad usage
 
 Usage:
-    brand_resolve.py channelplay
+    brand_resolve.py example
     brand_resolve.py channel play              # words are joined into one name
-    brand_resolve.py "channelplay" --json
+    brand_resolve.py "example" --json
     brand_resolve.py --list
 """
 

@@ -1,6 +1,6 @@
 ---
 description: Turn a reference photo — a lipstick swatch, fabric, paint, metal, foliage — into a display type treatment in the brand face
-argument-hint: "[path to the reference photo] [the words to set, e.g. 'CHANNELPLAY']"
+argument-hint: "[path to the reference photo] [the words to set, e.g. 'EXAMPLE BRAND']"
 ---
 
 # /brand-texture
@@ -37,7 +37,7 @@ five things in it produces unreadable type. If there is no string, ask; display 
 Show the output as it prints: the palette with each colour's nearest brand token and its delta E, the
 grain / directionality / gloss / raggedness figures, and the style `auto` picked with its reason. This
 step is worth running alone — it says whether the reference is on-brand before anyone makes artwork.
-If it reports OFF-PALETTE, say so: a lipstick red sits ~85 delta E from Channelplay's blues. Fine for
+If it reports OFF-PALETTE, say so: a lipstick red sits ~85 delta E from the brand's blues. Fine for
 a client brand or a campaign moment; wrong for house material that sits beside the rest of the deck.
 The user decides, not you.
 

@@ -24,7 +24,7 @@ Say which you chose and why. `kind` picks the renderer; mixing scene kinds is le
 
 ## Workflow
 
-1. **BRAND FIRST.** **brand-kit** → confirmed brand id; never guess or default to Channelplay.
+1. **BRAND FIRST.** **brand-kit** → confirmed brand id; never guess or default to Example Brand.
    Confirm the **video kit** (intro/outro, music, captions, storyline); if `referenceVideos` is
    empty, ask for reference videos first.
 2. **PICK THE PIPELINE** (above); state the choice.

@@ -2,7 +2,7 @@
 
 Every violation id the deck validator can emit, what actually causes it, and the concrete fix.
 
-Numbers and hexes below are Channelplay's. Another brand shifts the values; the causes and fixes are
+Numbers and hexes below are the brand's. Another brand shifts the values; the causes and fixes are
 the same.
 
 ---
@@ -10,13 +10,13 @@ the same.
 ## Reading the output
 
 ```sh
-"$PY" "$ROOT/scripts/validate.py" deck.pptx --brand channelplay --format human --ir deck.json
+"$PY" "$ROOT/scripts/validate.py" deck.pptx --brand example --format human --ir deck.json
 ```
 
 `--format json` (the default) emits FROZEN CONTRACT C:
 
 ```json
-{ "target": "/abs/deck.pptx", "brand": "channelplay", "kind": "deck", "pass": false,
+{ "target": "/abs/deck.pptx", "brand": "example", "kind": "deck", "pass": false,
   "counts": {"error": 2, "warn": 5, "info": 1},
   "violations": [ {"id":"TYPE.INHERITED_FONT","severity":"error","where":"slide 4 / body",
                    "found":"…","expected":"…","rule":"…","fix":"…"} ] }
@@ -204,7 +204,7 @@ the surface is known:
 
 | id | Sev | Cause | Fix |
 |---|---|---|---|
-| `COLOR.SUPERSEDED` | error | A hex from the old master template. `brand.color.superseded.map` lists them: `#0000D5`, `#0029E3`, `#0036AA`, `#0F237B`, `#00006B`, `#272525`, `#08F8B9`, `#0094DE`, `#E90C29`. Almost always an asset or a shape reused from `Channelplay Deck Template 3.pptx`. | Recolour to the canonical hex the message names. **Do not add the old hex to the palette** — the owner ruled on 2026-07-30 that the design system wins and the template palette is superseded. |
+| `COLOR.SUPERSEDED` | error | A hex from the old master template. `brand.color.superseded.map` lists them: `#0000D5`, `#0029E3`, `#0036AA`, `#0F237B`, `#00006B`, `#272525`, `#08F8B9`, `#0094DE`, `#E90C29`. Almost always an asset or a shape reused from `Example Brand Deck Template 3.pptx`. | Recolour to the canonical hex the message names. **Do not add the old hex to the palette** — the owner ruled on 2026-07-30 that the design system wins and the template palette is superseded. |
 | `COLOR.OFF_PALETTE` | error | Any colour not in the brand palette. See trap 3. | Snap to the nearest token the message names. |
 | `COLOR.BLACK_TEXT` | error | Text within delta E 6 of `#000000`. Pure black is never used. Comes in with pasted text, Excel tables and chart labels. | Set the run colour to `colorRules.defaultText` = navy `#0F0A6C`. Secondary text is `#5E6678`. |
 | `COLOR.FORBIDDEN_TEXT` | error | Text set in a colour listed in `colorRules.forbiddenText`: mint `#41E7AB`, teal `#29AFA7`, `#000000`, `#FF0000`. `#FF0000` is a template scaffold marker that must never ship. | Mint/teal text → `mint.700 #1B7A74`. Black → navy. Red scaffolding → delete the shape; it was never content. |
@@ -260,7 +260,7 @@ Anything else is `COLOR.OFF_PALETTE` on its stops.
 
 | id | Sev | Cause | Fix |
 |---|---|---|---|
-| `LOGO.MISSING` | error | No logo on a `cover` or `closing` slide, or a picture that matches no declared variant. `deckRules.requireLogoOnCoverAndClosing` is true. | Place a variant from `brands/channelplay/assets/logos/`. On the dark hero panels of `cover`, `section-break` and `closing` that is `reversed`; over photography (`full-bleed`) it is `monoWhite`; on light chrome slides it is `primary`. |
+| `LOGO.MISSING` | error | No logo on a `cover` or `closing` slide, or a picture that matches no declared variant. `deckRules.requireLogoOnCoverAndClosing` is true. | Place a variant from `brands/example/assets/logos/`. On the dark hero panels of `cover`, `section-break` and `closing` that is `reversed`; over photography (`full-bleed`) it is `monoWhite`; on light chrome slides it is `primary`. |
 | `LOGO.UNDERSIZE` | error | Below `logo.minWidthIn` = 1.25in. | Scale up, keeping the aspect. Deck chrome size is 1.397 × 0.288in; cover/closing size is 1.91 × 0.394in. |
 | `LOGO.DISTORTED` | error | Rendered aspect differs from the declared aspect by more than 2%. Primary and reversed are 4.846; mono-white is 4.685. `logo.forbidden` includes stretching. | Restore the aspect. The message gives the exact height for the current width. |
 | `LOGO.PLACEMENT` | warn | Logo left edge in the right half of the canvas. The owner ruled top-left on 2026-07-30; the old master template used top-right, so this fires on anything reused from it. | Move to `x = 0.869, y = 0.300`. |
@@ -313,7 +313,7 @@ Confirm it parses:
 
 ```sh
 "$PY" -c "import sys;sys.path.insert(0,'$ROOT/scripts/lib');import brandlib;\
-b=brandlib.load_brand('channelplay');print(len(b['learnedRules'].get('rules',[])),'learned rules ok')"
+b=brandlib.load_brand('example');print(len(b['learnedRules'].get('rules',[])),'learned rules ok')"
 ```
 
 ---
@@ -333,7 +333,7 @@ It is deterministic, so "it is wrong" usually means one of:
 |---|---|
 | A violation on a shape you never authored | Template furniture, or a builder bug. Report the `where` string; do not delete it from the `.pptx`. |
 | The same violation on every slide | Chrome, master or layout inheritance. One fix clears all of them. |
-| `COLOR.OFF_PALETTE` on a colour you believe is approved | Check `palette_index()` — superseded and forbidden-text hexes are deliberately excluded from it. `"$PY" "$ROOT/scripts/lib/brandlib.py" --brand channelplay` dumps the real palette. |
+| `COLOR.OFF_PALETTE` on a colour you believe is approved | Check `palette_index()` — superseded and forbidden-text hexes are deliberately excluded from it. `"$PY" "$ROOT/scripts/lib/brandlib.py" --brand example` dumps the real palette. |
 | Exit 1 with no violations | Internal failure: bad path, unknown brand, unreadable `.pptx`, malformed `rules.local.json`. Read stderr. |
 | Violations disappear when you drop `--ir` | They were structural, and they were real. Put `--ir` back. |
 | Numbers in `references/archetypes.md` disagree with a violation | The validator is the authority. Follow it, and say in your report that the reference needs updating. |
@@ -427,7 +427,7 @@ Append a dated entry. Do this even when you also do tier 2 or tier 3.
 
 - **Correction:** user rejected mint `#41E7AB` on a slide title over white.
 - **Why:** 1.6:1 contrast. Mint is decorative only; mint-family text uses `mint.700 #1B7A74`.
-- **Scope:** channelplay, all decks and videos, title and body text.
+- **Scope:** example, all decks and videos, title and body text.
 - **Persisted as:** `rules.local.json` rule `LOCAL.NO_MINT_TEXT`.
 ```
 

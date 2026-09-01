@@ -104,7 +104,7 @@ text that had to be shrunk to fit must be re-measured with the real metrics.
 ## Layout rules these templates follow
 
 - **Safe margin.** `#stage` is padded by `--safe-x` / `--safe-y` (5% of the canvas
-  for Channelplay: 96px × 54px). Nothing readable sits outside it.
+  for Example Brand: 96px × 54px). Nothing readable sits outside it.
 - **Logo top-left**, per the brand's logo placement rule, sized from its height
   using the variant's aspect ratio so it is never stretched.
 - **Reversed logo on dark, primary on light**, selected by the theme block rather
@@ -214,7 +214,7 @@ import sys; sys.path.insert(0, "scripts")
 import build_video as bv
 from lib import brandlib
 
-brand = brandlib.load_brand("channelplay")
+brand = brandlib.load_brand("example")
 video = brandlib.deep_merge(bv.DEFAULT_VIDEO, brand["video"])
 path  = bv.write_scene_html(
     bv.template_path("scene"),

@@ -52,10 +52,10 @@ PY="$HOME/.cache/brand-studio/venv/bin/python"
 F="$WORK/film.mp4"
 
 # full human report, sidecars attached automatically
-"$PY" "$ROOT/scripts/validate.py" "$F" --brand channelplay --format human
+"$PY" "$ROOT/scripts/validate.py" "$F" --brand example --format human
 
 # the specialist, with explicit sidecars and a denser frame sample
-"$PY" "$ROOT/scripts/validate_video.py" "$F" --brand channelplay \
+"$PY" "$ROOT/scripts/validate_video.py" "$F" --brand example \
       --srt "${F%.mp4}.srt" --timeline "$F.timeline.json" --frames 24 --format human
 
 # container facts
@@ -130,7 +130,7 @@ ffmpeg -i in.mp4 -c:v libx264 -pix_fmt yuv420p -crf 18 -preset medium -c:a aac -
 **Real cause:**
 
 0. **The intro is a gradient — see [gradient bookends](#gradient-bookends-that-look-perfect-and-still-warn).
-   For Channelplay this fires on essentially every film and is a false positive.** Check this first.
+   For Example Brand this fires on essentially every film and is a false positive.** Check this first.
 1. **`intro: false` / `outro: false` in the IR** while the brand declares one. The check reads the
    timeline first, so this only fires when the timeline says the bookend exists.
 2. **A supplied `brand.video.intro.file`** that is a live-action or photographic clip. It genuinely has
@@ -163,7 +163,7 @@ IR instead of validating an edit the IR does not describe.
 
 ### `VIDEO.SAFE_MARGIN` — warn
 
-**Means:** content crosses the safe band — for Channelplay, the outer 5% on every edge — in one or more
+**Means:** content crosses the safe band — for Example Brand, the outer 5% on every edge — in one or more
 sampled frames. The report names which edges and the worst inset.
 
 **Real cause:**
@@ -232,7 +232,7 @@ set `music.enabled: false` in the IR *and* `brand.video.voiceover.enabled: false
 
 ### `AUDIO.LOUDNESS` — warn
 
-**Means:** integrated loudness is more than 2 LU from the target (−16.0 LUFS for Channelplay), or the
+**Means:** integrated loudness is more than 2 LU from the target (−16.0 LUFS for Example Brand), or the
 stream is digital silence (`-inf`).
 
 **Real cause:** see [loudness drift](#loudness-drift). `-inf` specifically means the mix is empty — the
@@ -306,7 +306,7 @@ each scene's narration window.
 **Real cause:** a single word longer than the limit — a URL, a hyphenless compound, a long product code.
 The wrapper breaks on spaces and hard-splits only as a last resort. Otherwise: a hand-edited SRT.
 
-**Fix:** rewrite the caption to avoid the unbreakable token. `channelplay.in/retail-execution-programme`
+**Fix:** rewrite the caption to avoid the unbreakable token. `example.com/retail-execution-programme`
 in a caption is unreadable at 28pt anyway; put it in the outro `meta.contact`.
 
 ### `CAPTION.LINE_COUNT` — warn
@@ -356,7 +356,7 @@ Never edit only the SRT.
 
 ### `VOICE.EXCLAMATION` — error
 
-**Means:** a character from `brand.voice.forbiddenChars` — `!` for Channelplay — appears in a cue.
+**Means:** a character from `brand.voice.forbiddenChars` — `!` for Example Brand — appears in a cue.
 
 **Real cause:** enthusiasm. Occasionally a quotation that genuinely contains one.
 
@@ -378,7 +378,7 @@ would be a `brand.json` change.
 **Real cause of the interesting one — out of order:** almost always a film that opens on credentials.
 `approach` lands before `problem` because the first two scenes introduce the agency. That is the exact
 failure the brand's first storyline rule exists to prevent: *open on the client's problem, never on
-Channelplay's credentials.*
+the brand's credentials.*
 
 **Fix:** reorder the scenes so each stage first appears in arc order, or add the missing beat. Repeats
 are fine — `hook, problem, problem, approach, approach, proof, outcome, call-to-action` passes cleanly.
@@ -421,7 +421,7 @@ can ship.
 **Warnings the build prints and you must not ignore:**
 
 - `scene 'X' holds for Ns, above the brand maximum` — editorial. Split the scene.
-- `music is enabled but neither the IR nor the brand supplies a track` — the Channelplay default state.
+- `music is enabled but neither the IR nor the brand supplies a track` — the Example Brand default state.
   Supply a bed or set `music.enabled: false` and say so in the report.
 - `logo variant 'X' not found` — the motion templates and the generated intro/outro will render without
   a logo.
@@ -565,7 +565,7 @@ enough — they are the plugin's copy, not the OS's.
 ```sh
 ls ~/Library/Fonts | grep -i poppins        # what the OS can see
 fc-list 2>/dev/null | grep -i poppins       # if fontconfig is available
-cp "$ROOT/brands/channelplay/assets/fonts/"*.ttf ~/Library/Fonts/   # then re-render
+cp "$ROOT/brands/example/assets/fonts/"*.ttf ~/Library/Fonts/   # then re-render
 ```
 
 Note the family names the profile maps to — `Poppins`, `Poppins Medium`, `Poppins SemiBold`. All three
@@ -595,7 +595,7 @@ gradient slides as well.
 
 **Why:** both checks work by quantising a frame and testing the *dominant* colours. A gradient has no
 dominant colour. Quantisation returns points along the ramp, and a point on the ramp is not either
-endpoint. Measured on a real Channelplay intro frame:
+endpoint. Measured on a real Example Brand intro frame:
 
 ```
 20.4%  #0B0792        16.4%  #0704BD        15.2%  #0503C9        14.5%  #0805AA
@@ -680,7 +680,7 @@ with it. After any learn-protocol write:
 
 ```sh
 "$PY" -c "import sys;sys.path.insert(0,'$ROOT/scripts/lib');import brandlib;\
-b=brandlib.load_brand('channelplay');print(len(b['learnedRules'].get('rules',[])),'learned rules ok')"
+b=brandlib.load_brand('example');print(len(b['learnedRules'].get('rules',[])),'learned rules ok')"
 ```
 
 ---
@@ -804,7 +804,7 @@ Append a dated entry. Do this even when you also do tier 2 or tier 3.
 
 - **Correction:** user rejected two 15s scenes in the capability film as "a slideshow with a voice".
 - **Why:** a still frame past ~10s reads as dead air; the fix is to split the idea, not to shorten the hold.
-- **Scope:** channelplay, all videos, every scene.
+- **Scope:** example, all videos, every scene.
 - **Persisted as:** `brand.json` `video.slideHoldSec.max` 12.0 → 10.0.
 ```
 

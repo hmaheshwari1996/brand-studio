@@ -60,7 +60,7 @@ pretending. Nothing here patches the builder.
 
 Usage:
     daily_run.py --dry-run
-    daily_run.py --brand channelplay --date 2026-07-31 --only reel
+    daily_run.py --brand example --date 2026-07-31 --only reel
     daily_run.py --queue-item 2026-08-02 --force
 
 Exit codes:
@@ -118,7 +118,7 @@ DEFAULT_JOBS = 4
 DEFAULT_VIDEO_JOBS = 2
 
 # Films shorter than this ship without the brand's intro/outro bookends. At
-# Channelplay's 3.0s + 3.5s a bookended 15s reel would be 43% logo, which is not
+# the brand's 3.0s + 3.5s a bookended 15s reel would be 43% logo, which is not
 # a reel. Longer films carry both, and reuse the cached renders.
 BOOKEND_MIN_SEC = 20.0
 

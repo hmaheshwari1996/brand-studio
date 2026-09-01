@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://channelplay.in/brand-studio/brands/_schema.json",
+  "$id": "https://github.com/hmaheshwari1996/brand-studio/brands/_schema.json",
   "title": "brand-studio brand profile",
   "description": "Shape of brands/<id>/brand.json — the single machine-read source of brand truth for a deck or a video. Geometry lives in grammar/deck-grammar.json and is brand-agnostic; nothing in this file describes where things sit on a slide, only how they look and how they are worded. Loaded exclusively through scripts/lib/brandlib.py, which adds two runtime keys that are NOT part of this schema and must never be written to disk: 'learnedRules' (rules.local.json merged in) and '_dir' (absolute brand directory). Any property whose name starts with '$' is metadata: '$comment' is free prose and is ignored everywhere, and '$unverified' is written by scripts/new_brand.py to mark a block that carries a neutral default nobody ever confirmed.",
   "type": "object",
@@ -28,20 +28,20 @@
       "type": "string",
       "description": "Lowercase slug. MUST equal the containing directory name — brands/acme/brand.json must carry \"id\": \"acme\", or the brand resolves and then fails to load.",
       "pattern": "^[a-z0-9][a-z0-9-]*$",
-      "examples": ["channelplay", "acme-retail"]
+      "examples": ["example", "acme-retail"]
     },
     "name": {
       "type": "string",
       "description": "Display name as it should appear in a deck footer and in the brand confirmation card.",
       "minLength": 1,
-      "examples": ["Channelplay"]
+      "examples": ["Example Brand"]
     },
     "aliases": {
       "type": "array",
       "description": "Everything a person might type for this brand. Feeds fuzzy resolution in brand_resolve.py — a missing alias is the usual cause of a wrong match. Lowercase.",
       "items": { "type": "string" },
       "uniqueItems": true,
-      "examples": [["channel play", "cp", "channelplay technologies"]]
+      "examples": [["channel play", "cp", "example technologies"]]
     },
     "kind": {
       "description": "Whether this is the agency's own brand or a client's. Governs nothing mechanically; it exists so a reader can tell at a glance whose rules these are.",
@@ -68,7 +68,7 @@
       "properties": {
         "tokens": {
           "type": "string",
-          "description": "Source of colour and type values, with a date. e.g. \"Channelplay design system (DESIGN_SYSTEM.md v1.0), derived from Channelplay_Brand_Guidelines.pptx\"."
+          "description": "Source of colour and type values, with a date. e.g. \"Example Brand design system (DESIGN_SYSTEM.md v1.0), derived from Example Brand_Brand_Guidelines.pptx\"."
         },
         "geometry": {
           "type": "string",

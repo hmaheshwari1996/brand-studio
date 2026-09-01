@@ -20,9 +20,9 @@ field it lands in — see `references/registry.md` for the full schema.
 
 | Ask | Good answer | Bad answer | Lands in |
 |---|---|---|---|
-| Full display name as it should appear in a deck footer | `Channelplay` | `channelplay technologies pvt ltd (but we write it Channelplay)` — pick one, put the other in aliases | `name` |
-| Short id — lowercase, no spaces | `channelplay` | `Channelplay Deck v2` | `id` (and the directory name) |
-| What else do people call it? | `["channel play", "cp", "channelplay technologies"]` | `[]` when the brand is routinely abbreviated — you will fail to resolve `cp` later | `aliases` |
+| Full display name as it should appear in a deck footer | `Example Brand` | `example technologies pvt ltd (but we write it Example Brand)` — pick one, put the other in aliases | `name` |
+| Short id — lowercase, no spaces | `example` | `Example Brand Deck v2` | `id` (and the directory name) |
+| What else do people call it? | `["channel play", "cp", "example technologies"]` | `[]` when the brand is routinely abbreviated — you will fail to resolve `cp` later | `aliases` |
 | What does the brand do, in one sentence, and who is the audience? | `Retail training and field-execution agency, Delhi India. Audience is client-side brand and sales leadership plus a large field workforce.` | `We deliver excellence` — you cannot write copy from this | `description` |
 | Tone in three adjectives | `plain, operational, confident` | `professional` alone | `voice.guidance` |
 | House brand or client brand? | `house` / `client` | — | `kind` |
@@ -131,7 +131,7 @@ ratio (so the builder never stretches the mark) and shows whether the artwork it
 off-palette or superseded colours.
 
 ```sh
-"$PY" - <<'EOF' channelplay brands/channelplay/assets/logos
+"$PY" - <<'EOF' example brands/example/assets/logos
 import sys, os, collections
 sys.path.insert(0, os.path.join(os.environ["ROOT"], "scripts", "lib"))
 from PIL import Image
@@ -468,7 +468,7 @@ ffmpeg -v error -y -i REF.mp4 -vf "fps=1/5,scale=320:-2" -frames:v 24 /tmp/bk-fr
 ```
 
 ```sh
-"$PY" - <<'EOF' channelplay /tmp/bk-frames
+"$PY" - <<'EOF' example /tmp/bk-frames
 import sys, os, glob, collections
 sys.path.insert(0, os.path.join(os.environ["ROOT"], "scripts", "lib"))
 from PIL import Image

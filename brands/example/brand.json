@@ -1,0 +1,358 @@
+{
+  "$schema": "../_schema.json",
+  "id": "example",
+  "name": "Example Brand",
+  "aliases": [
+    "example",
+    "sample"
+  ],
+  "kind": "house",
+  "description": "A neutral reference profile. It exists so the builders, the validator and the test suite have a brand to run against out of the box — replace it with your own via /brand-new rather than editing it.",
+  "version": "1.0.0",
+  "updated": "2026-09-01",
+  "provenance": {
+    "tokens": "synthetic — not a real brand",
+    "geometry": "defaults from grammar/deck-grammar.json"
+  },
+  "color": {
+    "brand": {
+      "ink": "#1B2430",
+      "accent": "#7FE3C0",
+      "muted": "#5E6678",
+      "surface": "#F4F6F7"
+    },
+    "neutral": {
+      "white": "#FFFFFF",
+      "black": "#1B2430",
+      "grey": "#5E6678"
+    },
+    "semantic": {
+      "success": "#1B9E5A",
+      "warning": "#C99A2E",
+      "danger": "#C42430"
+    }
+  },
+  "colorRules": {
+    "defaultText": "#1B2430",
+    "secondaryText": "#5E6678",
+    "forbiddenText": {
+      "#000000": "Pure black is never used; body text is ink.",
+      "#7FE3C0": "The accent is decorative only — too light to read on white."
+    },
+    "onSurface": {
+      "#FFFFFF": "#1B2430",
+      "#F4F6F7": "#1B2430",
+      "#1B2430": "#FFFFFF"
+    },
+    "minContrastBody": 4.5,
+    "minContrastLarge": 3.0,
+    "largeTextPt": 18,
+    "gradientTextForbidden": true
+  },
+  "type": {
+    "family": "Helvetica",
+    "fallback": [
+      "Helvetica",
+      "Arial",
+      "sans-serif"
+    ],
+    "weightToPptxFamily": {
+      "400": "Poppins",
+      "500": "Poppins Medium",
+      "600": "Poppins SemiBold"
+    },
+    "approvedWeights": [
+      400,
+      500,
+      600
+    ],
+    "forbiddenWeights": [
+      100,
+      200,
+      300,
+      700,
+      800,
+      900
+    ],
+    "italicsAllowed": false,
+    "syntheticBoldAllowed": false,
+    "deckScalePt": {
+      "cover": {
+        "size": 54,
+        "leading": 60,
+        "weight": 600,
+        "tracking": -0.02
+      },
+      "section": {
+        "size": 44,
+        "leading": 50,
+        "weight": 600,
+        "tracking": -0.02
+      },
+      "title": {
+        "size": 32,
+        "leading": 38,
+        "weight": 600,
+        "tracking": -0.01
+      },
+      "subtitle": {
+        "size": 18,
+        "leading": 26,
+        "weight": 400,
+        "tracking": 0
+      },
+      "cardTitle": {
+        "size": 14,
+        "leading": 20,
+        "weight": 600,
+        "tracking": 0
+      },
+      "label": {
+        "size": 12,
+        "leading": 17,
+        "weight": 500,
+        "tracking": 0
+      },
+      "body": {
+        "size": 12,
+        "leading": 18,
+        "weight": 400,
+        "tracking": 0
+      },
+      "bodySmall": {
+        "size": 11,
+        "leading": 16,
+        "weight": 400,
+        "tracking": 0
+      },
+      "caption": {
+        "size": 10.5,
+        "leading": 15,
+        "weight": 400,
+        "tracking": 0.01
+      },
+      "eyebrow": {
+        "size": 10.5,
+        "leading": 15,
+        "weight": 500,
+        "tracking": 0.08,
+        "case": "upper"
+      },
+      "footer": {
+        "size": 10.5,
+        "leading": 15,
+        "weight": 400,
+        "tracking": 0
+      },
+      "statNumber": {
+        "size": 32,
+        "leading": 38,
+        "weight": 600,
+        "tracking": -0.01
+      }
+    },
+    "minBodyPt": 10.5,
+    "negativeTrackingAbovePt": 22
+  },
+  "logo": {
+    "placement": "top-left",
+    "placementRationale": "Design system section 3 rules top-left in headers. The master template used top-right; owner ruled top-left on 2026-07-30.",
+    "variants": {
+      "primary": {
+        "file": "assets/logos/example-logo-primary.png",
+        "use": "light backgrounds",
+        "aspect": 4.0
+      }
+    },
+    "variantForBackground": {
+      "light": "primary",
+      "dark": "primary"
+    },
+    "deckSizeIn": {
+      "w": 1.397,
+      "h": 0.288
+    },
+    "coverSizeIn": {
+      "w": 1.91,
+      "h": 0.394
+    },
+    "minWidthIn": 1.25,
+    "clearSpaceRatio": 1.0,
+    "clearSpaceBasis": "height of the play mark == logo height",
+    "forbidden": [
+      "redraw",
+      "recolour",
+      "stretch",
+      "rotate",
+      "effects",
+      "retype wordmark",
+      "place on busy photo without mono-white"
+    ],
+    "vectorAvailable": false,
+    "vectorNote": "Raster only at 1982px wide. Request SVG/EPS from the brand owner before print or large format."
+  },
+  "voice": {
+    "case": "sentence",
+    "caseExceptions": [
+      "eyebrow"
+    ],
+    "tense": "present",
+    "voice": "active",
+    "forbiddenChars": [
+      "!"
+    ],
+    "forbiddenPhrases": [
+      "Submit",
+      "Click here",
+      "Lorem ipsum",
+      "Place Table / Image / Chart",
+      "Replace Icons from Icon slide",
+      "Chapter Name Goes Here",
+      "This is the title text right here",
+      "Place Subtitle here",
+      "This is placeholder copy",
+      "Person Name",
+      "solutions"
+    ],
+    "guidance": "Plain, operational, confident, never salesy. Buttons and CTAs name the action. One word per concept throughout. Errors say what happened and what to do next. No exclamation marks."
+  },
+  "video": {
+    "resolution": {
+      "w": 1920,
+      "h": 1080
+    },
+    "fps": 30,
+    "formats": {
+      "$note": "Delivery formats. 'landscape' is the default and the one the validator checks against unless the IR names another via meta.format. Reels and stories are vertical; LinkedIn and in-feed posts read best square.",
+      "landscape": {
+        "w": 1920,
+        "h": 1080,
+        "ratio": "16:9",
+        "use": "client presentations, YouTube, in-room playback",
+        "safeMarginPct": 5,
+        "captionSizePt": 28
+      },
+      "square": {
+        "w": 1080,
+        "h": 1080,
+        "ratio": "1:1",
+        "use": "LinkedIn and in-feed social",
+        "safeMarginPct": 6,
+        "captionSizePt": 32
+      },
+      "vertical": {
+        "w": 1080,
+        "h": 1920,
+        "ratio": "9:16",
+        "use": "reels, stories, shorts",
+        "safeMarginPct": 8,
+        "captionSizePt": 36,
+        "chromeTopPct": 12,
+        "chromeBottomPct": 20,
+        "$note": "chromeTopPct / chromeBottomPct are the authoritative platform-chrome reserve and are what the builder reads. Do not encode layout numbers in this sentence -- rewording prose must never change a layout. Captions sit above the lower band, not at the true bottom."
+      }
+    },
+    "container": "mp4",
+    "vcodec": "libx264",
+    "acodec": "aac",
+    "safeMarginPct": 5,
+    "intro": {
+      "type": "generated",
+      "durationSec": 3.0,
+      "style": "blue-gradient-logo-reveal",
+      "file": null
+    },
+    "outro": {
+      "type": "generated",
+      "durationSec": 3.5,
+      "style": "navy-lockup-cta",
+      "file": null,
+      "contact": "Example.in",
+      "$note": "The standard closing line for every Example film. Override per film with meta.outroTitle / meta.contact, which bypasses the shared cached outro."
+    },
+    "music": {
+      "enabled": true,
+      "file": null,
+      "targetLufs": -23.0,
+      "duckUnderVoiceDb": -18.0,
+      "fadeInSec": 1.0,
+      "fadeOutSec": 2.0,
+      "mood": [
+        "confident",
+        "understated",
+        "corporate-modern"
+      ],
+      "avoid": [
+        "dramatic orchestral",
+        "lo-fi hiphop",
+        "aggressive EDM"
+      ]
+    },
+    "voiceover": {
+      "enabled": true,
+      "engine": "say",
+      "voice": "Samantha",
+      "rateWpm": 165,
+      "targetLufs": -16.0
+    },
+    "captions": {
+      "enabled": true,
+      "required": true,
+      "burnIn": false,
+      "sidecar": "srt",
+      "font": "Poppins Medium",
+      "sizePt": 28,
+      "color": "#FFFFFF",
+      "background": "#0F0A6C",
+      "backgroundOpacity": 0.82,
+      "position": "bottom-center",
+      "bottomMarginPct": 8,
+      "maxCharsPerLine": 42,
+      "maxLines": 2,
+      "minDurationSec": 1.2
+    },
+    "transition": {
+      "type": "crossfade",
+      "durationSec": 0.4
+    },
+    "slideHoldSec": {
+      "min": 3.0,
+      "default": 5.0,
+      "max": 12.0
+    },
+    "storyline": {
+      "required": true,
+      "arc": [
+        "hook",
+        "problem",
+        "approach",
+        "proof",
+        "outcome",
+        "call-to-action"
+      ],
+      "$arcNote": "The six-stage arc is for films of 45s and up. Short form cannot carry it: a 15s reel has room for about 38 spoken words, which is three beats. Judging a reel against the full arc warns on every single one, and a warning that always fires teaches people to ignore warnings. arcByFormat overrides it per delivery format.",
+      "arcByFormat": {
+        "$note": "Stages must come from the canonical arc vocabulary above. A reel's beats are called hook/turn/payoff in the queue and in concept.md, but they map onto the same roles so one validator vocabulary covers every format.",
+        "vertical": [
+          "hook",
+          "problem",
+          "proof"
+        ],
+        "square": [
+          "hook",
+          "problem",
+          "proof",
+          "call-to-action"
+        ]
+      },
+      "shortFormMaxSec": 20,
+      "rules": [
+        "Open on the client's problem, never on Example's credentials.",
+        "One idea per scene. If a scene needs two sentences of setup, it is two scenes.",
+        "Proof is specific and numeric wherever possible: stores, SKUs, states, headcount.",
+        "Close with a single, concrete next step."
+      ]
+    },
+    "referenceVideos": []
+  }
+}

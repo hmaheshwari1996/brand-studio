@@ -1,6 +1,6 @@
 {
- "$comment": "Brand-agnostic icon library harvested from the Channelplay master deck template. These are Microsoft Office stock icon paths; all hardcoded fills were replaced with currentColor so the builder tints them from the active brand profile. Rasterise with headless Chrome at build time.",
- "source": "Channelplay Deck Template  3.pptx (ppt/media/*.svg)",
+ "$comment": "Brand-agnostic icon library harvested from the Example Brand master deck template. These are Microsoft Office stock icon paths; all hardcoded fills were replaced with currentColor so the builder tints them from the active brand profile. Rasterise with headless Chrome at build time.",
+ "source": "Example Brand Deck Template  3.pptx (ppt/media/*.svg)",
  "count": 86,
  "viewBox": "0 0 96 96",
  "usage": "Set colour by wrapping in <svg style=\"color:<brand hex>\"> or substituting currentColor before rasterising.",

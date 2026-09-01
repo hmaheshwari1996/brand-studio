@@ -14,7 +14,7 @@ The honest framing, because it decides what this script can and cannot do:
     script produces -- an RGBA PNG of a specific string, plus a JSON sidecar that
     makes the result reproducible.
 
-    The letterforms stay the brand face. Channelplay's guidelines say "Poppins
+    The letterforms stay the brand face. the brand's guidelines say "Poppins
     only, never substitute another face", so the skeleton always comes from
     brand.type.weightToPptxFamily and only the FILL and the EDGES come from the
     photo. That is a hard constraint, not a preference: a treatment that changed
@@ -32,8 +32,8 @@ Pipeline
     5. record    sidecar JSON with everything needed to reproduce the artwork
 
 Usage
-    texture_type.py --ref swatch.jpg --text "CHANNELPLAY" --analyze-only --json
-    texture_type.py --ref swatch.jpg --text "CHANNELPLAY" --preview --out hero.png
+    texture_type.py --ref swatch.jpg --text "EXAMPLE BRAND" --analyze-only --json
+    texture_type.py --ref swatch.jpg --text "EXAMPLE BRAND" --preview --out hero.png
     texture_type.py --ref concrete.png --text "FIELD FORCE" --style ragged \\
                     --width 2400 --bg dark --accept-off-palette
 
@@ -1069,8 +1069,8 @@ def build_parser():
         epilog="A photo cannot become a .ttf. This produces artwork, not a font file.")
     ap.add_argument("--ref", required=True, help="reference photo (jpg/png/heic-as-png)")
     ap.add_argument("--text", help="the string to set (required unless --analyze-only)")
-    ap.add_argument("--brand", default=os.environ.get("BRAND_STUDIO_BRAND", "channelplay"),
-                    help="brand id or name (default channelplay)")
+    ap.add_argument("--brand", default=os.environ.get("BRAND_STUDIO_BRAND", "example"),
+                    help="brand id or name (default example)")
     ap.add_argument("--weight", default="600",
                     help="brand weight for the skeleton (default 600). Must be an "
                          "approved weight -- unapproved weights are refused, not "

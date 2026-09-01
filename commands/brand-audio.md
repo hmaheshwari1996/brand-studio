@@ -20,7 +20,7 @@ Request: `$ARGUMENTS`
 ## Flow A — a music bed
 
 ```sh
-"$PY" "$ROOT/scripts/make_music.py" --duration 42 --brand channelplay --out bed.wav --json
+"$PY" "$ROOT/scripts/make_music.py" --duration 42 --brand example --out bed.wav --json
 ```
 
 `--duration` is the **finished film length**; the bed lands on it to within 50 ms with the last chord
@@ -37,7 +37,7 @@ Right under narration, wrong on its own. Do not oversell it.
 ## Flow B — a voiceover
 
 ```sh
-"$PY" "$ROOT/scripts/make_voice.py" --text-file script.txt --brand channelplay --out vo.wav --json
+"$PY" "$ROOT/scripts/make_voice.py" --text-file script.txt --brand example --out vo.wav --json
 "$PY" "$ROOT/scripts/make_voice.py" --text-file script-hi.txt --lang hi --out vo-hi.wav --json
 ```
 

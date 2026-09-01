@@ -27,8 +27,8 @@ Exit codes
 
 Usage:
     validate.py deck.pptx
-    validate.py deck.pptx --brand channelplay --format human
-    validate.py film.mp4 --brand channelplay          # picks up film.srt if present
+    validate.py deck.pptx --brand example --format human
+    validate.py film.mp4 --brand example          # picks up film.srt if present
     validate.py film.mp4 --dry-run                    # print the child command only
     validate.py notes.txt                             # exit 0, prints nothing
 """

@@ -207,9 +207,9 @@ Both shapes parse. Prefer the object form so you can carry a comment:
   "version": "1.0.0",
   "brands": [
     {
-      "id": "channelplay",
-      "name": "Channelplay",
-      "aliases": ["channel play", "cp", "channelplay technologies"],
+      "id": "example",
+      "name": "Example Brand",
+      "aliases": ["channel play", "cp", "example technologies"],
       "updated": "2026-07-30"
     }
   ]
@@ -218,7 +218,7 @@ Both shapes parse. Prefer the object form so you can carry a comment:
 
 ```json
 [
-  { "id": "channelplay", "name": "Channelplay", "aliases": ["cp"], "updated": "2026-07-30" }
+  { "id": "example", "name": "Example Brand", "aliases": ["cp"], "updated": "2026-07-30" }
 ]
 ```
 
@@ -271,7 +271,7 @@ A brand profile is portable if and only if `brands/<id>/` is self-contained.
 2. **Every referenced file exists.** Logos, fonts, intro/outro, music, reference media:
 
    ```sh
-   "$PY" - <<'EOF' channelplay
+   "$PY" - <<'EOF' example
    import sys, os, json
    sys.path.insert(0, os.path.join(os.environ["ROOT"], "scripts", "lib"))
    import brandlib as B
@@ -367,7 +367,7 @@ continue. The same correction must never be needed twice.
 
 - **Correction:** user rejected mint `#41E7AB` on a slide title over white.
 - **Why:** 1.6:1 contrast. Mint is decorative only; mint-family text uses `mint.700 #1B7A74`.
-- **Scope:** channelplay, all decks and videos, title and body text.
+- **Scope:** example, all decks and videos, title and body text.
 - **Persisted as:** `rules.local.json` rule `LOCAL.NO_MINT_TEXT`.
 ```
 
@@ -429,7 +429,7 @@ re-implement it. `brands/<id>/GUIDELINES.md` is human-readable prose and is neve
 
 **Non-negotiables**
 
-- **Never assume Channelplay.** It is the house brand, not the default. "Make a deck" with no brand
+- **Never assume Example Brand.** It is the house brand, not the default. "Make a deck" with no brand
   named is ambiguous — ask.
 - **Never proceed on an unconfirmed profile.** Resolution is a lookup, not consent.
 - **Never auto-accept a fuzzy match** (exit 3). The guess is often wrong when one client's name is

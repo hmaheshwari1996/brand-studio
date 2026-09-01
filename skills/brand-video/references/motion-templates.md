@@ -22,7 +22,7 @@ restyles itself for any brand in the registry. See
 
 ## Choosing a template from the story beat
 
-The brand's storyline arc lives in `brand.video.storyline.arc`. For Channelplay that is
+The brand's storyline arc lives in `brand.video.storyline.arc`. For Example Brand that is
 hook → problem → approach → proof → outcome → call-to-action. Map each beat to the motion that
 carries it:
 

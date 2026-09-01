@@ -13,7 +13,7 @@ python-pptx template, because that theme is not the brand.
 
 Usage:
     build_deck.py --ir deck.json --out deck.pptx
-    build_deck.py --ir deck.json --brand channelplay --out deck.pptx --strict
+    build_deck.py --ir deck.json --brand example --out deck.pptx --strict
     build_deck.py --list-archetypes
 
 Exit codes:
